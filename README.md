@@ -11,9 +11,9 @@ The product uses the onboard **QMI8658C** accelerometer/gyroscope for tilt-drive
 v0.1 now targets two transport modes:
 
 - **direct USB HID** — the ESP32-S3 enumerates as a standard USB mouse;
-- **ESP-NOW wireless** — the ESP32-S3 sends the same logical mouse reports to a companion receiver, which presents standard USB HID to the PC.
+- **ESP-NOW wireless** — the ESP32-S3 encodes the generic faikeow `relative_mouse` profile and sends it to a compatible faikeow receiver, which presents standard USB HID to the PC.
 
-The intended first wireless receiver is a clone "Pico W" containing a genuine RP2040 plus an ESP8266-class Wi-Fi coprocessor. Receiver firmware is a companion project rather than part of this ESP32-S3 firmware repository.
+The receiver platform is maintained separately in [`techrote/faikeow-now-reciever`](https://github.com/techrote/faikeow-now-reciever). Its first accepted hardware target is a clone "Pico W" containing RP2040 plus ESP8266/ESP8285-class Wi-Fi hardware. TiltMouse is the first reference sender for faikeow's generic `relative_mouse` profile.
 
 Bluetooth LE HID/HOGP remains a possible future transport, but it is explicitly deferred beyond v0.1. The onboard 8×8 RGB matrix also remains out of scope.
 
@@ -45,7 +45,7 @@ Completed components now include:
 These components are not yet joined into the final application scheduler. The next steps are:
 
 1. **TM-005A / #15** — introduce the logical mouse-report / transport seam;
-2. **TM-005B / #16** — add ESP-NOW TX and the receiver protocol contract;
+2. **TM-005B / #16** — add ESP-NOW TX and encode faikeow's generic platform envelope + `relative_mouse` profile;
 3. **TM-006 / #6** — integrate the complete input pipeline with selectable USB or ESP-NOW output.
 
 The default wired path must not initialize Wi-Fi unnecessarily. ESP-NOW mode may initialize the ESP32-S3 Wi-Fi subsystem only as required for connectionless ESP-NOW; it does not require infrastructure Wi-Fi or IP networking. Bluetooth/BLE remains uninitialized for v0.1.
@@ -60,7 +60,7 @@ The first usable release should provide:
 - grouped capacitive-touch left/right buttons;
 - startup neutral calibration and runtime re-centre;
 - direct USB HID with no host driver;
-- ESP-NOW wireless operation through a compatible ESP-NOW-to-USB receiver;
+- ESP-NOW wireless operation through a compatible `faikeow-now-reciever` implementation of the generic `relative_mouse` profile;
 - no soldering on the TiltMouse board;
 - no LED features;
 - no infrastructure Wi-Fi/IP networking;

@@ -22,11 +22,13 @@ Read these before implementation:
 - [docs/BUILDING.md](docs/BUILDING.md) — pinned toolchain and local build/test commands.
 - [docs/PLAN-REVIEW.md](docs/PLAN-REVIEW.md) — review of the initial plan and improvements adopted.
 
-## Foundation
+## Current implementation
 
-The project is pinned to ESP-IDF **v6.1**, with `espressif/esp_tinyusb` **2.3.0** and `espressif/tinyusb` **0.21.0~1** reserved for the native-USB implementation track.
+The project is pinned to ESP-IDF **v6.1**, with `espressif/esp_tinyusb` **2.3.0** and `espressif/tinyusb` **0.21.0~1**.
 
-The foundation firmware currently does one target-specific thing: it drives RGB matrix data GPIO14 to a quiescent low state. USB HID, IMU, touch sensing, Wi-Fi, Bluetooth, and LED effects are intentionally not initialized until their owning tasks.
+The firmware keeps RGB matrix data GPIO14 quiescent and initializes a native USB HID mouse transport with a mouse-only interface. The transport has left/right button bits and relative X/Y movement, but the default application emits no movement or button reports by itself.
+
+IMU acquisition, tilt mapping, capacitive touch, Wi-Fi, Bluetooth, and LED effects remain disabled until their owning tasks.
 
 See [docs/BUILDING.md](docs/BUILDING.md) for exact commands.
 

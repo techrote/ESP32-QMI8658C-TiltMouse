@@ -1,4 +1,8 @@
-# TM-001 intentionally keeps the firmware baseline minimal.
 # Target selection is explicit: `idf.py set-target esp32s3`.
-# Wi-Fi, Bluetooth, USB HID, IMU, touch sensing, and RGB effects are not
-# initialized by the foundation application.
+# TM-002 enables exactly one native TinyUSB HID interface. Espressif's pinned
+# defaults leave CDC and the other USB device classes disabled, so the normal
+# firmware identity is mouse-only.
+CONFIG_TINYUSB_HID_COUNT=1
+
+# IMU, touch sensing, Wi-Fi, Bluetooth, and RGB effects are not initialized by
+# the current application.

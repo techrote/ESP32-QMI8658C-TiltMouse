@@ -2,7 +2,7 @@
 
 ## Required automated checks
 
-TM-001 should establish named CI checks that later PRs preserve. At minimum:
+TM-001 establishes these named CI checks; later PRs should preserve them:
 
 1. **ESP32-S3 firmware build**
    - clean ESP-IDF build for target `esp32s3`;
@@ -16,9 +16,12 @@ TM-001 should establish named CI checks that later PRs preserve. At minimum:
    - IMU traces -> orientation/motion outputs;
    - touch traces -> logical button transitions.
 
-4. **Static/format sanity**
-   - apply a lightweight formatter/linter policy that is reproducible in CI;
+4. **Text and style sanity**
+   - run the dependency-free repository text/style checker;
+   - enforce UTF-8/LF text, final newlines, and no trailing whitespace;
    - avoid checks that require target hardware.
+
+The host test build additionally uses `-Wall -Wextra -Wpedantic -Werror` as a compiler-level static sanity gate.
 
 ## Driver testability
 

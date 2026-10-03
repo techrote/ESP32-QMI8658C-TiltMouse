@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  firmware-build:
+    name: ESP32-S3 firmware build
+    runs-on: ubuntu-24.04
+    container:
+      image: espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned ESP-IDF release
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py --version
+          idf.py --version | grep -F "ESP-IDF v6.1"
+      - name: Build firmware
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py set-target esp32s3
+          idf.py build
+
+  host-tests:
+    name: Host unit tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S tests/host -B build/host -G Ninja
+      - name: Build
+        run: cmake --build build/host
+      - name: Test
+        run: ctest --test-dir build/host --output-on-failure
+
+  style:
+    name: Text and style sanity
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check repository text/style
+        run: python3 tools/check_style.py

@@ -1,0 +1,9 @@
+# Raw ESP32-S3-style touch fixture: touch increases the measured count.
+scenario,reset,repeat,gpio1,gpio2,gpio3,gpio4,gpio5,gpio6,gpio7,left,right
+reference-only-calibration,1,16,10000,10000,10000,10000,10000,10000,10000,0,0
+reference-only-touch,0,6,10000,10000,10000,10600,10000,10000,10000,0,0
+simultaneous-calibration,1,16,10000,10000,10000,10000,10000,10000,10000,0,0
+simultaneous-press,0,2,10150,10000,10000,10000,10060,10060,10000,1,1
+simultaneous-hold,0,12,10150,10000,10000,10000,10060,10060,10000,1,1
+simultaneous-release-debounce-1,0,1,10000,10000,10000,10000,10000,10000,10000,1,1
+simultaneous-release-debounce-2,0,1,10000,10000,10000,10000,10000,10000,10000,0,0

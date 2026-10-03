@@ -9,7 +9,7 @@ Create firmware for the Waveshare ESP32-S3-Matrix that behaves as a no-solder ti
 v0.1 supports two output paths over one transport-neutral logical mouse-report stream:
 
 - direct native USB HID;
-- ESP-NOW wireless to a companion receiver that presents USB HID to the host.
+- ESP-NOW wireless using the generic `faikeow-now-reciever` platform and its `relative_mouse` profile.
 
 Bluetooth LE HID/HOGP is deferred beyond v0.1 rather than removed as a future design option.
 
@@ -91,7 +91,7 @@ Do not duplicate the same motion report across both transports during normal ope
 
 ## ESP-NOW policy
 
-TM-005B / #16 owns the transmitter and protocol contract.
+TM-005B / #16 owns the TiltMouse sender implementation. The generic ESP-NOW platform envelope, profile IDs and `relative_mouse` receiver contract are owned by `techrote/faikeow-now-reciever` (not by TiltMouse).
 
 The wireless protocol must:
 
@@ -106,7 +106,7 @@ The wireless protocol must:
 - prefer unicast for normal operation;
 - keep Wi-Fi callbacks short and bounded.
 
-The intended first receiver is clone Pico-W-class hardware containing RP2040 + ESP8266:
+The intended first receiver implementation is `techrote/faikeow-now-reciever` on clone Pico-W-class hardware containing RP2040 + ESP8266/ESP8285:
 
 ```text
 ESP32-S3-Matrix
@@ -125,7 +125,7 @@ RP2040
        PC
 ```
 
-This repository owns the ESP32-S3 transmitter and receiver protocol contract. Exact clone-board interconnect discovery, ESP8266 flashing and RP2040 receiver firmware belong to the companion receiver project.
+This repository owns the ESP32-S3 sender-side adaptation from TiltMouse logical reports into faikeow's generic platform envelope + `relative_mouse` profile. `techrote/faikeow-now-reciever` owns the generic envelope/profile contracts, receiver ordering/freshness semantics, clone-board interconnect, ESP radio firmware and RP2040 USB HID implementation.
 
 ## Usability detail: click-induced motion
 
@@ -242,10 +242,22 @@ Completed foundation/feature work:
 Pivot/integration work:
 
 - TM-005A / #15: logical mouse-report and transport abstraction.
-- TM-005B / #16: ESP-NOW transport and receiver protocol.
+- TM-005B / #16: ESP-NOW sender implementing faikeow platform envelope + `relative_mouse` profile.
 - TM-006 / #6: integrated tilt mouse with selectable USB/ESP-NOW output.
 - TM-007 / #7: wired/wireless fault tolerance and hardening.
 - TM-008 / #8: physical USB + ESP-NOW acceptance and tuning.
 - TM-009 / #9: v0.1 wired/wireless release consolidation.
 
-TM-005A depends on TM-002/TM-004/TM-005. TM-005B depends on TM-005A. TM-006 depends on both pivot tasks plus the completed sensor/input work.
+TM-005A depends on TM-002/TM-004/TM-005. TM-005B depends on TM-005A and must reconcile an accepted faikeow platform/profile v1 contract before freezing bytes. TM-006 depends on both pivot tasks plus the completed sensor/input work.
+
+## Receiver platform authority
+
+Generic receiver platform: https://github.com/techrote/faikeow-now-reciever
+
+Relevant faikeow authority:
+- `RAG.md`
+- `docs/02-PROTOCOLS.md`
+- `docs/08-HID-PROFILES.md`
+- FNR-006 / issue #7 — generic receiver core + `relative_mouse` profile
+- FNR-008 / issue #9 — physical platform/reference-sender acceptance
+- FNR-009 / issue #10 — v0.1 receiver release

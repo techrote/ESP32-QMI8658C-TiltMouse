@@ -104,7 +104,9 @@ Pure estimator, motion and button-fusion logic must be host-testable without ESP
 
 ## Build and diagnostics strategy
 
-TM-001 must choose and pin an exact stable ESP-IDF release after verifying the required ESP32-S3 touch and `esp_tinyusb` APIs. Do not leave CI tracking a floating `latest` after that.
+TM-001 selected and pinned the stable ESP-IDF **v6.1** release (6.1.0), `espressif/esp_tinyusb` **2.3.0**, and `espressif/tinyusb` **0.21.0~1**. The ESP-IDF pin is enforced by the component manifest and CI container; managed USB dependencies are exact rather than floating.
+
+ESP-IDF v6.1 provides the modern `esp_driver_touch_sens` / `driver/touch_sens.h` touch API required by TM-005. The pinned `esp_tinyusb` release supports ESP32-S3 and HID and is reserved for TM-002; TM-001 does not initialize USB HID.
 
 Normal release identity: HID mouse only.
 

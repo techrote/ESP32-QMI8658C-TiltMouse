@@ -4,23 +4,34 @@ This file is the compact authoritative context for implementation agents. If an 
 
 ## Mission
 
-Create firmware for the Waveshare ESP32-S3-Matrix that behaves as a standard USB HID mouse. Cursor movement is controlled by tilting the board. Mouse buttons are implemented with the ESP32-S3 capacitive-touch channels using only the existing exposed board contacts; the project must remain no-solder.
+Create firmware for the Waveshare ESP32-S3-Matrix that behaves as a no-solder tilt mouse. Cursor movement is controlled by board tilt and mouse buttons by grouped capacitive-touch channels.
+
+v0.1 supports two output paths over one transport-neutral logical mouse-report stream:
+
+- direct native USB HID;
+- ESP-NOW wireless to a companion receiver that presents USB HID to the host.
+
+Bluetooth LE HID/HOGP is deferred beyond v0.1 rather than removed as a future design option.
 
 ## Fixed product constraints
 
 - Target board: Waveshare ESP32-S3-Matrix.
 - Firmware framework: ESP-IDF.
-- USB transport: ESP32-S3 native USB device peripheral using TinyUSB / `esp_tinyusb`.
-- No host-side driver should be required for normal mouse use.
+- Wired transport: ESP32-S3 native USB device peripheral using TinyUSB / `esp_tinyusb`.
+- Wireless transport: ESP-NOW using the ESP32-S3 Wi-Fi radio.
+- Direct USB remains the default wired path.
+- ESP-NOW is an alternate mode, not an IP-network transport.
+- Do not add infrastructure Wi-Fi association, sockets, AP services, or unrelated network features for v0.1.
+- Do not initialize Bluetooth/BLE in v0.1.
+- No host-side driver should be required for normal mouse use in either path: wireless hosts see the companion receiver as ordinary USB HID.
 - Motion sensor: onboard QMI8658C 6-axis IMU.
 - Left click: software fusion of touch channels GPIO1, GPIO2, GPIO3.
 - GPIO4: never a mouse click; reserve as separator/reference/diagnostic channel.
 - Right click: software fusion of touch channels GPIO5, GPIO6, GPIO7.
 - Do not electrically tie the touch pins together. Group them only in software.
-- Do not use the LED matrix in the initial release. Do not initialize LED effects. Keep LED data quiescent.
-- Do not initialize Wi-Fi or Bluetooth in the initial release.
+- Do not use the LED matrix in the initial release. Keep LED data quiescent.
 - Preserve a reliable BOOT/RESET flashing recovery path.
-- Do not claim physical-device acceptance without physical evidence.
+- Do not claim physical-device or RF acceptance without physical evidence.
 
 ## Board facts
 
@@ -42,7 +53,7 @@ From the Waveshare schematic and board documentation:
 
 ESP32-S3 touch hardware maps TOUCH1–TOUCH7 to GPIO1–GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
 
-The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9 documents the 7-bit I2C address as 0x6A when SA0 is pulled high or left unconnected and 0x6B when SA0 is pulled low. Firmware should verify identity and probe 0x6A then 0x6B instead of relying on a board-address assumption.
+The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9 documents the 7-bit I2C address as 0x6A when SA0 is pulled high or left unconnected and 0x6B when SA0 is pulled low. Firmware verifies identity and probes 0x6A then 0x6B rather than relying on a board-address assumption.
 
 ## Motion model
 
@@ -51,44 +62,80 @@ Do not use free-running gyro integration as the tilt estimate.
 Use:
 1. accelerometer-derived gravity direction as the long-term reference;
 2. gyroscope angular rate for low-latency short-term motion;
-3. a lightweight complementary filter or equivalent bounded estimator for pitch/roll;
+3. a bounded complementary filter for pitch/roll;
 4. a neutral orientation captured at startup and on explicit re-centre;
 5. tilt angle mapped to **relative cursor velocity**, not absolute screen position.
 
-Initial tunables should be centralized and documented:
-- IMU sample rate;
-- HID report rate;
-- deadzone;
-- maximum useful tilt;
-- X/Y gain and axis inversion;
-- response exponent / curve;
-- output clamp;
-- complementary-filter time constant.
+TM-004 established the host-testable estimator/motion layer. Physical axis mapping and tuning remain TM-008 evidence.
 
-Preserve sub-report motion with fractional residual accumulators so small motions are not lost by integer HID reports.
+Preserve sub-report motion with fractional residual accumulators so small motions are not lost by integer reports.
 
 ## Touch-button model
 
 Every touch channel is calibrated independently. Maintain per-channel baseline and noise estimates.
 
-Logical button fusion must be testable and configurable. The implementation should support or experimentally compare:
-- normalized summed evidence;
-- one-strong-or-two-moderate evidence;
-- 2-of-3 voting.
+Logical button fusion supports configurable evidence strategies with hysteresis and debounce. GPIO4 remains diagnostic/reference-only and never emits a click.
 
-Use separate press/release thresholds (hysteresis), debounce, and baseline adaptation only while a channel/group is not actively touched.
+## Logical report and transport model
 
-GPIO4 is not a button. Initially collect it for diagnostics. Use it as common-mode/environmental compensation only if evidence shows that it improves false-positive/false-negative behaviour.
+Application integration must not couple sensor/touch logic directly to TinyUSB or ESP-NOW.
+
+TM-005A / #15 introduces one logical report contract carrying bounded relative X/Y and complete current button state. Transport-specific metadata is not part of the core report.
+
+Normal application report ownership is single-transport:
+
+- USB mode -> logical report -> USB HID adapter;
+- ESP-NOW mode -> logical report -> ESP-NOW packet encoder/TX.
+
+Do not duplicate the same motion report across both transports during normal operation.
+
+## ESP-NOW policy
+
+TM-005B / #16 owns the transmitter and protocol contract.
+
+The wireless protocol must:
+
+- remain small enough for ESP-NOW v1 interoperability: application packet <=250 bytes;
+- carry full current button state in every report;
+- carry a monotonically advancing sequence number outside the core logical report;
+- reject/ignore duplicate and stale/out-of-order reports deterministically;
+- prefer newest movement over retransmitting stale movement;
+- avoid unbounded retransmission queues;
+- define link-loss timeout behavior that releases all buttons at the receiver;
+- keep RF channel and peer/key provisioning explicit;
+- prefer unicast for normal operation;
+- keep Wi-Fi callbacks short and bounded.
+
+The intended first receiver is clone Pico-W-class hardware containing RP2040 + ESP8266:
+
+```text
+ESP32-S3-Matrix
+  logical mouse report
+        |
+     ESP-NOW
+        v
+ESP8266 receiver
+        |
+ internal serial/SPI-style board link
+        v
+RP2040
+        |
+     USB HID
+        v
+       PC
+```
+
+This repository owns the ESP32-S3 transmitter and receiver protocol contract. Exact clone-board interconnect discovery, ESP8266 flashing and RP2040 receiver firmware belong to the companion receiver project.
 
 ## Usability detail: click-induced motion
 
-Touching the board can mechanically perturb its orientation. Integration must measure this. If physical evidence shows objectionable cursor jumps on press/release, add a narrowly bounded mitigation such as a short transition damping/freeze window or estimator gating. Keep this configurable and do not introduce it speculatively without evidence.
+Touching the board can mechanically perturb its orientation. TM-008 must measure this. Any mitigation remains evidence-driven and narrowly bounded.
 
 ## Firmware decomposition
 
-Keep hardware access separate from pure logic so most behaviour can be tested on a normal CI host.
+Keep hardware access separate from pure logic so most behavior can be tested on a normal CI host.
 
-Expected modules:
+Expected/established modules:
 
 - `board`: pin/resource definitions and safe startup.
 - `qmi8658`: I2C register driver and scaled samples.
@@ -96,60 +143,66 @@ Expected modules:
 - `mouse_motion`: deadzone/curve/velocity/residual logic.
 - `touch_input`: raw touch acquisition, calibration, normalization.
 - `touch_buttons`: left/right fusion, hysteresis, debounce.
-- `usb_hid_mouse`: descriptors, mount state, reports, suspend/resume.
-- `app`: scheduling and integration.
+- `mouse_report` or equivalent: transport-neutral logical report seam.
+- `usb_hid_mouse`: USB descriptor/lifecycle and logical-report adapter.
+- `espnow_mouse`: ESP-NOW packet/TX transport.
+- `app`: scheduling, neutral/re-centre and selected-transport integration.
 - optional diagnostic transport/build mode for telemetry.
-
-Pure estimator, motion and button-fusion logic must be host-testable without ESP32 hardware.
 
 ## Build and diagnostics strategy
 
-TM-001 selected and pinned the stable ESP-IDF **v6.1** release (6.1.0), `espressif/esp_tinyusb` **2.3.0**, and `espressif/tinyusb` **0.21.0~1**. The ESP-IDF pin is enforced by the component manifest and CI container; managed USB dependencies are exact rather than floating.
+TM-001 pinned ESP-IDF **v6.1** (6.1.0), `espressif/esp_tinyusb` **2.3.0**, and `espressif/tinyusb` **0.21.0~1**.
 
-ESP-IDF v6.1 provides the modern `esp_driver_touch_sens` / `driver/touch_sens.h` touch API required by TM-005. The pinned `esp_tinyusb` release supports ESP32-S3 and HID and is reserved for TM-002; TM-001 does not initialize USB HID.
+Normal direct-USB identity remains mouse-only. A diagnostic build may expose HID+CDC if useful.
 
-Normal release identity: HID mouse only.
+ESP-NOW mode may depend on ESP-IDF `esp_wifi` / `esp_now`; direct USB mode should not initialize Wi-Fi merely because wireless support exists in the binary.
 
-A diagnostic build may expose TinyUSB CDC + HID as a composite device if useful for raw touch/IMU telemetry. It must not become a requirement for normal use.
-
-The onboard LEDs remain unused in both normal and diagnostic builds unless a later issue explicitly changes scope.
+The onboard LEDs remain unused unless a later issue explicitly changes scope.
 
 ## Acceptance principles
 
 Hosted CI can establish:
-- clean ESP-IDF build for `esp32s3`;
-- host unit tests for pure logic;
-- deterministic replay tests;
-- static/format checks where practical;
-- descriptor/report compile-time checks.
+
+- clean ESP32-S3 build;
+- host unit/replay tests;
+- USB report contracts;
+- ESP-NOW packet/sequence/state contracts;
+- transport ownership and fault-state logic.
 
 Hosted CI cannot establish:
-- touch sensitivity on the physical board;
-- ergonomics;
-- actual USB enumeration on the target board;
-- real cursor feel;
+
+- physical USB enumeration;
+- real ESP-NOW RF behavior;
+- compatibility with a particular clone receiver board;
+- physical axes, drift or cursor feel;
+- touch sensitivity/ergonomics;
 - click-induced physical jitter.
 
-Never substitute simulated evidence for those physical claims.
+TM-008 requires physical evidence for both direct USB and the complete ESP-NOW -> receiver -> USB HID path.
 
 ## v0.1 definition
 
 v0.1 is complete when a physical ESP32-S3-Matrix can:
-- enumerate as a standard USB mouse;
+
+- enumerate directly as a standard USB mouse in wired mode;
+- operate wirelessly through a compatible ESP-NOW receiver that enumerates as standard USB HID;
 - remain stationary in a comfortable neutral pose;
 - move cursor smoothly and predictably by tilt;
-- left-click/hold/drag using GPIO1–3 group;
-- right-click/hold using GPIO5–7 group;
+- left-click/hold/drag using GPIO1–3;
+- right-click/hold using GPIO5–7;
 - ignore GPIO4 as a click;
 - re-centre without reflashing;
-- survive USB reconnect and ordinary suspend/resume;
+- survive ordinary USB and wireless link-loss/recovery paths safely;
 - recover safely from IMU read failures;
-- run with LED matrix, Wi-Fi and Bluetooth unused.
+- run with the LED matrix unused;
+- run without Bluetooth/BLE.
 
 ## Non-goals for v0.1
 
+- Bluetooth LE HID/HOGP;
+- Bluetooth/Wi-Fi coexistence tuning;
+- infrastructure Wi-Fi, TCP/IP or socket networking;
 - RGB feedback or animations;
-- wireless HID;
 - scrolling gestures;
 - middle click;
 - persistent multi-profile GUI;
@@ -163,29 +216,36 @@ v0.1 is complete when a physical ESP32-S3-Matrix can:
 
 1. Waveshare ESP32-S3-Matrix:
    https://docs.waveshare.com/ESP32-S3-Matrix
-2. Waveshare resources:
-   https://docs.waveshare.com/ESP32-S3-Matrix/Resources-And-Documents
-3. Waveshare schematic:
+2. Waveshare schematic:
    https://files.waveshare.com/wiki/ESP32-S3-Matrix/ESP32-S3-Matrix-Sch.pdf
-4. QMI8658C datasheet:
+3. QMI8658C datasheet:
    https://files.waveshare.com/wiki/common/QMI8658C.pdf
-5. ESP32-S3 capacitive touch:
+4. ESP32-S3 capacitive touch:
    https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/peripherals/cap_touch_sens.html
-6. ESP32-S3 USB device stack:
+5. ESP32-S3 USB device stack:
    https://docs.espressif.com/projects/esp-usb/en/latest/esp32s3/usb_device.html
-7. Espressif TinyUSB HID device example:
-   https://github.com/espressif/esp-idf/tree/master/examples/peripherals/usb/device/tusb_hid
+6. ESP-NOW API:
+   https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/api-reference/network/esp_now.html
+7. ESP-NOW v1/v2 interoperability:
+   https://docs.espressif.com/projects/esp-faq/en/latest/application-solution/esp-now.html
 
 ## Programme order
+
+Completed foundation/feature work:
 
 - TM-001: repository/ESP-IDF/CI foundation.
 - TM-002: native USB HID mouse transport.
 - TM-003: QMI8658C driver and sample acquisition.
 - TM-004: orientation estimator and tilt-to-motion engine.
 - TM-005: capacitive-touch acquisition and grouped buttons.
-- TM-006: integrated tilt mouse and re-centre/diagnostics.
-- TM-007: robustness and usability hardening.
-- TM-008: physical acceptance and tuning.
-- TM-009: v0.1 release consolidation.
 
-Parallelism after TM-001: TM-002, TM-003 and TM-005 may proceed independently. TM-004 depends on TM-003. TM-006 depends on TM-002, TM-004 and TM-005.
+Pivot/integration work:
+
+- TM-005A / #15: logical mouse-report and transport abstraction.
+- TM-005B / #16: ESP-NOW transport and receiver protocol.
+- TM-006 / #6: integrated tilt mouse with selectable USB/ESP-NOW output.
+- TM-007 / #7: wired/wireless fault tolerance and hardening.
+- TM-008 / #8: physical USB + ESP-NOW acceptance and tuning.
+- TM-009 / #9: v0.1 wired/wireless release consolidation.
+
+TM-005A depends on TM-002/TM-004/TM-005. TM-005B depends on TM-005A. TM-006 depends on both pivot tasks plus the completed sensor/input work.

@@ -4,5 +4,10 @@
 # firmware identity is mouse-only.
 CONFIG_TINYUSB_HID_COUNT=1
 
+# Route USB lifecycle state through esp_tinyusb's device-event callback. These
+# options make esp_tinyusb own the TinyUSB suspend/resume callbacks as well.
+CONFIG_TINYUSB_SUSPEND_CALLBACK=y
+CONFIG_TINYUSB_RESUME_CALLBACK=y
+
 # IMU, touch sensing, Wi-Fi, Bluetooth, and RGB effects are not initialized by
 # the current application.

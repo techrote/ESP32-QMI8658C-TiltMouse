@@ -85,6 +85,28 @@ _Static_assert(
     sizeof(tiltmouse_usb_hid_mouse_report_t) == 3,
     "TiltMouse HID input report must stay exactly three bytes");
 
+static void tiltmouse_usb_hid_mouse_device_event(
+    tinyusb_event_t *event,
+    void *arg)
+{
+    (void)arg;
+
+    switch (event->id) {
+    case TINYUSB_EVENT_ATTACHED:
+    case TINYUSB_EVENT_DETACHED:
+        s_suspended = false;
+        break;
+    case TINYUSB_EVENT_SUSPENDED:
+        s_suspended = true;
+        break;
+    case TINYUSB_EVENT_RESUMED:
+        s_suspended = false;
+        break;
+    default:
+        break;
+    }
+}
+
 esp_err_t tiltmouse_usb_hid_mouse_init(void)
 {
     if (s_initialized) {
@@ -94,6 +116,8 @@ esp_err_t tiltmouse_usb_hid_mouse_init(void)
     s_suspended = false;
 
     tinyusb_config_t tusb_cfg = TINYUSB_DEFAULT_CONFIG();
+    tusb_cfg.event_cb = tiltmouse_usb_hid_mouse_device_event;
+    tusb_cfg.event_arg = NULL;
     tusb_cfg.descriptor.device = NULL;
     tusb_cfg.descriptor.full_speed_config = s_configuration_descriptor;
     tusb_cfg.descriptor.string = s_string_descriptor;
@@ -190,25 +214,4 @@ void tud_hid_set_report_cb(
     (void)report_type;
     (void)buffer;
     (void)bufsize;
-}
-
-void tud_mount_cb(void)
-{
-    s_suspended = false;
-}
-
-void tud_umount_cb(void)
-{
-    s_suspended = false;
-}
-
-void tud_suspend_cb(bool remote_wakeup_en)
-{
-    (void)remote_wakeup_en;
-    s_suspended = true;
-}
-
-void tud_resume_cb(void)
-{
-    s_suspended = false;
 }

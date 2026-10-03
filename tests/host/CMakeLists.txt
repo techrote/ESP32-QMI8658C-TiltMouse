@@ -34,3 +34,25 @@ target_compile_features(touch_buttons PRIVATE c_std_11)
 target_compile_options(touch_buttons PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 add_test(NAME touch_buttons COMMAND touch_buttons)
+
+
+add_executable(
+    usb_hid_mouse_report
+    test_usb_hid_mouse.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse_report.c
+)
+target_include_directories(
+    usb_hid_mouse_report
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/include
+)
+target_compile_features(usb_hid_mouse_report PRIVATE c_std_11)
+target_compile_options(
+    usb_hid_mouse_report
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Werror
+)
+add_test(NAME usb_hid_mouse_report COMMAND usb_hid_mouse_report)

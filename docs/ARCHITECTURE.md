@@ -153,9 +153,9 @@ Wi-Fi/ESP-NOW callbacks run in high-priority Wi-Fi context and therefore perform
 
 ## Companion receiver boundary
 
-The intended first receiver is clone Pico-W-style hardware with RP2040 + ESP8266.
+The intended receiver platform is [`techrote/faikeow-now-reciever`](https://github.com/techrote/faikeow-now-reciever), initially targeting clone Pico-W-style RP2040 + ESP8266/ESP8285 hardware.
 
-This repository does **not** own that receiver's firmware implementation. It owns the transmitter and wire/protocol contract.
+This repository does **not** own receiver firmware or the generic platform/profile wire contract. It owns the TiltMouse sender-side mapping into faikeow's accepted generic envelope + `relative_mouse` profile.
 
 The companion receiver is responsible for:
 
@@ -165,7 +165,7 @@ The companion receiver is responsible for:
 4. releasing all buttons after link timeout;
 5. presenting ordinary USB HID mouse reports from RP2040 to the PC.
 
-The exact internal link, ESP8266 flashing path and receiver project structure are hardware-discovery concerns for the companion project.
+The exact internal link, ESP radio flashing path, profile dispatch and receiver USB implementation belong to faikeow.
 
 ## Transport selection
 

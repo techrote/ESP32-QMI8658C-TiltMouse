@@ -56,3 +56,18 @@ target_compile_options(
         -Werror
 )
 add_test(NAME usb_hid_mouse_report COMMAND usb_hid_mouse_report)
+
+add_executable(
+    qmi8658_driver
+    test_qmi8658.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/qmi8658/qmi8658.c
+)
+target_include_directories(
+    qmi8658_driver
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/qmi8658/include
+)
+target_compile_features(qmi8658_driver PRIVATE c_std_11)
+target_compile_options(qmi8658_driver PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+add_test(NAME qmi8658_driver COMMAND qmi8658_driver)

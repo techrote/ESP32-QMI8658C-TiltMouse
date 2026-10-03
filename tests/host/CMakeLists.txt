@@ -71,3 +71,26 @@ target_compile_features(qmi8658_driver PRIVATE c_std_11)
 target_compile_options(qmi8658_driver PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 add_test(NAME qmi8658_driver COMMAND qmi8658_driver)
+
+add_executable(
+    orientation_motion
+    test_orientation_motion.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
+)
+target_include_directories(
+    orientation_motion
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
+)
+target_compile_definitions(
+    orientation_motion
+    PRIVATE
+        IMU_FIXTURE_PATH="${CMAKE_CURRENT_LIST_DIR}/../fixtures/imu_motion_replay.csv"
+)
+target_compile_features(orientation_motion PRIVATE c_std_11)
+target_compile_options(orientation_motion PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(orientation_motion PRIVATE m)
+
+add_test(NAME orientation_motion COMMAND orientation_motion)

@@ -44,29 +44,29 @@ The PC does not need Bluetooth, ESP-NOW support or a custom driver. It sees only
 
 ## Repository boundary
 
-This repository owns:
+TiltMouse owns:
 
 - transport-neutral logical mouse semantics;
 - ESP32-S3 ESP-NOW TX;
-- packet version/format;
-- ordering/state semantics;
-- transmitter-side fault handling;
-- interoperability vectors/tests.
+- mapping TiltMouse logical reports into the generic faikeow platform envelope + `relative_mouse` profile;
+- transmitter-side scheduling/fault handling;
+- sender compatibility vectors/tests.
 
-The companion receiver project owns:
+`techrote/faikeow-now-reciever` owns:
 
-- identification of the clone board's ESP8266↔RP2040 link;
-- ESP8266 flashing/firmware;
+- the generic ESP-NOW application envelope and platform versioning;
+- HID profile IDs and the `relative_mouse` profile contract;
 - ESP-NOW RX;
-- receiver ordering/timeout behavior;
-- RP2040-side USB HID firmware;
-- receiver physical acceptance.
+- generic peer/session/order/freshness behavior;
+- clone-board ESP8266/ESP8285↔RP2040 transport;
+- RP2040 profile dispatch and USB HID implementation;
+- receiver provisioning/recovery and physical acceptance.
 
-TM-008 links the exact receiver implementation used for end-to-end acceptance.
+TiltMouse must not invent a private receiver wire format. TM-005B consumes the accepted faikeow contract. TM-008 records the exact faikeow commit/artifacts used for end-to-end acceptance.
 
 ## Protocol requirements
 
-TM-005B / #16 freezes the exact byte layout. The protocol must satisfy these invariants.
+faikeow FNR-006 / issue #7 freezes the generic platform envelope and `relative_mouse` profile byte contracts. TM-005B / #16 must encode those contracts exactly and add no incompatible private framing.
 
 ### Compatibility
 
@@ -74,16 +74,13 @@ Keep every application packet within **250 bytes**. This preserves ESP-NOW v1 in
 
 ### Logical contents
 
-A wireless packet carries at least:
+The ESP-NOW application payload is the faikeow generic envelope plus the `relative_mouse` profile payload.
 
-- protocol version;
-- monotonically advancing sequence number;
-- bounded relative X;
-- bounded relative Y;
-- complete current left/right button state;
-- any flags required for safe evolution.
+The generic envelope carries routing/order metadata such as platform version, profile ID, session/restart discriminator, sequence, flags/type and payload length.
 
-Transport metadata remains outside the core logical mouse-report type.
+The `relative_mouse` profile carries bounded relative X/Y and complete current left/right button state.
+
+Transport/profile metadata remains outside TiltMouse's core logical mouse-report type.
 
 ### Latest-first movement
 
@@ -106,7 +103,7 @@ If the receiver loses the transmitter for longer than the configured timeout, it
 
 ### Ordering
 
-The receiver rejects duplicate/stale/out-of-order reports according to a wrap-safe sequence rule defined and tested by TM-005B.
+faikeow owns receiver-side session/order/freshness semantics. TM-005B must generate envelope session/sequence fields consistent with the accepted faikeow contract and provide compatibility vectors.
 
 ### RF/peer configuration
 
@@ -147,7 +144,7 @@ BLE coexistence is out of v0.1 scope because BLE/HOGP itself is deferred.
 
 CI can validate packet encoding, ordering logic and state machines. It cannot validate RF performance or the clone receiver.
 
-TM-008 must establish the complete physical chain:
+TM-008, coordinated with faikeow FNR-008 / issue #9, must establish the complete physical chain:
 
 ```text
 TiltMouse -> ESP-NOW RF -> ESP8266 receiver -> RP2040 -> USB HID -> host
@@ -163,3 +160,10 @@ Evidence must identify exact firmware commits/artifacts on both sides.
   https://docs.espressif.com/projects/esp-faq/en/latest/application-solution/esp-now.html
 - ESP-NOW SDK introduction, including ESP8266 family support:
   https://docs.espressif.com/projects/esp-now/en/latest/esp32/introduction.html
+
+## Receiver platform references
+
+- faikeow repository: https://github.com/techrote/faikeow-now-reciever
+- generic protocol authority: https://github.com/techrote/faikeow-now-reciever/blob/main/docs/02-PROTOCOLS.md
+- HID profile authority: https://github.com/techrote/faikeow-now-reciever/blob/main/docs/08-HID-PROFILES.md
+- generic receiver/profile implementation: https://github.com/techrote/faikeow-now-reciever/issues/7

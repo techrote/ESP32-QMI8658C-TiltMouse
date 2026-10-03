@@ -2,27 +2,57 @@
 
 ## Pinned toolchain
 
-TM-001 pins the foundation to:
+TM-001 pins:
 
 - ESP-IDF **v6.1** (release version 6.1.0);
 - `espressif/esp_tinyusb` **2.3.0**;
 - `espressif/tinyusb` **0.21.0~1**.
 
-The managed USB components are declared so the USB implementation inherits a known dependency set. TM-002 enables exactly one TinyUSB HID interface and supplies an explicit one-interface mouse configuration/report descriptor. The normal build does not enable CDC or any other USB device class.
+The ESP-IDF version is pinned in the component manifest and CI container. Dependency/toolchain changes require a deliberate repository decision and a clean target build.
 
-The ESP-IDF version is pinned in both `main/idf_component.yml` and the CI container image. Do not update any of these versions independently: dependency/toolchain changes require a deliberate repository decision and a clean firmware build.
+## Current component state
 
-## Native USB HID state
+Merged work includes:
 
-TM-002 initializes the ESP32-S3 native USB device peripheral during normal startup after the board safe-state initialization.
+- native USB mouse-only HID transport;
+- QMI8658C acquisition;
+- orientation/motion logic;
+- capacitive-touch acquisition/button fusion.
 
-The HID transport exposes only:
+TM-005A / #15 will introduce a logical mouse-report seam. TM-005B / #16 will add ESP-NOW support using ESP-IDF's Wi-Fi/ESP-NOW APIs.
+
+## Transport build policy
+
+### Direct USB
+
+Direct USB is the default wired mode.
+
+The HID transport exposes:
 
 - left/right button bits;
-- relative signed X movement;
-- relative signed Y movement.
+- relative signed X;
+- relative signed Y.
 
-There is no keyboard interface, wheel/pan report field, CDC interface, wireless transport, or automatic demo movement. Initializing the firmware therefore must not move the host cursor by itself; future integration tasks explicitly call the HID send API when real input is available.
+No keyboard interface, wheel/pan field or automatic demo movement is part of normal operation.
+
+Direct USB mode should not initialize Wi-Fi merely because ESP-NOW support exists.
+
+### ESP-NOW
+
+ESP-NOW is the alternate wireless mode.
+
+Wireless support may initialize the ESP32-S3 Wi-Fi subsystem only as required by ESP-NOW. It does not require:
+
+- infrastructure Wi-Fi association;
+- an IP address;
+- TCP/UDP sockets;
+- an AP service.
+
+The packet contract remains <=250 bytes for compatibility with ESP-NOW v1 receivers such as ESP8266-class hardware.
+
+### Bluetooth
+
+Bluetooth LE HID/HOGP is deferred beyond v0.1. Current builds should not initialize Bluetooth/BLE.
 
 ## Firmware build
 
@@ -33,11 +63,11 @@ idf.py set-target esp32s3
 idf.py build
 ```
 
-`idf.py set-target` may create a local `sdkconfig`. It is generated state and should not be committed unless a later task deliberately establishes a project configuration file.
+`idf.py set-target` may create local generated `sdkconfig` state; do not commit it unless a later task deliberately establishes project configuration.
+
+Exact build-time/runtime transport selection will be documented by TM-006 once the transport seam and ESP-NOW implementation are merged.
 
 ## Host unit tests
-
-The host-test harness deliberately does not depend on ESP-IDF:
 
 ```sh
 cmake -S tests/host -B build/host -G Ninja
@@ -45,7 +75,7 @@ cmake --build build/host
 ctest --test-dir build/host --output-on-failure
 ```
 
-TM-002 adds host coverage for HID button masks, relative report construction, and the all-buttons-release report. Later pure algorithm components should extend this harness rather than hiding deterministic logic inside target-only callbacks.
+Pure logic, logical report construction, USB adaptation and ESP-NOW packet/state semantics should remain testable without target hardware.
 
 ## Style/static sanity
 
@@ -53,10 +83,20 @@ TM-002 adds host coverage for HID button masks, relative report construction, an
 python3 tools/check_style.py
 ```
 
-The check is intentionally dependency-free. It enforces UTF-8/LF text, final newlines, and no trailing whitespace. Host tests compile with `-Wall -Wextra -Wpedantic -Werror`, providing an additional static compiler sanity gate for pure C logic.
+The check enforces UTF-8/LF text, final newlines and no trailing whitespace. Host tests compile with `-Wall -Wextra -Wpedantic -Werror`.
 
 ## CI evidence boundary
 
-The automated firmware build establishes that the HID descriptors, TinyUSB calls and application wiring compile for ESP32-S3 against the pinned SDK/component versions. Host CI establishes the pure report/button semantics.
+The automated ESP32-S3 build establishes compatibility with the pinned SDK/components.
 
-Neither proves physical USB enumeration or cursor behaviour on the Waveshare board. Those remain target-hardware evidence for TM-008.
+Host CI establishes deterministic software contracts.
+
+Neither proves:
+
+- physical USB enumeration;
+- ESP-NOW RF behavior;
+- ESP8266 receiver interoperability;
+- physical cursor feel;
+- touch reliability.
+
+Those are TM-008 physical evidence.

@@ -14,17 +14,19 @@ jobs:
     name: ESP32-S3 firmware build
     runs-on: ubuntu-24.04
     container:
-      image: espressif/idf:v6.1
+      image: espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
     steps:
       - uses: actions/checkout@v4
       - name: Verify pinned ESP-IDF release
         shell: bash
         run: |
+          . "$IDF_PATH/export.sh"
           idf.py --version
           idf.py --version | grep -F "ESP-IDF v6.1"
       - name: Build firmware
         shell: bash
         run: |
+          . "$IDF_PATH/export.sh"
           idf.py set-target esp32s3
           idf.py build
 

@@ -42,7 +42,7 @@ From the Waveshare schematic and board documentation:
 
 ESP32-S3 touch hardware maps TOUCH1–TOUCH7 to GPIO1–GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
 
-The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. Its 7-bit I2C address is 0x6A when SA0 is low/unconnected and 0x6B when SA0 is pulled high. Firmware should verify identity and may safely probe 0x6A then 0x6B instead of relying on an undocumented board assumption.
+The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9 documents the 7-bit I2C address as 0x6A when SA0 is pulled high or left unconnected and 0x6B when SA0 is pulled low. Firmware should verify identity and probe 0x6A then 0x6B instead of relying on a board-address assumption.
 
 ## Motion model
 

@@ -16,7 +16,7 @@ TM-001 established these CI checks; later PRs preserve them:
    - IMU traces -> orientation/motion outputs;
    - touch traces -> logical button transitions;
    - logical reports -> USB report adaptation;
-   - logical reports -> ESP-NOW packet encode/decode/order behavior.
+   - logical reports -> exact faikeow generic-envelope + `relative_mouse` sender encoding and compatibility vectors.
 
 4. **Text and style sanity**
    - UTF-8/LF text;
@@ -36,15 +36,16 @@ USB report construction/button masks must be host-testable without enumeration.
 
 TM-005A logical reports must be host-testable without USB or ESP-NOW.
 
-TM-005B ESP-NOW protocol logic must separate packet/state semantics from target Wi-Fi callbacks so host tests can cover:
+TM-005B sender logic must separate faikeow envelope/profile encoding from target Wi-Fi callbacks so host tests can cover:
 
-- version/size validation;
-- encode/decode;
-- sequence advance/wrap;
-- duplicate/stale/out-of-order rejection;
-- complete button-state recovery;
-- link-timeout release policy;
-- latest-first movement/no stale backlog.
+- exact platform/profile version and ID;
+- envelope/payload length bounds;
+- golden-vector encoding;
+- sender session/sequence advance and wrap;
+- complete current button-state encoding;
+- latest-first/no stale retransmission backlog.
+
+Receiver-side duplicate/stale/out-of-order rejection and timeout neutralization are owned and tested in `techrote/faikeow-now-reciever`, not duplicated here.
 
 ## Fixture requirements
 
@@ -75,11 +76,11 @@ The following require real hardware evidence and must not be inferred from CI.
 ### ESP-NOW wireless
 
 - ESP32-S3 transmits in the selected wireless mode without requiring infrastructure Wi-Fi;
-- a compatible receiver actually receives/interprets the documented packet contract;
+- the exact accepted `techrote/faikeow-now-reciever` build receives the generic platform envelope + `relative_mouse` profile;
 - the receiver presents normal USB HID to the host;
-- packet loss/sequence gaps do not replay stale motion;
-- duplicate/out-of-order packets are rejected as designed;
-- wireless link loss eventually releases all buttons;
+- joint evidence confirms packet loss/sequence gaps do not replay stale motion;
+- joint evidence confirms duplicate/out-of-order handling matches faikeow's profile contract;
+- wireless link loss reaches faikeow's safe neutral/released-button state;
 - recovery does not emit a stale movement burst;
 - RF channel/peer/provisioning assumptions are recorded.
 
@@ -94,7 +95,7 @@ The following require real hardware evidence and must not be inferred from CI.
 - hold/drag works;
 - clicking does not cause unacceptable cursor jumps.
 
-TM-008 must record the exact TiltMouse commit/artifact and, for wireless acceptance, the exact companion receiver hardware and firmware identity.
+TM-008 must record the exact TiltMouse commit/artifact and, for wireless acceptance, the exact `faikeow-now-reciever` commit, RP2040/ESP-radio artifact identities, generic platform version and `relative_mouse` profile version.
 
 ## Failure handling tests
 
@@ -105,7 +106,7 @@ Before v0.1:
 - touch failure releases button state;
 - USB unmount/suspend does not build an unbounded report backlog;
 - ESP-NOW failure does not build an unbounded retransmission backlog;
-- receiver timeout releases all buttons;
+- TiltMouse sender tests establish fresh/full-state output while faikeow's own tests establish receiver timeout neutralization;
 - transport transitions cannot duplicate reports;
 - reconnect/recovery does not emit large stale movement;
 - re-centre clears residual motion.

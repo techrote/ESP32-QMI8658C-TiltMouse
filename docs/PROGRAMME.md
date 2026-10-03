@@ -58,9 +58,9 @@ Implemented independent GPIO1–GPIO7 touch acquisition/calibration/fusion with 
 
 Insert a transport-neutral logical mouse-report seam between input/motion logic and output transport. Refactor USB to consume the seam without changing USB behavior. No Wi-Fi or ESP-NOW in this task.
 
-### TM-005B / #16 — ESP-NOW wireless transport and receiver protocol
+### TM-005B / #16 — ESP-NOW sender for the faikeow relative-mouse profile
 
-Implement ESP-NOW TX on the ESP32-S3 and define the versioned packet/state contract for a companion ESP8266 -> RP2040 -> USB HID receiver.
+Implement ESP-NOW TX on the ESP32-S3 and map the TM-005A logical mouse report into the accepted `techrote/faikeow-now-reciever` generic platform envelope + `relative_mouse` profile. Do not define a competing private receiver protocol.
 
 The application packet must remain <=250 bytes for ESP-NOW v1 interoperability with ESP8266-class receivers. Movement uses latest-first semantics; full button state is repeated so loss cannot permanently stick a button.
 
@@ -72,11 +72,11 @@ Join IMU, orientation, motion and touch into one logical report stream, then rou
 
 Harden USB lifecycle, ESP-NOW link/sequence/timeout behavior, transport transitions, IMU failures, touch failures, stale data and safe button release. Add deterministic fault/replay tests and physical acceptance telemetry.
 
-### TM-008 / #8 — Physical USB + ESP-NOW acceptance and tuning
+### TM-008 / #8 — Physical USB + faikeow ESP-NOW acceptance and tuning
 
-Use the real ESP32-S3-Matrix to establish USB enumeration, axes, neutral drift, cursor feel and touch behavior. Also establish the full ESP-NOW -> compatible receiver -> USB HID path with link-loss/recovery evidence.
+Use the real ESP32-S3-Matrix to establish USB enumeration, axes, neutral drift, cursor feel and touch behavior. Coordinate with faikeow FNR-008 / #9 to establish the full generic-envelope + `relative_mouse` ESP-NOW -> receiver -> USB HID path with exact cross-repo artifacts.
 
-### TM-009 / #9 — v0.1 wired/wireless release consolidation
+### TM-009 / #9 — v0.1 wired/wireless release consolidation with faikeow compatibility
 
 Freeze evidence-backed defaults, document wired/wireless operation and receiver assumptions, produce reproducible artifacts and explicitly record BLE/HOGP as deferred.
 

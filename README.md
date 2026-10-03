@@ -19,7 +19,16 @@ Read these before implementation:
 - [docs/PROGRAMME.md](docs/PROGRAMME.md) — staged implementation plan and dependencies.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — firmware architecture and algorithms.
 - [docs/VALIDATION.md](docs/VALIDATION.md) — CI, host tests, and physical-device evidence.
+- [docs/BUILDING.md](docs/BUILDING.md) — pinned toolchain and local build/test commands.
 - [docs/PLAN-REVIEW.md](docs/PLAN-REVIEW.md) — review of the initial plan and improvements adopted.
+
+## Foundation
+
+The project is pinned to ESP-IDF **v6.1**, with `espressif/esp_tinyusb` **2.3.0** and `espressif/tinyusb` **0.21.0~1** reserved for the native-USB implementation track.
+
+The foundation firmware currently does one target-specific thing: it drives RGB matrix data GPIO14 to a quiescent low state. USB HID, IMU, touch sensing, Wi-Fi, Bluetooth, and LED effects are intentionally not initialized until their owning tasks.
+
+See [docs/BUILDING.md](docs/BUILDING.md) for exact commands.
 
 ## Initial scope
 

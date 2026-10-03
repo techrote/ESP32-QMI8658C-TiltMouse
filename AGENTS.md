@@ -9,23 +9,28 @@ Before editing:
 2. read `docs/PROGRAMME.md`;
 3. read `docs/ARCHITECTURE.md`;
 4. read `docs/VALIDATION.md`;
-5. read the owning GitHub issue and all of its comments;
-6. reconcile live `main`, open PRs and relevant branches.
+5. read `docs/WIRELESS.md` for transport-related work;
+6. read the owning GitHub issue and all of its comments;
+7. reconcile live `main`, open PRs and relevant branches.
 
 ## Execution rules
 
 - One TM issue owns one bounded implementation scope.
 - Resume an existing legitimate branch/PR for the issue instead of duplicating it.
-- Use a short issue-specific branch such as `tm-002/usb-hid`.
+- Use a short issue-specific branch.
 - Do not force-push `main`.
 - Do not alter repository security/settings unless the owner explicitly asks.
-- Do not broaden scope into LEDs, Wi-Fi, Bluetooth, wireless HID, scrolling or unrelated features.
+- Do not broaden scope into LEDs, unrelated networking, scrolling or unrelated features.
+- Wi-Fi is permitted only in issues that explicitly own ESP-NOW work or integrated ESP-NOW behavior.
+- ESP-NOW mode must not grow into infrastructure Wi-Fi/IP networking unless a later issue explicitly changes scope.
+- Bluetooth/BLE HID is deferred beyond v0.1; do not initialize or implement it unless a later issue explicitly owns that scope.
 - Preserve the no-solder constraint.
 - Group GPIO1–3 and GPIO5–7 only in software; never assume they are electrically connected.
 - GPIO4 must not emit a mouse click.
 - Keep GPIO14 / LED data quiescent for the initial product.
 - Keep hardware access separated from pure logic and add host tests for pure logic.
-- Do not fabricate target-hardware evidence. If a task requires physical proof unavailable in the current environment, record the exact missing evidence and stop at a clean handoff rather than claiming completion.
+- Normal application report emission has one selected transport owner at a time; avoid duplicate movement through USB and ESP-NOW.
+- Do not fabricate target-hardware or RF evidence. If a task requires physical proof unavailable in the current environment, record the exact missing evidence and stop at a clean handoff rather than claiming completion.
 
 ## PR and merge protocol
 
@@ -45,9 +50,11 @@ Use squash merge unless repository history or the issue gives a reason not to.
 ## Evidence discipline
 
 Distinguish:
+
 - **CI-established** facts;
 - **host-test-established** facts;
 - **target-hardware-established** facts;
+- **RF/receiver-established** facts;
 - assumptions awaiting physical confirmation.
 
-A green firmware build proves compilation, not actual USB enumeration, touch ergonomics or IMU orientation correctness on the physical board.
+A green firmware build proves compilation, not actual USB enumeration, ESP-NOW RF interoperability, receiver behavior, touch ergonomics or IMU orientation correctness on physical hardware.

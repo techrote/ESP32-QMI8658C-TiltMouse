@@ -58,6 +58,10 @@ Implemented independent GPIO1–GPIO7 touch acquisition/calibration/fusion with 
 
 Insert a transport-neutral logical mouse-report seam between input/motion logic and output transport. Refactor USB to consume the seam without changing USB behavior. No Wi-Fi or ESP-NOW in this task.
 
+**Preparation archived; implementation pending.** The [TM-005A preservation record](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/PRESERVATION.md) links the exact original ZIP, complete unpacked packet and publication manifest. Read the original [findings](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/unpacked/FINDINGS.md) and [handoff](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/unpacked/HANDOFF.md) before implementation. The checkpoint preserves executable prototypes, fixtures, original source extracts, results and an unapplied API-only patch.
+
+The retained historical evidence reports 10 fixture scenarios plus separate extra checks, 6,400 seeded stress steps, five detected deliberate defects and 260,100 focused C field comparisons. The original full host suite, target firmware build and physical USB/RF acceptance were not established by that prepass. Archive integrity does not satisfy issue #15 acceptance or install the proposed policy. The preservation record reconciles the earlier conversation's scenario-count discrepancy without changing the original files.
+
 ### TM-005B / #16 — ESP-NOW sender for the faikeow relative-mouse profile
 
 Implement ESP-NOW TX on the ESP32-S3 and map the TM-005A logical mouse report into the accepted `techrote/faikeow-now-reciever` generic platform envelope + `relative_mouse` profile. Do not define a competing private receiver protocol.

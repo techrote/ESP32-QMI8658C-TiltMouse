@@ -1,0 +1,370 @@
+{
+  "schema": 1,
+  "scope": "Original bytes and separate preservation records; no implementation acceptance",
+  "assessed_commit": "8d7313216916d8f7d554da20df1b5fb8603d0b21",
+  "original_zip_sha256": "9fc446a0739cbb8d48f1ad226e1da8a51d024a0080163e893c14073e515f143a",
+  "original_zip_members": 45,
+  "original_manifest_payloads": 44,
+  "excludes": [
+    "PRESERVATION-MANIFEST.json"
+  ],
+  "files": [
+    {
+      "path": "ORIGINAL-PACKET.zip",
+      "bytes": 74516,
+      "sha256": "9fc446a0739cbb8d48f1ad226e1da8a51d024a0080163e893c14073e515f143a",
+      "git_blob": "6a411c9f00421b81968d196891833f702dec85e4",
+      "mode": "100644"
+    },
+    {
+      "path": "PRESERVATION.md",
+      "bytes": 6182,
+      "sha256": "eec84783681177cf13a581ce77fc5795dca1751178d9379465d8c142af0ea10e",
+      "git_blob": "8ce072ab1fea35124c6a190d77f56c8db100f2f6",
+      "mode": "100644"
+    },
+    {
+      "path": "original-records/TM-005A-FINDINGS.md",
+      "bytes": 28237,
+      "sha256": "704caa00caf65af727d5d827f8a06cd28d63bd8e70111a9e8cd96358b5c9d6e1",
+      "git_blob": "75c79a854ea742728ab3a1a6ec31733406e1ea7b",
+      "mode": "100644"
+    },
+    {
+      "path": "original-records/TM-005A-HANDOFF.md",
+      "bytes": 3369,
+      "sha256": "dc7953f96b36ae2cf7d54ce492a70d20a11f3e3bd62273205c1f30523b4750f8",
+      "git_blob": "460d3e639b4653c76345d9a74c4c56fc7f352d2c",
+      "mode": "100644"
+    },
+    {
+      "path": "original-records/TM-005A-archive-verification.json",
+      "bytes": 685,
+      "sha256": "5bb3a5544d27ac5c7f779282b1ba6b87c4d6f8d6f7cfb67d83fc4da8753ed61c",
+      "git_blob": "00792f52737ee081363506151f20171b0cce4740",
+      "mode": "100644"
+    },
+    {
+      "path": "original-records/TM-005A-prepass-8d731321.zip.sha256",
+      "bytes": 95,
+      "sha256": "583c8487643e5b02772d63c93d9f1000bb59d78c2870966cb582dc48ca4cb56a",
+      "git_blob": "c92942dbee3b9eac6c6da53403c1d2e92f39aa5a",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/FINDINGS.md",
+      "bytes": 28237,
+      "sha256": "704caa00caf65af727d5d827f8a06cd28d63bd8e70111a9e8cd96358b5c9d6e1",
+      "git_blob": "75c79a854ea742728ab3a1a6ec31733406e1ea7b",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/HANDOFF.md",
+      "bytes": 3369,
+      "sha256": "dc7953f96b36ae2cf7d54ce492a70d20a11f3e3bd62273205c1f30523b4750f8",
+      "git_blob": "460d3e639b4653c76345d9a74c4c56fc7f352d2c",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/MANIFEST.json",
+      "bytes": 7503,
+      "sha256": "eb35aa387e86e3d5292d3cd598e2c021a6796499abc95790c0a7aa632db6c34f",
+      "git_blob": "9ad99d377af4b6b5e0c5a524442e05b108d81808",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/README.md",
+      "bytes": 1674,
+      "sha256": "ac8aed680acdcd2dd688d73ae1b3b2ab35b3ceba4e278650ce65a9075dd6c3bb",
+      "git_blob": "a5a21e89c7daf188e2448b056bc54d41c0083f4c",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/SOURCES.md",
+      "bytes": 7482,
+      "sha256": "654f3d4b8837381b73b13f7a22e73c6ea291c8e8c39d8430911b71bb4fea9044",
+      "git_blob": "5393f07addd4dc8df6db13f59364769f3469479d",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/mouse_motion/include/tiltmouse/mouse_motion.h",
+      "bytes": 1964,
+      "sha256": "75868f54208cecfd3a944b95d7be7b5702fd44116cf602876c992bf501964146",
+      "git_blob": "a6a5abd16816ce8ffa1b38ab8bae98771aec05c1",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/mouse_motion/mouse_motion.c",
+      "bytes": 5601,
+      "sha256": "28eb8a7b38c7c68ed593fb9303b450171e19f0bae05510dfbda0ea02c0335551",
+      "git_blob": "53d11bfafa14ccd3e4844b08581308d9dd6d8381",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/orientation/include/tiltmouse/orientation.h",
+      "bytes": 2007,
+      "sha256": "d0d33fbb55c9ff2c6b2ccaaee9d2aa00942c2a4d1a5a88dfc580badbd15e78bc",
+      "git_blob": "3ff5ce193b64790b7d0112f49df2a102c5a87aa7",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse.h",
+      "bytes": 525,
+      "sha256": "b782ba3eb82082eaef6590247bebf6cd1ff7c0d5b7a0d07ff8033de74a3cee57",
+      "git_blob": "9337068c42bc0cc19fa27e5fad996dfe5551ebdb",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse_report.h",
+      "bytes": 730,
+      "sha256": "a10ef3a8dca55071647a3f15252b635ab7b15ef1a9ed8ab5863d060ffd0be66c",
+      "git_blob": "e24c5f20e76afecece468841ac9a09417d897978",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/usb_hid_mouse/usb_hid_mouse.c",
+      "bytes": 5866,
+      "sha256": "3c33b34ca11c99877a43b342f4f19c4a92de5ad738bae505f4e31544f238c8b8",
+      "git_blob": "ea638185452019be23eafdd99a6381901c2713a9",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/assessed/components/usb_hid_mouse/usb_hid_mouse_report.c",
+      "bytes": 852,
+      "sha256": "046041994f0f002dbd94ba70324707548ba50a8512a88840df65683fb72642f8",
+      "git_blob": "2c0398242cd1eab64421cd89e7e199a3ab69a036",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/read_inventory.json",
+      "bytes": 7220,
+      "sha256": "92d7d8ae6d844b098fe344b258d2b662edbc463862d7c86f0f5ad774b9e38dc2",
+      "git_blob": "1b9230ebec583ac936c30d33f551ef6a5b5fc83c",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/reconciliation.json",
+      "bytes": 572,
+      "sha256": "dca188e2e2391c8d4afe1c474d277e5f313e896534fe9f96024bea2f4022f184",
+      "git_blob": "ad71162af267cb9bfff7fb5b4cc1a6ab4b889991",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/evidence/source_verification.json",
+      "bytes": 1955,
+      "sha256": "54cc7bb2d27ad8ae75638ee6e524b01e6dab4598d4120e8958c0a1fe6519d6e4",
+      "git_blob": "b05ebaee94eebe76ffa6940fac102af38d86ce23",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/fixtures/scenarios.json",
+      "bytes": 2691,
+      "sha256": "75ca4a5b2734b22986a4ee4eaf2fbee472aaff51022480498969da84ee4c3d7d",
+      "git_blob": "2f7f97ec20d71f35c590899cb6e37df1e4114681",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/proposals/0001-logical-seam-headers.patch",
+      "bytes": 4025,
+      "sha256": "fb49b927620d1c244dab15b29166d584f836cd1ce3493c855c7a7661f739b81d",
+      "git_blob": "4bc971286c99f498ca66ed43fe9569bc4cb7f0bc",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/proposals/README.md",
+      "bytes": 780,
+      "sha256": "baa4383070dd60ea805f78d26b451dcfda5c660399ff396d4e9616dfbbc24bcf",
+      "git_blob": "57fc18b657977ba0ca9a9edbef94ac047b2c1347",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/proposed_tree/components/mouse_report/include/tiltmouse/mouse_report.h",
+      "bytes": 1295,
+      "sha256": "73902ace14d1ef24985d9f42873b7a09cf4f2054c6cbbc5f10ff0ee6e67ddd9a",
+      "git_blob": "abda6258bca15829c21d7f5ed3f201f4c405d7f6",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/proposed_tree/components/mouse_report/include/tiltmouse/mouse_transport.h",
+      "bytes": 2142,
+      "sha256": "b3fd3b2d736256ad2f22d451c02cbc965819e8af606d01cf0a0fa065c6ba4ea0",
+      "git_blob": "ee22440bb09ec363fc84631d9d460b3fa7e954d8",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/baseline_probe.c",
+      "bytes": 5043,
+      "sha256": "ff2dc302832061cec0f4f13da3775631661a6597c782b9d53e17ff1013c3cb1f",
+      "git_blob": "106c5c8d9d3440b9665834f13de860b13836647d",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/compare_policies.py",
+      "bytes": 1441,
+      "sha256": "765d5eba3254f0457a21a3b2b484ae8087a4095a3b6a461b76b133f4b2480cfa",
+      "git_blob": "bcaea5acec18824b62a5b8ae99abe15477bc1719",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/descriptor_check.py",
+      "bytes": 2328,
+      "sha256": "ddca2284fa3e460177d48276832b0ce91bd0fcf6c8161a352442ee14ae7f27ee",
+      "git_blob": "1707bc3a065b562313205a1b2b61a0159dab1d5e",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/header_smoke.cpp",
+      "bytes": 115,
+      "sha256": "a74ef7f57f0e802d860b88ac3ced739a38d6fcd68009b144770a9b4b525bccf2",
+      "git_blob": "841d72f3da5abe15915d1afeccd9541d480c7f63",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/run_model.py",
+      "bytes": 6794,
+      "sha256": "a891c0b5b64f45c710c38fce627f671e1ae18ec5b8eded1dd231a3703db2f20d",
+      "git_blob": "47875b0281602dc8bf38a3e689f8c99fe5aeb043",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/state_model.py",
+      "bytes": 8465,
+      "sha256": "3d774de3f00fa268a57664f303fbff0335bd47aaa9e4427316c0e932cbfbcfdb",
+      "git_blob": "e82cdd613ca4b7d7a80808b41c729a4ec62b3c83",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/stubs/class/hid/hid_device.h",
+      "bytes": 497,
+      "sha256": "2fb919e7be24f6a7fe04856613cb736c44f8c7aad2710c262db9ca1d2a099de2",
+      "git_blob": "3c67c86e24db48b5fe03d4e9884b5e95c23c9af5",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/stubs/esp_err.h",
+      "bytes": 135,
+      "sha256": "9d99e749afe9e5f515128b2e4f9f302e95efcb6f3a2ea15ac1314cc9a33573ca",
+      "git_blob": "6d1342a5a1d3f0bebb221b249fda5082e6e35d0b",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/stubs/sdkconfig.h",
+      "bytes": 64,
+      "sha256": "7311b3dae42f6cfa4f18df2315e1288fff1c3480873be73378938b248b80d6b6",
+      "git_blob": "7f52266c3e96b26e86c3e33452fcd09ae4e3a4f3",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/stubs/tinyusb.h",
+      "bytes": 527,
+      "sha256": "20daa057dd9fde4ec362466992166a69eef6596cd3b3b86288f078f70e961367",
+      "git_blob": "f39cb625f1e97314f240fd6dc4bf41533da62d71",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/prototype/stubs/tinyusb_default_config.h",
+      "bytes": 57,
+      "sha256": "31b32572ebd50286b19b14278787e43fcdc76aac52add2879adb8fb4617892df",
+      "git_blob": "a730a0fa11f968c58837bb79267a66d2f00ee2dd",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/baseline_probe",
+      "bytes": 53888,
+      "sha256": "8437beb3bce8c1e99410d62a50c546ad7af1174f8f661b8c0d695ed90bf39fab",
+      "git_blob": "d3106d8d4c0450de117873d630ecdb587eb89c3e",
+      "mode": "100755"
+    },
+    {
+      "path": "unpacked/results/baseline_results.json",
+      "bytes": 264,
+      "sha256": "639505f524ea4f682780562cf56512327e5b25f9898859e8d7206d63d13e6001",
+      "git_blob": "a65fcfcaaa0c947a291e52c2f5c5f77831896f55",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/descriptor_results.json",
+      "bytes": 1521,
+      "sha256": "f57f5a4bb3b63e68f7d964a23e2a7de43c37d7d2e60ada47f6fd4b788ad79523",
+      "git_blob": "fa0761a50404fef3e808c5b7d85792bdf2e926ed",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/descriptor_stdout.json",
+      "bytes": 1521,
+      "sha256": "f57f5a4bb3b63e68f7d964a23e2a7de43c37d7d2e60ada47f6fd4b788ad79523",
+      "git_blob": "fa0761a50404fef3e808c5b7d85792bdf2e926ed",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/environment.json",
+      "bytes": 840,
+      "sha256": "f62d0777e0a154192135b70e5f94d89c3986554e064d3f8f5628d0859ad7797d",
+      "git_blob": "516aca24e6c2d973a78e7b5b12f2b1259e34df74",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/model_results.json",
+      "bytes": 1246,
+      "sha256": "09367f074a5fef1ecac00274406e8491fcf617c6b9ac31331e8b24ed625cf7e0",
+      "git_blob": "20a544ed25e25148e7b98225674f71b725c9deac",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/model_stdout.json",
+      "bytes": 1246,
+      "sha256": "09367f074a5fef1ecac00274406e8491fcf617c6b9ac31331e8b24ed625cf7e0",
+      "git_blob": "20a544ed25e25148e7b98225674f71b725c9deac",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/patch_comparison.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/policy_results.json",
+      "bytes": 750,
+      "sha256": "907accd16f22d5edfd73bf09ec57be68e87fec1351ff9d810449ce98f4476022",
+      "git_blob": "88eeb860eb18710a0910d0d35dff64eaa36ff983",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/run_checks.log",
+      "bytes": 25,
+      "sha256": "eae1a0f7ff0701532e9dede98f63897ad3944ed104f1d3272e71ecb91159aa2a",
+      "git_blob": "5ce91a830b387abe48e07a31cbd15cb9dc938009",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/verification.json",
+      "bytes": 1068,
+      "sha256": "c74f6de96480907e5221b5355a7e4d912ebda401aecc41bf38387f3c8fde3f2f",
+      "git_blob": "b7af6b4f63b931e58ea0d6a7d19eaba0150d0cc0",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/results/worked_traces.json",
+      "bytes": 38410,
+      "sha256": "b82627ca901a8dd2dcede41bcc5adeea16485d899d98b2507e3d6b7993dff6c1",
+      "git_blob": "f1ad40290b98342879e114732ab228fe65d7fadf",
+      "mode": "100644"
+    },
+    {
+      "path": "unpacked/run_checks.sh",
+      "bytes": 1060,
+      "sha256": "92c24defbae53ab5685d53d4751ee6d2cec3c260b770202f1728d40a47298bb0",
+      "git_blob": "644b243668f61b71e12bf785126b271ac2e1aa0a",
+      "mode": "100755"
+    },
+    {
+      "path": "unpacked/verify_packet.py",
+      "bytes": 1711,
+      "sha256": "08ef86cea54b48817b7360f99004cc9da61ee4b1938056642716cf9ecec9ae45",
+      "git_blob": "f34831ef70625a61109fe029624ef484c7763155",
+      "mode": "100644"
+    }
+  ]
+}

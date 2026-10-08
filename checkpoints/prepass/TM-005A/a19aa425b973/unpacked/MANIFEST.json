@@ -1,0 +1,228 @@
+{
+  "algorithm": "SHA-256",
+  "excludes": [
+    "MANIFEST.json"
+  ],
+  "files": [
+    {
+      "path": "FINDINGS.md",
+      "bytes": 28237,
+      "sha256": "704caa00caf65af727d5d827f8a06cd28d63bd8e70111a9e8cd96358b5c9d6e1"
+    },
+    {
+      "path": "HANDOFF.md",
+      "bytes": 3369,
+      "sha256": "dc7953f96b36ae2cf7d54ce492a70d20a11f3e3bd62273205c1f30523b4750f8"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1674,
+      "sha256": "ac8aed680acdcd2dd688d73ae1b3b2ab35b3ceba4e278650ce65a9075dd6c3bb"
+    },
+    {
+      "path": "SOURCES.md",
+      "bytes": 7482,
+      "sha256": "654f3d4b8837381b73b13f7a22e73c6ea291c8e8c39d8430911b71bb4fea9044"
+    },
+    {
+      "path": "evidence/assessed/components/mouse_motion/include/tiltmouse/mouse_motion.h",
+      "bytes": 1964,
+      "sha256": "75868f54208cecfd3a944b95d7be7b5702fd44116cf602876c992bf501964146"
+    },
+    {
+      "path": "evidence/assessed/components/mouse_motion/mouse_motion.c",
+      "bytes": 5601,
+      "sha256": "28eb8a7b38c7c68ed593fb9303b450171e19f0bae05510dfbda0ea02c0335551"
+    },
+    {
+      "path": "evidence/assessed/components/orientation/include/tiltmouse/orientation.h",
+      "bytes": 2007,
+      "sha256": "d0d33fbb55c9ff2c6b2ccaaee9d2aa00942c2a4d1a5a88dfc580badbd15e78bc"
+    },
+    {
+      "path": "evidence/assessed/components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse.h",
+      "bytes": 525,
+      "sha256": "b782ba3eb82082eaef6590247bebf6cd1ff7c0d5b7a0d07ff8033de74a3cee57"
+    },
+    {
+      "path": "evidence/assessed/components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse_report.h",
+      "bytes": 730,
+      "sha256": "a10ef3a8dca55071647a3f15252b635ab7b15ef1a9ed8ab5863d060ffd0be66c"
+    },
+    {
+      "path": "evidence/assessed/components/usb_hid_mouse/usb_hid_mouse.c",
+      "bytes": 5866,
+      "sha256": "3c33b34ca11c99877a43b342f4f19c4a92de5ad738bae505f4e31544f238c8b8"
+    },
+    {
+      "path": "evidence/assessed/components/usb_hid_mouse/usb_hid_mouse_report.c",
+      "bytes": 852,
+      "sha256": "046041994f0f002dbd94ba70324707548ba50a8512a88840df65683fb72642f8"
+    },
+    {
+      "path": "evidence/read_inventory.json",
+      "bytes": 7220,
+      "sha256": "92d7d8ae6d844b098fe344b258d2b662edbc463862d7c86f0f5ad774b9e38dc2"
+    },
+    {
+      "path": "evidence/reconciliation.json",
+      "bytes": 572,
+      "sha256": "dca188e2e2391c8d4afe1c474d277e5f313e896534fe9f96024bea2f4022f184"
+    },
+    {
+      "path": "evidence/source_verification.json",
+      "bytes": 1955,
+      "sha256": "54cc7bb2d27ad8ae75638ee6e524b01e6dab4598d4120e8958c0a1fe6519d6e4"
+    },
+    {
+      "path": "fixtures/scenarios.json",
+      "bytes": 2691,
+      "sha256": "75ca4a5b2734b22986a4ee4eaf2fbee472aaff51022480498969da84ee4c3d7d"
+    },
+    {
+      "path": "proposals/0001-logical-seam-headers.patch",
+      "bytes": 4025,
+      "sha256": "fb49b927620d1c244dab15b29166d584f836cd1ce3493c855c7a7661f739b81d"
+    },
+    {
+      "path": "proposals/README.md",
+      "bytes": 780,
+      "sha256": "baa4383070dd60ea805f78d26b451dcfda5c660399ff396d4e9616dfbbc24bcf"
+    },
+    {
+      "path": "proposed_tree/components/mouse_report/include/tiltmouse/mouse_report.h",
+      "bytes": 1295,
+      "sha256": "73902ace14d1ef24985d9f42873b7a09cf4f2054c6cbbc5f10ff0ee6e67ddd9a"
+    },
+    {
+      "path": "proposed_tree/components/mouse_report/include/tiltmouse/mouse_transport.h",
+      "bytes": 2142,
+      "sha256": "b3fd3b2d736256ad2f22d451c02cbc965819e8af606d01cf0a0fa065c6ba4ea0"
+    },
+    {
+      "path": "prototype/baseline_probe.c",
+      "bytes": 5043,
+      "sha256": "ff2dc302832061cec0f4f13da3775631661a6597c782b9d53e17ff1013c3cb1f"
+    },
+    {
+      "path": "prototype/compare_policies.py",
+      "bytes": 1441,
+      "sha256": "765d5eba3254f0457a21a3b2b484ae8087a4095a3b6a461b76b133f4b2480cfa"
+    },
+    {
+      "path": "prototype/descriptor_check.py",
+      "bytes": 2328,
+      "sha256": "ddca2284fa3e460177d48276832b0ce91bd0fcf6c8161a352442ee14ae7f27ee"
+    },
+    {
+      "path": "prototype/header_smoke.cpp",
+      "bytes": 115,
+      "sha256": "a74ef7f57f0e802d860b88ac3ced739a38d6fcd68009b144770a9b4b525bccf2"
+    },
+    {
+      "path": "prototype/run_model.py",
+      "bytes": 6794,
+      "sha256": "a891c0b5b64f45c710c38fce627f671e1ae18ec5b8eded1dd231a3703db2f20d"
+    },
+    {
+      "path": "prototype/state_model.py",
+      "bytes": 8465,
+      "sha256": "3d774de3f00fa268a57664f303fbff0335bd47aaa9e4427316c0e932cbfbcfdb"
+    },
+    {
+      "path": "prototype/stubs/class/hid/hid_device.h",
+      "bytes": 497,
+      "sha256": "2fb919e7be24f6a7fe04856613cb736c44f8c7aad2710c262db9ca1d2a099de2"
+    },
+    {
+      "path": "prototype/stubs/esp_err.h",
+      "bytes": 135,
+      "sha256": "9d99e749afe9e5f515128b2e4f9f302e95efcb6f3a2ea15ac1314cc9a33573ca"
+    },
+    {
+      "path": "prototype/stubs/sdkconfig.h",
+      "bytes": 64,
+      "sha256": "7311b3dae42f6cfa4f18df2315e1288fff1c3480873be73378938b248b80d6b6"
+    },
+    {
+      "path": "prototype/stubs/tinyusb.h",
+      "bytes": 527,
+      "sha256": "20daa057dd9fde4ec362466992166a69eef6596cd3b3b86288f078f70e961367"
+    },
+    {
+      "path": "prototype/stubs/tinyusb_default_config.h",
+      "bytes": 57,
+      "sha256": "31b32572ebd50286b19b14278787e43fcdc76aac52add2879adb8fb4617892df"
+    },
+    {
+      "path": "results/baseline_probe",
+      "bytes": 53888,
+      "sha256": "8437beb3bce8c1e99410d62a50c546ad7af1174f8f661b8c0d695ed90bf39fab"
+    },
+    {
+      "path": "results/baseline_results.json",
+      "bytes": 264,
+      "sha256": "639505f524ea4f682780562cf56512327e5b25f9898859e8d7206d63d13e6001"
+    },
+    {
+      "path": "results/descriptor_results.json",
+      "bytes": 1521,
+      "sha256": "f57f5a4bb3b63e68f7d964a23e2a7de43c37d7d2e60ada47f6fd4b788ad79523"
+    },
+    {
+      "path": "results/descriptor_stdout.json",
+      "bytes": 1521,
+      "sha256": "f57f5a4bb3b63e68f7d964a23e2a7de43c37d7d2e60ada47f6fd4b788ad79523"
+    },
+    {
+      "path": "results/environment.json",
+      "bytes": 840,
+      "sha256": "f62d0777e0a154192135b70e5f94d89c3986554e064d3f8f5628d0859ad7797d"
+    },
+    {
+      "path": "results/model_results.json",
+      "bytes": 1246,
+      "sha256": "09367f074a5fef1ecac00274406e8491fcf617c6b9ac31331e8b24ed625cf7e0"
+    },
+    {
+      "path": "results/model_stdout.json",
+      "bytes": 1246,
+      "sha256": "09367f074a5fef1ecac00274406e8491fcf617c6b9ac31331e8b24ed625cf7e0"
+    },
+    {
+      "path": "results/patch_comparison.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "results/policy_results.json",
+      "bytes": 750,
+      "sha256": "907accd16f22d5edfd73bf09ec57be68e87fec1351ff9d810449ce98f4476022"
+    },
+    {
+      "path": "results/run_checks.log",
+      "bytes": 25,
+      "sha256": "eae1a0f7ff0701532e9dede98f63897ad3944ed104f1d3272e71ecb91159aa2a"
+    },
+    {
+      "path": "results/verification.json",
+      "bytes": 1068,
+      "sha256": "c74f6de96480907e5221b5355a7e4d912ebda401aecc41bf38387f3c8fde3f2f"
+    },
+    {
+      "path": "results/worked_traces.json",
+      "bytes": 38410,
+      "sha256": "b82627ca901a8dd2dcede41bcc5adeea16485d899d98b2507e3d6b7993dff6c1"
+    },
+    {
+      "path": "run_checks.sh",
+      "bytes": 1060,
+      "sha256": "92c24defbae53ab5685d53d4751ee6d2cec3c260b770202f1728d40a47298bb0"
+    },
+    {
+      "path": "verify_packet.py",
+      "bytes": 1711,
+      "sha256": "08ef86cea54b48817b7360f99004cc9da61ee4b1938056642716cf9ecec9ae45"
+    }
+  ]
+}

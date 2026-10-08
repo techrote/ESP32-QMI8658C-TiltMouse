@@ -1,0 +1,48 @@
+{
+  "commit": "8d7313216916d8f7d554da20df1b5fb8603d0b21",
+  "method": "Connector text retained locally, Git blob SHA-1 recomputed against connector tree/contents identities",
+  "files": {
+    "components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse_report.h": {
+      "expected_git_blob": "e24c5f20e76afecece468841ac9a09417d897978",
+      "actual_git_blob": "e24c5f20e76afecece468841ac9a09417d897978",
+      "verified": true,
+      "bytes": 730
+    },
+    "components/usb_hid_mouse/usb_hid_mouse_report.c": {
+      "expected_git_blob": "2c0398242cd1eab64421cd89e7e199a3ab69a036",
+      "actual_git_blob": "2c0398242cd1eab64421cd89e7e199a3ab69a036",
+      "verified": true,
+      "bytes": 852
+    },
+    "components/usb_hid_mouse/include/tiltmouse/usb_hid_mouse.h": {
+      "expected_git_blob": "9337068c42bc0cc19fa27e5fad996dfe5551ebdb",
+      "actual_git_blob": "9337068c42bc0cc19fa27e5fad996dfe5551ebdb",
+      "verified": true,
+      "bytes": 525
+    },
+    "components/usb_hid_mouse/usb_hid_mouse.c": {
+      "expected_git_blob": "ea638185452019be23eafdd99a6381901c2713a9",
+      "actual_git_blob": "ea638185452019be23eafdd99a6381901c2713a9",
+      "verified": true,
+      "bytes": 5866
+    },
+    "components/mouse_motion/include/tiltmouse/mouse_motion.h": {
+      "expected_git_blob": "a6a5abd16816ce8ffa1b38ab8bae98771aec05c1",
+      "actual_git_blob": "a6a5abd16816ce8ffa1b38ab8bae98771aec05c1",
+      "verified": true,
+      "bytes": 1964
+    },
+    "components/orientation/include/tiltmouse/orientation.h": {
+      "expected_git_blob": "3ff5ce193b64790b7d0112f49df2a102c5a87aa7",
+      "actual_git_blob": "3ff5ce193b64790b7d0112f49df2a102c5a87aa7",
+      "verified": true,
+      "bytes": 2007
+    },
+    "components/mouse_motion/mouse_motion.c": {
+      "expected_git_blob": "53d11bfafa14ccd3e4844b08581308d9dd6d8381",
+      "actual_git_blob": "53d11bfafa14ccd3e4844b08581308d9dd6d8381",
+      "verified": true,
+      "bytes": 5601
+    }
+  }
+}

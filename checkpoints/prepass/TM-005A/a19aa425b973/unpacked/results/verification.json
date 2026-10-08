@@ -1,0 +1,22 @@
+{
+  "recorded_utc": "2026-10-04T21:27:13.518945+00:00",
+  "assessed_commit": "8d7313216916d8f7d554da20df1b5fb8603d0b21",
+  "original_git_blobs": 7,
+  "source_blob_verification": "pass",
+  "fixture_scenarios": 10,
+  "seeded_stress_steps": 6400,
+  "deliberate_defects_detected": 5,
+  "valid_domain_field_comparisons": 260100,
+  "focused_c_probe": "pass (fake USB backend)",
+  "compiler_warnings": "-Wall -Wextra -Wpedantic -Werror",
+  "undefined_behavior_sanitizer": "pass for executed C probe paths",
+  "descriptor_static_check": "confirmed baseline defect; candidate not applied",
+  "headers_cpp11_syntax": "pass",
+  "patch_apply_check": "pass in isolated local empty tree; adds only two files",
+  "patch_tree_byte_comparison": "pass",
+  "firmware_build": "not run",
+  "complete_original_host_suite": "not run",
+  "physical_USB_RF": "not run",
+  "github_mutations": 0,
+  "archive_note": "MANIFEST.json covers every packet file except itself. Outer ZIP SHA-256 is necessarily external. Final extraction/CRC verification is in the adjacent archive verification JSON."
+}

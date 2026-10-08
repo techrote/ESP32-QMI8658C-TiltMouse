@@ -1,0 +1,1 @@
+{"payload_equivalence_cases":260100,"backend_attempts":3,"backend_acceptances":2,"fractional_four_steps_sum":1,"early_error_preserves_sentinel_delta":true,"failed_release_not_retained_by_baseline":true,"scope":"original source + fake backend, not TinyUSB target"}

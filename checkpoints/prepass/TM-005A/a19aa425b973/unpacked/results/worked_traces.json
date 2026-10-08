@@ -1,0 +1,2023 @@
+[
+  {
+    "name": "backpressure",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "m1",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 4,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "m1",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "m2",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 5,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "m2",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "m3",
+        "now": 16,
+        "deadline": 24,
+        "report": {
+          "dx": 6,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 6,
+        "dy": 0,
+        "buttons": 0,
+        "origin": "m3",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "m3",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 6,
+        "dy": 0,
+        "buttons": 0,
+        "origin": "m3",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 24
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 24
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      }
+    ],
+    "xy": [
+      6,
+      0
+    ],
+    "buttons": 0
+  },
+  {
+    "name": "press_drag_release",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "d1",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 7,
+          "dy": -2,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 7,
+        "dy": -2,
+        "buttons": 1,
+        "origin": "d1",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "d1",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 7,
+        "dy": -2,
+        "buttons": 1,
+        "origin": "d1",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "d2",
+        "now": 16,
+        "deadline": 24,
+        "report": {
+          "dx": 8,
+          "dy": -3,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "d2",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "r",
+        "now": 24,
+        "deadline": 32,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "r",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 32
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 32
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          3
+        ]
+      }
+    ],
+    "xy": [
+      7,
+      -2
+    ],
+    "buttons": 0
+  },
+  {
+    "name": "failure_before_acceptance",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "lost",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 9,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "submit_failed",
+        "dx": 9,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "lost"
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "lost",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "submit_failed"
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 1
+  },
+  {
+    "name": "failure_after_acceptance_not_delivered",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "unknown",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 9,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 9,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "unknown",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "unknown",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": false,
+        "delivered": false,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 1
+  },
+  {
+    "name": "failure_after_acceptance_delivered",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "unknown",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 9,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 9,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "unknown",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "unknown",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 9,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "unknown",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": false,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      }
+    ],
+    "xy": [
+      9,
+      0
+    ],
+    "buttons": 1
+  },
+  {
+    "name": "release_failure_then_repress",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "r",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "submit_failed",
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "r",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "submit_failed"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p2",
+        "now": 16,
+        "deadline": 24,
+        "report": {
+          "dx": 9,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p2",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "release_first"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 24
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 24
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          3
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 1
+  },
+  {
+    "name": "partial_release",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "both",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 1,
+          "dy": 2,
+          "buttons": 3,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 1,
+        "dy": 2,
+        "buttons": 3,
+        "origin": "both",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "both",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 1,
+        "dy": 2,
+        "buttons": 3,
+        "origin": "both",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "left_up",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 3,
+          "dy": 4,
+          "buttons": 2,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 3,
+        "dy": 4,
+        "buttons": 2,
+        "origin": "left_up",
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "left_up",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 3,
+        "dy": 4,
+        "buttons": 2,
+        "origin": "left_up",
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      }
+    ],
+    "xy": [
+      4,
+      6
+    ],
+    "buttons": 2
+  },
+  {
+    "name": "expired_motion_fresh_buttons",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "expired",
+        "now": 16,
+        "deadline": 8,
+        "report": {
+          "dx": 100,
+          "dy": 0,
+          "buttons": 2,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 2,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "expired",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "expired"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 2,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 16
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 2
+  },
+  {
+    "name": "invalid_range_release",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "bad",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": -128,
+          "dy": 99,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "neutralize",
+        "revision": 1
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "bad",
+        "motion": "dropped",
+        "state": "safe_release_retained",
+        "reason": "invalid"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 0
+  },
+  {
+    "name": "old_completion_cannot_clear_new_release",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "r",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "r",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p2",
+        "now": 9,
+        "deadline": 17,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p2",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "release_first"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "r2",
+        "now": 10,
+        "deadline": 18,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "r2",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 2,
+        "accepted_at": 18
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 2,
+        "accepted_at": 18
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          3
+        ]
+      }
+    ],
+    "xy": [
+      0,
+      0
+    ],
+    "buttons": 0
+  },
+  {
+    "name": "release_barrier_retry",
+    "events": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "r",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "r",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "not_ready"
+      },
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "p2",
+        "now": 16,
+        "deadline": 24,
+        "report": {
+          "dx": 8,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "p2",
+        "motion": "dropped",
+        "state": "buttons_retained",
+        "reason": "release_first"
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 24
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": false,
+        "delivered": false,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 32
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 32
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          3
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          4
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 40
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          4
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 40
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "name": "fenced_switch",
+    "usb": [
+      {
+        "transport": "USB",
+        "event": "offered",
+        "origin": "old",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 5,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 5,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "old",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "result",
+        "origin": "old",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "USB",
+        "event": "neutralize",
+        "revision": 1
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 5,
+        "dy": 0,
+        "buttons": 1,
+        "origin": "old",
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "delivered",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "USB",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "USB",
+        "event": "ignored_completion",
+        "ticket": [
+          0,
+          1
+        ]
+      }
+    ],
+    "radio": [
+      {
+        "transport": "RADIO",
+        "event": "neutralize",
+        "revision": 1
+      },
+      {
+        "transport": "RADIO",
+        "event": "accepted",
+        "ticket": [
+          1,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "RADIO",
+        "event": "delivered",
+        "ticket": [
+          1,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 3,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "RADIO",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          1,
+          1
+        ]
+      },
+      {
+        "transport": "RADIO",
+        "event": "offered",
+        "origin": "new",
+        "now": 40,
+        "deadline": 48,
+        "report": {
+          "dx": 3,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "RADIO",
+        "event": "accepted",
+        "ticket": [
+          1,
+          2
+        ],
+        "dx": 3,
+        "dy": 0,
+        "buttons": 0,
+        "origin": "new",
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 40
+      },
+      {
+        "transport": "RADIO",
+        "event": "result",
+        "origin": "new",
+        "motion": "accepted",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "RADIO",
+        "event": "delivered",
+        "ticket": [
+          1,
+          2
+        ],
+        "dx": 3,
+        "dy": 0,
+        "buttons": 0,
+        "origin": "new",
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 40
+      },
+      {
+        "transport": "RADIO",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "weak_ack_counterexample_NOT_a_guarantee",
+    "events": [
+      {
+        "transport": "RADIO",
+        "event": "offered",
+        "origin": "p",
+        "now": 0,
+        "deadline": 8,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "RADIO",
+        "event": "accepted",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "RADIO",
+        "event": "result",
+        "origin": "p",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "RADIO",
+        "event": "delivered",
+        "ticket": [
+          0,
+          1
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 0,
+        "accepted_at": 0
+      },
+      {
+        "transport": "RADIO",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          1
+        ]
+      },
+      {
+        "transport": "RADIO",
+        "event": "offered",
+        "origin": "r",
+        "now": 8,
+        "deadline": 16,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 0,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "RADIO",
+        "event": "accepted",
+        "ticket": [
+          0,
+          2
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 0,
+        "origin": null,
+        "debt": 1,
+        "revision": 1,
+        "accepted_at": 8
+      },
+      {
+        "transport": "RADIO",
+        "event": "result",
+        "origin": "r",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "RADIO",
+        "event": "completion",
+        "ok": true,
+        "delivered": false,
+        "ticket": [
+          0,
+          2
+        ]
+      },
+      {
+        "transport": "RADIO",
+        "event": "offered",
+        "origin": "p2",
+        "now": 16,
+        "deadline": 24,
+        "report": {
+          "dx": 0,
+          "dy": 0,
+          "buttons": 1,
+          "kind": "current"
+        }
+      },
+      {
+        "transport": "RADIO",
+        "event": "accepted",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "RADIO",
+        "event": "result",
+        "origin": "p2",
+        "motion": "none",
+        "state": "buttons_retained",
+        "reason": "ok"
+      },
+      {
+        "transport": "RADIO",
+        "event": "delivered",
+        "ticket": [
+          0,
+          3
+        ],
+        "dx": 0,
+        "dy": 0,
+        "buttons": 1,
+        "origin": null,
+        "debt": 0,
+        "revision": 1,
+        "accepted_at": 16
+      },
+      {
+        "transport": "RADIO",
+        "event": "completion",
+        "ok": true,
+        "delivered": true,
+        "ticket": [
+          0,
+          3
+        ]
+      }
+    ]
+  }
+]

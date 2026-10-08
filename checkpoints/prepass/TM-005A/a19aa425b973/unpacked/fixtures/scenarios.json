@@ -1,0 +1,42 @@
+{
+  "label": "SYNTHETIC, not captured device or RF evidence",
+  "deadline_units": "abstract monotonic milliseconds, 8 is illustrative not tuned",
+  "scenarios": [
+    {"name":"backpressure", "events":[
+      ["ready",false], ["publish","m1",0,8,4,0,0], ["publish","m2",8,16,5,0,0],
+      ["ready",true], ["publish","m3",16,24,6,0,0], ["complete",true,true],
+      ["service",24], ["complete",true,true]], "expected_xy":[6,0], "expected_buttons":0},
+    {"name":"press_drag_release", "events":[
+      ["publish","p",0,8,0,0,1], ["complete",true,true],
+      ["publish","d1",8,16,7,-2,1], ["complete",true,true],
+      ["ready",false], ["publish","d2",16,24,8,-3,1], ["publish","r",24,32,0,0,0],
+      ["ready",true], ["service",32], ["complete",true,true]], "expected_xy":[7,-2], "expected_buttons":0},
+    {"name":"failure_before_acceptance", "events":[
+      ["accept_next",false], ["publish","lost",0,8,9,0,1],
+      ["service",8], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":1},
+    {"name":"failure_after_acceptance_not_delivered", "events":[
+      ["publish","unknown",0,8,9,0,1], ["complete",false,false],
+      ["service",8], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":1},
+    {"name":"failure_after_acceptance_delivered", "events":[
+      ["publish","unknown",0,8,9,0,1], ["complete",false,true],
+      ["service",8], ["complete",true,true]], "expected_xy":[9,0], "expected_buttons":1},
+    {"name":"release_failure_then_repress", "events":[
+      ["publish","p",0,8,0,0,1], ["complete",true,true],
+      ["accept_next",false], ["publish","r",8,16,0,0,0],
+      ["publish","p2",16,24,9,0,1], ["complete",true,true],
+      ["service",24], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":1},
+    {"name":"partial_release", "events":[
+      ["publish","both",0,8,1,2,3], ["complete",true,true],
+      ["publish","left_up",8,16,3,4,2], ["complete",true,true]], "expected_xy":[4,6], "expected_buttons":2},
+    {"name":"expired_motion_fresh_buttons", "events":[
+      ["publish","expired",16,8,100,0,2], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":2},
+    {"name":"invalid_range_release", "events":[
+      ["publish","p",0,8,0,0,1], ["complete",true,true],
+      ["publish","bad",8,16,-128,99,1], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":0},
+    {"name":"old_completion_cannot_clear_new_release", "events":[
+      ["publish","p",0,8,0,0,1], ["complete",true,true],
+      ["publish","r",8,16,0,0,0], ["publish","p2",9,17,0,0,1],
+      ["publish","r2",10,18,0,0,0], ["complete",true,true],
+      ["service",18], ["complete",true,true]], "expected_xy":[0,0], "expected_buttons":0}
+  ]
+}

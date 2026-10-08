@@ -1,0 +1,62 @@
+{
+  "assessed_descriptor_hex": "05 01 09 02 a1 01 09 01 a1 00 05 09 19 01 29 02 15 00 25 01 95 02 75 01 95 01 75 06 81 03 05 01 09 30 09 31 15 81 25 7f 75 08 95 02 81 06 c0 c0",
+  "assessed": {
+    "input_bits": 22,
+    "fields": [
+      {
+        "bit_offset": 0,
+        "bits": 6,
+        "count": 1,
+        "size": 6,
+        "page": 9,
+        "constant": true,
+        "relative": false
+      },
+      {
+        "bit_offset": 6,
+        "bits": 16,
+        "count": 2,
+        "size": 8,
+        "page": 1,
+        "constant": false,
+        "relative": true
+      }
+    ],
+    "button_data_bits": 0
+  },
+  "candidate_two_byte_insertion": {
+    "input_bits": 24,
+    "fields": [
+      {
+        "bit_offset": 0,
+        "bits": 2,
+        "count": 2,
+        "size": 1,
+        "page": 9,
+        "constant": false,
+        "relative": false
+      },
+      {
+        "bit_offset": 2,
+        "bits": 6,
+        "count": 1,
+        "size": 6,
+        "page": 9,
+        "constant": true,
+        "relative": false
+      },
+      {
+        "bit_offset": 8,
+        "bits": 16,
+        "count": 2,
+        "size": 8,
+        "page": 1,
+        "constant": false,
+        "relative": true
+      }
+    ],
+    "button_data_bits": 2
+  },
+  "finding": "Missing Input(Data,Variable,Absolute) after two 1-bit buttons. Only 6 padding bits precede X/Y; descriptor declares 22 bits, while payload is 24 bits.",
+  "scope": "Static short-item parse of Git-blob-verified source. Candidate is NOT applied; no enumeration claim."
+}

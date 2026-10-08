@@ -1,0 +1,41 @@
+{
+  "fixture_scenarios_passed": 10,
+  "extra_checks": [
+    "release barrier retry",
+    "inactive route",
+    "four invalid/release candidates",
+    "fenced switch and fresh-all-up rearm"
+  ],
+  "seed": 5005,
+  "stress_runs": 64,
+  "stress_steps": 6400,
+  "deliberate_defects": [
+    {
+      "name": "retry_after_ambiguous_acceptance",
+      "detected": true,
+      "message": "application offered a consumed delta twice"
+    },
+    {
+      "name": "heartbeat_replays_cached_delta",
+      "detected": true,
+      "message": "same consumed delta accepted twice"
+    },
+    {
+      "name": "old_rejected_delta_requeued",
+      "detected": true,
+      "message": "expired delta emitted"
+    },
+    {
+      "name": "two_transport_owners",
+      "detected": true,
+      "message": "one delta accepted by two transports"
+    },
+    {
+      "name": "latest_state_erases_release_obligation",
+      "detected": true,
+      "message": "release lost when overwritten by re-press"
+    }
+  ],
+  "weak_ack_counterexample": "A lost release followed by re-press is NOT repaired by repeating current pressed state. Receiver ACK or fail-closed timeout/rearm is required for a stronger guarantee.",
+  "scope": "Synthetic model only. No end-to-end USB/RF claim."
+}

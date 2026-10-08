@@ -1,0 +1,23 @@
+{
+  "archive": "TM-005A-prepass-8d731321.zip",
+  "bytes": 74516,
+  "sha256": "9fc446a0739cbb8d48f1ad226e1da8a51d024a0080163e893c14073e515f143a",
+  "zip_crc": "pass",
+  "path_safety": "pass",
+  "extracted_manifest": {
+    "files_sha256_verified": 44,
+    "git_blobs_verified": 7,
+    "text_sanity": "pass",
+    "network_access": false
+  },
+  "extracted_checks": "pass",
+  "deterministic_results_byte_equal": [
+    "model_results.json",
+    "worked_traces.json",
+    "descriptor_results.json",
+    "baseline_results.json",
+    "policy_results.json"
+  ],
+  "binary_byte_identity_not_asserted": "debug paths differ after extraction",
+  "verified_utc": "2026-10-04T21:27:22.894519+00:00"
+}

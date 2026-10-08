@@ -1,0 +1,22 @@
+{
+  "repository": "techrote/ESP32-QMI8658C-TiltMouse",
+  "issue": 15,
+  "assessed_commit": "8d7313216916d8f7d554da20df1b5fb8603d0b21",
+  "main_recheck_same": true,
+  "issue_state": "open",
+  "issue_comments": 0,
+  "open_prs": 0,
+  "visible_branches": [
+    "docs/espnow-pivot",
+    "docs/faikeow-profile-sync",
+    "main",
+    "tm-001/foundation-ci",
+    "tm-002/usb-hid",
+    "tm-003/qmi8658-driver",
+    "tm-004/orientation-motion",
+    "tm-005/touch-buttons"
+  ],
+  "github_mutations": 0,
+  "ci_actions": 0,
+  "scope": "Read-only snapshot, no issue completion claim"
+}

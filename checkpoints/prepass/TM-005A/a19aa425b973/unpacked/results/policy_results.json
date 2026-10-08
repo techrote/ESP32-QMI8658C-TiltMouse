@@ -1,0 +1,31 @@
+{
+  "label": "SYNTHETIC: integer counts, not measured cursor distance",
+  "input_deltas": [
+    4,
+    5,
+    6
+  ],
+  "backend_ready": [
+    false,
+    false,
+    true
+  ],
+  "drop_one_shot_emitted": 6,
+  "unbounded_sum_emitted": 15,
+  "latest_slot_emitted": 6,
+  "bounded_sum_age_8_emitted": 11,
+  "coalescing_assumptions": "Same valid button epoch, unsent deltas only; maximum age 8; bound not hit.",
+  "cross_button_boundary": [
+    {
+      "dx": 8,
+      "buttons": 1
+    },
+    {
+      "dx": -8,
+      "buttons": 0
+    }
+  ],
+  "naive_sum": 0,
+  "boundary_policy": "Do not coalesce across press/release; prioritize state and discard older movement.",
+  "scope": "Illustrative policy arithmetic, not implementation of alternative schedulers."
+}

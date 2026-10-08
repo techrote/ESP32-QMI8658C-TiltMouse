@@ -82,6 +82,8 @@ Application integration must not couple sensor/touch logic directly to TinyUSB o
 
 TM-005A / #15 introduces one logical report contract carrying bounded relative X/Y and complete current button state. Transport-specific metadata is not part of the core report.
 
+The completed TM-005A preparatory packet is [archived with its original ZIP, models, fixtures, results and API proposal](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/PRESERVATION.md) at assessed commit `8d7313216916d8f7d554da20df1b5fb8603d0b21`. Its original bytes and Git modes were verified during publication on 8 October 2026. This is preserved prepass evidence; the proposal is not installed, and issue #15 implementation and acceptance remain pending.
+
 Normal application report ownership is single-transport:
 
 - USB mode -> logical report -> USB HID adapter;

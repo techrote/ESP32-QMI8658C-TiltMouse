@@ -1,0 +1,6 @@
+#ifndef TEST_FAKE_SDKCONFIG_H
+#define TEST_FAKE_SDKCONFIG_H
+
+#define CONFIG_TINYUSB_HID_COUNT 1
+
+#endif

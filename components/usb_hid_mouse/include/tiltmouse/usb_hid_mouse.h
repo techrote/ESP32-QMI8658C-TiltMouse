@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "esp_err.h"
+#include "tiltmouse/mouse_transport.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,6 +24,12 @@ esp_err_t tiltmouse_usb_hid_mouse_send(
     int8_t y);
 
 esp_err_t tiltmouse_usb_hid_mouse_release_all(void);
+
+/* Application-facing logical-report USB adapter, for TM-006 integration.
+ * Call from one serialized owner; service drains asynchronous completions. */
+tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_publish(
+    const tm_mouse_report_t *report, uint64_t now_us, uint64_t deadline_us);
+tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_service(void);
 
 #ifdef __cplusplus
 }

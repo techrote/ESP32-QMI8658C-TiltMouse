@@ -34,7 +34,7 @@ Touch hardware acquisition may be target-only, but normalization/fusion/debounce
 
 USB report construction/button masks must be host-testable without enumeration.
 
-TM-005A logical reports must be host-testable without USB or ESP-NOW.
+TM-005A logical report construction, bounded one-owner transport policy, USB report adaptation and the **production** HID descriptor layout are exercised by host tests without USB or ESP-NOW. The descriptor test verifies exactly two data button bits, six padding bits and two relative signed axes.
 
 TM-005B sender logic must separate faikeow envelope/profile encoding from target Wi-Fi callbacks so host tests can cover:
 

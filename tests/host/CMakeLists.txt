@@ -40,11 +40,13 @@ add_executable(
     usb_hid_mouse_report
     test_usb_hid_mouse.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse_report.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
 )
 target_include_directories(
     usb_hid_mouse_report
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
 )
 target_compile_features(usb_hid_mouse_report PRIVATE c_std_11)
 target_compile_options(
@@ -94,3 +96,27 @@ target_compile_options(orientation_motion PRIVATE -Wall -Wextra -Wpedantic -Werr
 target_link_libraries(orientation_motion PRIVATE m)
 
 add_test(NAME orientation_motion COMMAND orientation_motion)
+
+add_executable(
+    mouse_transport
+    test_mouse_transport.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_transport.c
+)
+target_include_directories(
+    mouse_transport
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+)
+target_compile_features(mouse_transport PRIVATE c_std_11)
+target_compile_options(mouse_transport PRIVATE -Wall -Wextra -Wpedantic -Werror)
+add_test(NAME mouse_transport COMMAND mouse_transport)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_test(
+    NAME usb_hid_descriptor
+    COMMAND
+        ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_LIST_DIR}/test_usb_hid_descriptor.py
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse.c
+)

@@ -108,7 +108,7 @@ Calibration, normalization, fusion, hysteresis and debounce remain independent o
 
 ## Logical mouse report
 
-TM-005A / #15 owns the seam between application logic and transport.
+TM-005A / #15 implemented the seam in `components/mouse_report/` between application logic and transport. See `docs/LOGICAL-REPORT.md` for the contract and terminal-motion policy.
 
 The logical report carries mouse semantics only:
 
@@ -130,6 +130,8 @@ The USB layer owns:
 - descriptors;
 - mount/suspend state;
 - adaptation of logical reports into relative mouse HID reports;
+- the corrected two-button, three-byte HID input descriptor;
+- a bounded asynchronous completion handoff to the serialized publisher;
 - safe all-buttons-release.
 
 Normal wired identity remains mouse-only. CDC is optional diagnostic functionality only.

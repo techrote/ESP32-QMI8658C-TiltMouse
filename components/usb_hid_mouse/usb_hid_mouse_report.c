@@ -1,5 +1,7 @@
 #include "tiltmouse/usb_hid_mouse_report.h"
 
+#include <stddef.h>
+
 uint8_t tiltmouse_usb_hid_mouse_button_mask(bool left_pressed, bool right_pressed)
 {
     uint8_t buttons = 0;
@@ -32,4 +34,27 @@ tiltmouse_usb_hid_mouse_report_t tiltmouse_usb_hid_mouse_make_report(
 tiltmouse_usb_hid_mouse_report_t tiltmouse_usb_hid_mouse_release_report(void)
 {
     return tiltmouse_usb_hid_mouse_make_report(false, false, 0, 0);
+}
+
+bool tiltmouse_usb_hid_mouse_from_logical(
+    const tm_mouse_report_t *logical,
+    tiltmouse_usb_hid_mouse_report_t *out)
+{
+    if (out == NULL) {
+        return false;
+    }
+
+    *out = tiltmouse_usb_hid_mouse_release_report();
+    if (!tm_mouse_report_is_valid(logical)) {
+        return false;
+    }
+
+    if (logical->kind == TM_MOUSE_REPORT_CURRENT) {
+        *out = (tiltmouse_usb_hid_mouse_report_t){
+            .buttons = logical->buttons,
+            .x = logical->dx,
+            .y = logical->dy,
+        };
+    }
+    return true;
 }

@@ -3,12 +3,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdatomic.h>
 
 #include "class/hid/hid_device.h"
 #include "sdkconfig.h"
 #include "tinyusb.h"
 #include "tinyusb_default_config.h"
 #include "tiltmouse/usb_hid_mouse_report.h"
+#include "tiltmouse/mouse_report.h"
+#include "tiltmouse/mouse_transport.h"
 
 #if CONFIG_TINYUSB_HID_COUNT != 1
 #error "TiltMouse requires exactly one TinyUSB HID interface"
@@ -37,6 +40,7 @@ static const uint8_t s_hid_report_descriptor[] = {
     0x25, 0x01,       /*     Logical Maximum (1) */
     0x95, 0x02,       /*     Report Count (2) */
     0x75, 0x01,       /*     Report Size (1) */
+    0x81, 0x02,       /*     Input (Data, Variable, Absolute) BUTTONS */
     0x95, 0x01,       /*     Report Count (1) */
     0x75, 0x06,       /*     Report Size (6) */
     0x81, 0x03,       /*     Input (Constant, Variable, Absolute) */
@@ -79,7 +83,43 @@ static const uint8_t s_configuration_descriptor[] = {
 };
 
 static bool s_initialized;
-static volatile bool s_suspended;
+static atomic_bool s_suspended;
+/* TinyUSB runs callbacks on its own task. Handoff is atomic; all publisher
+ * state mutation is confined to the calling application task. */
+static atomic_int s_completion; /* 0=pending, 1=completed, 2=failed */
+static tm_mouse_transport_t s_usb_publisher;
+
+static bool usb_sink_ready(void *context)
+{
+    (void)context;
+    return s_initialized && tud_mounted() &&
+           !atomic_load(&s_suspended) && tud_hid_ready();
+}
+
+static bool usb_sink_submit(void *context, const tm_mouse_report_t *report)
+{
+    (void)context;
+    tiltmouse_usb_hid_mouse_report_t usb_report;
+    if (!tiltmouse_usb_hid_mouse_from_logical(report, &usb_report)) {
+        return false;
+    }
+
+    return tud_hid_report(0, &usb_report, sizeof(usb_report));
+}
+
+static void usb_process_completion(void)
+{
+    /* Call only from the single owner of the publisher, never from TinyUSB. */
+    const int event = atomic_exchange(&s_completion, 0);
+    if (event != 0) {
+        const uint64_t ticket =
+            tm_mouse_transport_pending_ticket(&s_usb_publisher);
+        if (ticket != 0u) {
+            (void)tm_mouse_transport_complete(
+                &s_usb_publisher, ticket, event == 1);
+        }
+    }
+}
 
 _Static_assert(
     sizeof(tiltmouse_usb_hid_mouse_report_t) == 3,
@@ -93,14 +133,18 @@ static void tiltmouse_usb_hid_mouse_device_event(
 
     switch (event->id) {
     case TINYUSB_EVENT_ATTACHED:
+        atomic_store(&s_suspended, false);
+        break;
     case TINYUSB_EVENT_DETACHED:
-        s_suspended = false;
+        atomic_store(&s_suspended, false);
+        /* A detached in-flight endpoint must not block future safety state. */
+        atomic_store(&s_completion, 2);
         break;
     case TINYUSB_EVENT_SUSPENDED:
-        s_suspended = true;
+        atomic_store(&s_suspended, true);
         break;
     case TINYUSB_EVENT_RESUMED:
-        s_suspended = false;
+        atomic_store(&s_suspended, false);
         break;
     default:
         break;
@@ -113,7 +157,7 @@ esp_err_t tiltmouse_usb_hid_mouse_init(void)
         return ESP_ERR_INVALID_STATE;
     }
 
-    s_suspended = false;
+    atomic_store(&s_suspended, false);
 
     tinyusb_config_t tusb_cfg = TINYUSB_DEFAULT_CONFIG();
     tusb_cfg.event_cb = tiltmouse_usb_hid_mouse_device_event;
@@ -127,9 +171,20 @@ esp_err_t tiltmouse_usb_hid_mouse_init(void)
     tusb_cfg.descriptor.high_speed_config = s_configuration_descriptor;
 #endif
 
+    atomic_store(&s_completion, 0);
     const esp_err_t err = tinyusb_driver_install(&tusb_cfg);
     if (err == ESP_OK) {
         s_initialized = true;
+        const tm_mouse_transport_sink_t sink = {
+            .ready = usb_sink_ready,
+            .submit = usb_sink_submit,
+            .context = NULL,
+        };
+        /* The zero-initialized static publisher is owned by the app task. */
+        if (!tm_mouse_transport_activate(
+                &s_usb_publisher, TM_MOUSE_TRANSPORT_USB, sink)) {
+            return ESP_FAIL;
+        }
     }
 
     return err;
@@ -142,43 +197,89 @@ bool tiltmouse_usb_hid_mouse_is_mounted(void)
 
 bool tiltmouse_usb_hid_mouse_is_suspended(void)
 {
-    return s_initialized && s_suspended;
+    return s_initialized && atomic_load(&s_suspended);
+}
+
+tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_publish(
+    const tm_mouse_report_t *report, uint64_t now_us, uint64_t deadline_us)
+{
+    usb_process_completion();
+    return tm_mouse_transport_publish(
+        &s_usb_publisher, TM_MOUSE_TRANSPORT_USB,
+        report, now_us, deadline_us);
+}
+
+tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_service(void)
+{
+    usb_process_completion();
+    return tm_mouse_transport_service(
+        &s_usb_publisher, TM_MOUSE_TRANSPORT_USB);
+}
+
+static esp_err_t usb_legacy_result(tm_mouse_publish_result_t result)
+{
+    if (result.reason == TM_MOUSE_REASON_INVALID) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    if (result.reason == TM_MOUSE_REASON_NOT_READY ||
+        result.reason == TM_MOUSE_REASON_INACTIVE ||
+        result.reason == TM_MOUSE_REASON_BUSY) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    if (result.reason == TM_MOUSE_REASON_SUBMIT_FAILED) {
+        return ESP_FAIL;
+    }
+    return ESP_OK;
 }
 
 esp_err_t tiltmouse_usb_hid_mouse_send(
-    bool left_pressed,
-    bool right_pressed,
-    int8_t x,
-    int8_t y)
+    bool left_pressed, bool right_pressed, int8_t x, int8_t y)
 {
-    if (!s_initialized || !tud_mounted() || s_suspended || !tud_hid_ready()) {
+    tm_mouse_report_t logical;
+    const uint32_t buttons =
+        (left_pressed ? TM_MOUSE_BUTTON_LEFT : 0u) |
+        (right_pressed ? TM_MOUSE_BUTTON_RIGHT : 0u);
+
+    if (!tm_mouse_report_make_current(x, y, buttons, &logical)) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    const tm_mouse_publish_result_t result =
+        tiltmouse_usb_hid_mouse_publish(&logical, 0u, 0u);
+    if ((x != 0 || y != 0) && result.motion == TM_MOUSE_MOTION_DROPPED) {
         return ESP_ERR_INVALID_STATE;
     }
-
-    const tiltmouse_usb_hid_mouse_report_t report =
-        tiltmouse_usb_hid_mouse_make_report(left_pressed, right_pressed, x, y);
-
-    if (!tud_hid_report(0, &report, sizeof(report))) {
-        return ESP_FAIL;
-    }
-
-    return ESP_OK;
+    return usb_legacy_result(result);
 }
 
 esp_err_t tiltmouse_usb_hid_mouse_release_all(void)
 {
-    const tiltmouse_usb_hid_mouse_report_t report =
-        tiltmouse_usb_hid_mouse_release_report();
+    tm_mouse_report_t release;
+    (void)tm_mouse_report_make_release(&release);
+    return usb_legacy_result(
+        tiltmouse_usb_hid_mouse_publish(&release, 0u, 0u));
+}
 
-    if (!s_initialized || !tud_mounted() || s_suspended || !tud_hid_ready()) {
-        return ESP_ERR_INVALID_STATE;
-    }
+/* TinyUSB asynchronous signals contain no movement-retry permission. Do not
+ * call the pure-C state machine from callback context. */
+void tud_hid_report_complete_cb(
+    uint8_t instance, uint8_t const *report, uint16_t len)
+{
+    (void)instance;
+    (void)report;
+    (void)len;
+    atomic_store(&s_completion, 1);
+}
 
-    if (!tud_hid_report(0, &report, sizeof(report))) {
-        return ESP_FAIL;
-    }
-
-    return ESP_OK;
+void tud_hid_report_failed_cb(
+    uint8_t instance, hid_report_type_t report_type,
+    uint8_t const *report, uint16_t transferred_bytes)
+{
+    (void)instance;
+    (void)report_type;
+    (void)report;
+    (void)transferred_bytes;
+    atomic_store(&s_completion, 2);
 }
 
 uint8_t const *tud_hid_descriptor_report_cb(uint8_t instance)

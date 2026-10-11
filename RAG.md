@@ -80,9 +80,9 @@ Logical button fusion supports configurable evidence strategies with hysteresis 
 
 Application integration must not couple sensor/touch logic directly to TinyUSB or ESP-NOW.
 
-TM-005A / #15 introduces one logical report contract carrying bounded relative X/Y and complete current button state. Transport-specific metadata is not part of the core report.
+TM-005A / #15 establishes `components/mouse_report/`: a validated four-byte logical report with bounded signed X/Y, full two-bit button state and explicit current/invalid/release kind. The bounded publisher retains desired buttons plus release debt but never queues integer movement. It sends through one selected sink, returning separate movement/state/reason outcomes. Transport-specific metadata remains outside the core report. See `docs/LOGICAL-REPORT.md`.
 
-The completed TM-005A preparatory packet is [archived with its original ZIP, models, fixtures, results and API proposal](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/PRESERVATION.md) at assessed commit `8d7313216916d8f7d554da20df1b5fb8603d0b21`. Its original bytes and Git modes were verified during publication on 8 October 2026. This is preserved prepass evidence; the proposal is not installed, and issue #15 implementation and acceptance remain pending.
+The completed TM-005A preparatory packet is [archived with its original ZIP, models, fixtures, results and API proposal](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/blob/c9d813b0e313b9cd1f7017c596a7ce0404073a3c/checkpoints/prepass/TM-005A/a19aa425b973/PRESERVATION.md) at assessed commit `8d7313216916d8f7d554da20df1b5fb8603d0b21`. Its original bytes and Git modes were verified during publication on 8 October 2026. This is preserved historical prepass evidence. Its API-only sketch was reviewed rather than blindly installed; the production implementation and regression tests are separate.
 
 Normal application report ownership is single-transport:
 
@@ -145,7 +145,7 @@ Expected/established modules:
 - `mouse_motion`: deadzone/curve/velocity/residual logic.
 - `touch_input`: raw touch acquisition, calibration, normalization.
 - `touch_buttons`: left/right fusion, hysteresis, debounce.
-- `mouse_report` or equivalent: transport-neutral logical report seam.
+- `mouse_report`: implemented transport-neutral logical report, serialized publisher and release debt.
 - `usb_hid_mouse`: USB descriptor/lifecycle and logical-report adapter.
 - `espnow_mouse`: ESP-NOW packet/TX transport.
 - `app`: scheduling, neutral/re-centre and selected-transport integration.
@@ -243,7 +243,7 @@ Completed foundation/feature work:
 
 Pivot/integration work:
 
-- TM-005A / #15: logical mouse-report and transport abstraction.
+- TM-005A / #15: logical mouse-report and transport abstraction (implemented).
 - TM-005B / #16: ESP-NOW sender implementing faikeow platform envelope + `relative_mouse` profile.
 - TM-006 / #6: integrated tilt mouse with selectable USB/ESP-NOW output.
 - TM-007 / #7: wired/wireless fault tolerance and hardening.

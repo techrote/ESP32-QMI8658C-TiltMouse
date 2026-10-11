@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "tiltmouse/usb_hid_mouse_report.h"
 
@@ -38,10 +39,33 @@ static void test_release_report(void)
     assert(report.y == 0);
 }
 
+static void test_logical_adapter(void)
+{
+    tm_mouse_report_t logical = {0};
+    tiltmouse_usb_hid_mouse_report_t usb = {0};
+
+    assert(tm_mouse_report_make_current(-127, 127, TM_MOUSE_BUTTON_ALL,
+                                        &logical));
+    assert(tiltmouse_usb_hid_mouse_from_logical(&logical, &usb));
+    assert(usb.x == -127 && usb.y == 127 && usb.buttons == 3u);
+
+    assert(tm_mouse_report_make_release(&logical));
+    assert(tiltmouse_usb_hid_mouse_from_logical(&logical, &usb));
+    assert(usb.x == 0 && usb.y == 0 && usb.buttons == 0u);
+
+    logical.kind = TM_MOUSE_REPORT_INVALID;
+    usb = tiltmouse_usb_hid_mouse_make_report(true, true, 20, -10);
+    assert(!tiltmouse_usb_hid_mouse_from_logical(&logical, &usb));
+    assert(usb.x == 0 && usb.y == 0 && usb.buttons == 0u);
+    assert(!tiltmouse_usb_hid_mouse_from_logical(NULL, &usb));
+    assert(!tiltmouse_usb_hid_mouse_from_logical(&logical, NULL));
+}
+
 int main(void)
 {
     test_button_masks();
     test_report_construction();
     test_release_report();
+    test_logical_adapter();
     return 0;
 }

@@ -92,11 +92,9 @@ static atomic_bool s_link_lost;
 static atomic_uint_fast32_t s_completion_event;
 static tm_mouse_output_t s_output;
 
-enum {
-    USB_EVENT_PRESENT = 0x80000000u,
-    USB_EVENT_SUCCESS = 0x40000000u,
-    USB_EVENT_PAYLOAD_MASK = 0x00FFFFFFu,
-};
+#define USB_EVENT_PRESENT UINT32_C(0x80000000)
+#define USB_EVENT_SUCCESS UINT32_C(0x40000000)
+#define USB_EVENT_PAYLOAD_MASK UINT32_C(0x00FFFFFF)
 
 _Static_assert(
     sizeof(tiltmouse_usb_hid_mouse_report_t) == 3,

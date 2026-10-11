@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "tiltmouse/mouse_report.h"
 #include "tiltmouse/mouse_transport.h"

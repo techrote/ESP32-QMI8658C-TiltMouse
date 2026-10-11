@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "tiltmouse/mouse_report.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,13 +23,14 @@ typedef struct {
 
 uint8_t tiltmouse_usb_hid_mouse_button_mask(bool left_pressed, bool right_pressed);
 
+/* Legacy byte-construction API, retained for TM-002 host compatibility. */
 tiltmouse_usb_hid_mouse_report_t tiltmouse_usb_hid_mouse_make_report(
-    bool left_pressed,
-    bool right_pressed,
-    int8_t x,
-    int8_t y);
-
+    bool left_pressed, bool right_pressed, int8_t x, int8_t y);
 tiltmouse_usb_hid_mouse_report_t tiltmouse_usb_hid_mouse_release_report(void);
+
+/* Checked conversion: never memcpy/serialize the logical struct as a report. */
+bool tiltmouse_usb_hid_mouse_from_logical(
+    const tm_mouse_report_t *logical, tiltmouse_usb_hid_mouse_report_t *hid);
 
 #ifdef __cplusplus
 }

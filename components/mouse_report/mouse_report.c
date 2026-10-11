@@ -1,5 +1,7 @@
 #include "tiltmouse/mouse_report.h"
 
+#include <stddef.h>
+
 bool tm_mouse_report_make(int dx, int dy, unsigned buttons, tm_mouse_report_t *out)
 {
     if (out == NULL) {

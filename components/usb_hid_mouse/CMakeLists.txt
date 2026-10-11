@@ -3,5 +3,6 @@ idf_component_register(
         "usb_hid_mouse.c"
         "usb_hid_mouse_report.c"
     INCLUDE_DIRS "include"
-    REQUIRES esp_tinyusb
+    REQUIRES esp_tinyusb mouse_report
+    PRIV_REQUIRES esp_timer
 )

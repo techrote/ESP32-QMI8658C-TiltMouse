@@ -40,17 +40,19 @@ Completed components now include:
 - native mouse-only USB HID transport;
 - QMI8658C I2C acquisition with deterministic failure handling;
 - host-testable pitch/roll estimation and tilt-to-relative-motion mapping;
-- capacitive-touch acquisition and grouped logical buttons.
+- capacitive-touch acquisition and grouped logical buttons;
+- validated transport-neutral mouse reports, single-owner bounded publication and USB adaptation;
+- corrected 24-bit HID descriptor with genuine left/right button Input data.
 
-These components are not yet joined into the final application scheduler. The next steps are:
+These components are not yet joined into the final application scheduler. The TM-005A logical report and USB adapter are implemented and tested; the next steps are:
 
-1. **TM-005A / #15** — introduce the logical mouse-report / transport seam;
-2. **TM-005B / #16** — add ESP-NOW TX and encode faikeow's generic platform envelope + `relative_mouse` profile;
-3. **TM-006 / #6** — integrate the complete input pipeline with selectable USB or ESP-NOW output.
+1. **TM-005B / #16** — add ESP-NOW TX and encode faikeow's generic platform envelope + `relative_mouse` profile;
+2. **TM-006 / #6** — integrate the complete input pipeline with selectable USB or ESP-NOW output;
+3. **TM-007 / #7** — harden the full transmitter lifecycle and recovery.
 
 The default wired path must not initialize Wi-Fi unnecessarily. ESP-NOW mode may initialize the ESP32-S3 Wi-Fi subsystem only as required for connectionless ESP-NOW; it does not require infrastructure Wi-Fi or IP networking. Bluetooth/BLE remains uninitialized for v0.1.
 
-See [docs/BUILDING.md](docs/BUILDING.md) for exact commands.
+See [docs/LOGICAL-REPORT.md](docs/LOGICAL-REPORT.md) for the TM-005A semantics and limitations and [docs/BUILDING.md](docs/BUILDING.md) for exact commands.
 
 ## v0.1 scope
 

@@ -17,9 +17,10 @@ Merged work includes:
 - native USB mouse-only HID transport;
 - QMI8658C acquisition;
 - orientation/motion logic;
-- capacitive-touch acquisition/button fusion.
+- capacitive-touch acquisition/button fusion;
+- TM-005A transport-neutral report/publisher and native USB adapter.
 
-TM-005A / #15 will introduce a logical mouse-report seam. TM-005B / #16 will add ESP-NOW support using ESP-IDF's Wi-Fi/ESP-NOW APIs.
+TM-005A / #15 introduced that logical mouse-report seam. TM-005B / #16 will add ESP-NOW support using ESP-IDF's Wi-Fi/ESP-NOW APIs.
 
 ## Transport build policy
 
@@ -75,7 +76,7 @@ cmake --build build/host
 ctest --test-dir build/host --output-on-failure
 ```
 
-Pure logic, logical report construction, USB adaptation and ESP-NOW packet/state semantics should remain testable without target hardware.
+The host suite includes pure logical report construction, bounded transport policy, USB adaptation and a parser of the exact production HID report descriptor. ESP-NOW packet/state tests will be introduced by TM-005B; no wireless implementation is present yet.
 
 ## Style/static sanity
 

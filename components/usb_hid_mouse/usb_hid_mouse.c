@@ -133,8 +133,12 @@ static void tiltmouse_usb_hid_mouse_device_event(
 
     switch (event->id) {
     case TINYUSB_EVENT_ATTACHED:
+        atomic_store(&s_suspended, false);
+        break;
     case TINYUSB_EVENT_DETACHED:
         atomic_store(&s_suspended, false);
+        /* A detached in-flight endpoint must not block future safety state. */
+        atomic_store(&s_completion, 2);
         break;
     case TINYUSB_EVENT_SUSPENDED:
         atomic_store(&s_suspended, true);
@@ -240,8 +244,12 @@ esp_err_t tiltmouse_usb_hid_mouse_send(
         return ESP_ERR_INVALID_ARG;
     }
 
-    return usb_legacy_result(
-        tiltmouse_usb_hid_mouse_publish(&logical, 0u, 0u));
+    const tm_mouse_publish_result_t result =
+        tiltmouse_usb_hid_mouse_publish(&logical, 0u, 0u);
+    if ((x != 0 || y != 0) && result.motion == TM_MOUSE_MOTION_DROPPED) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return usb_legacy_result(result);
 }
 
 esp_err_t tiltmouse_usb_hid_mouse_release_all(void)

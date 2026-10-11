@@ -46,7 +46,7 @@ void tm_mouse_transport_deactivate(tm_mouse_transport_t *transport)
 
 static tm_mouse_publish_result_t try_submit(
     tm_mouse_transport_t *transport, int8_t dx, int8_t dy,
-    tm_mouse_publish_result_t result)
+    tm_mouse_publish_result_t result, bool force_report)
 {
     if (transport->in_flight) {
         result.reason = TM_MOUSE_REASON_BUSY;
@@ -68,7 +68,7 @@ static tm_mouse_publish_result_t try_submit(
         result.reason = TM_MOUSE_REASON_RELEASE_FIRST;
     }
 
-    if (dx == 0 && dy == 0 && !transport->dirty &&
+    if (dx == 0 && dy == 0 && !force_report && !transport->dirty &&
         transport->release_debt == 0u) {
         return result;
     }
@@ -134,7 +134,7 @@ tm_mouse_publish_result_t tm_mouse_transport_publish(
         transport->desired_buttons = 0u;
         transport->release_debt = TM_MOUSE_BUTTON_ALL;
         transport->dirty = true;
-        return try_submit(transport, 0, 0, result);
+        return try_submit(transport, 0, 0, result, true);
     }
 
     if (report->kind == TM_MOUSE_REPORT_RELEASE_ALL) {
@@ -147,7 +147,7 @@ tm_mouse_publish_result_t tm_mouse_transport_publish(
         transport->desired_buttons = 0u;
         transport->release_debt = TM_MOUSE_BUTTON_ALL;
         transport->dirty = true;
-        return try_submit(transport, 0, 0, result);
+        return try_submit(transport, 0, 0, result, true);
     }
 
     const uint8_t previously_held = transport->desired_buttons;
@@ -171,10 +171,10 @@ tm_mouse_publish_result_t tm_mouse_transport_publish(
 
     if (deadline_us != 0u && now_us > deadline_us) {
         result.reason = TM_MOUSE_REASON_EXPIRED;
-        return try_submit(transport, 0, 0, result);
+        return try_submit(transport, 0, 0, result, false);
     }
 
-    return try_submit(transport, report->dx, report->dy, result);
+    return try_submit(transport, report->dx, report->dy, result, true);
 }
 
 tm_mouse_publish_result_t tm_mouse_transport_service(
@@ -190,7 +190,7 @@ tm_mouse_publish_result_t tm_mouse_transport_service(
     result.state = transport->fault_latched
         ? TM_MOUSE_STATE_SAFE_RELEASE_RETAINED
         : TM_MOUSE_STATE_BUTTONS_RETAINED;
-    return try_submit(transport, 0, 0, result);
+    return try_submit(transport, 0, 0, result, false);
 }
 
 uint64_t tm_mouse_transport_pending_ticket(const tm_mouse_transport_t *transport)

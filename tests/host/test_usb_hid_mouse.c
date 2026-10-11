@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "tiltmouse/usb_hid_mouse_report.h"
 

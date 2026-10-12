@@ -120,3 +120,27 @@ add_test(
         ${CMAKE_CURRENT_LIST_DIR}/test_usb_hid_descriptor.py
         ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse.c
 )
+
+add_executable(
+    app_pipeline
+    test_app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/touch_buttons.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
+)
+target_include_directories(
+    app_pipeline
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_input/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+)
+target_compile_features(app_pipeline PRIVATE c_std_11)
+target_compile_options(app_pipeline PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(app_pipeline PRIVATE m)
+add_test(NAME app_pipeline COMMAND app_pipeline)

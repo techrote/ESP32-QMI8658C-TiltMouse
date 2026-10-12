@@ -120,3 +120,20 @@ add_test(
         ${CMAKE_CURRENT_LIST_DIR}/test_usb_hid_descriptor.py
         ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse.c
 )
+
+find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+add_executable(
+    espnow_sender
+    test_espnow_sender.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/espnow_codec.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
+)
+target_include_directories(
+    espnow_sender PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+)
+target_compile_features(espnow_sender PRIVATE c_std_11)
+target_compile_options(espnow_sender PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(espnow_sender PRIVATE OpenSSL::Crypto)
+add_test(NAME espnow_sender COMMAND espnow_sender)

@@ -44,7 +44,7 @@ Completed components now include:
 - validated transport-neutral mouse reports, single-owner bounded publication and USB adaptation;
 - corrected 24-bit HID descriptor with genuine left/right button Input data.
 
-These components are not yet joined into the final application scheduler. The TM-005A logical report and USB adapter are implemented and tested; the next steps are:
+The TM-006 application-integration increment is staged on a separate branch (not accepted or merged). The wireless binding remains blocked by TM-005B; main still has the original USB-only startup. The TM-005A logical report and USB adapter are implemented and tested; the next steps are:
 
 1. **TM-005B / #16** — add ESP-NOW TX and encode faikeow's generic platform envelope + `relative_mouse` profile;
 2. **TM-006 / #6** — integrate the complete input pipeline with selectable USB or ESP-NOW output;

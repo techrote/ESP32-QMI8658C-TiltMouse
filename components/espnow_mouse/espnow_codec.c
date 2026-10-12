@@ -142,8 +142,11 @@ bool tm_fnr_sender_init(tm_fnr_sender_t *sender,
                         const uint8_t peer_key[TM_FNR_KEY_SIZE],
                         uint64_t nonzero_new_session)
 {
-    if (sender == NULL || nonzero_new_session == 0 ||
-        !auth_valid(auth, peer_key)) {
+    if (sender == NULL) {
+        return false;
+    }
+    if (nonzero_new_session == 0 || !auth_valid(auth, peer_key)) {
+        clear_secret((uint8_t *)sender, sizeof(*sender));
         return false;
     }
     *sender = (tm_fnr_sender_t){0};

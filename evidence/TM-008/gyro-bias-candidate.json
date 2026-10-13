@@ -38,7 +38,8 @@
         }
       ],
       "deployed": false,
-      "actual_private_key_linked": false
+      "actual_private_key_linked": false,
+      "currently_installed": false
     },
     {
       "mode": "usb-diagnostic",
@@ -75,8 +76,9 @@
           "bytes": 963
         }
       ],
-      "deployed": false,
-      "actual_private_key_linked": false
+      "deployed": true,
+      "actual_private_key_linked": false,
+      "currently_installed": true
     },
     {
       "mode": "espnow",
@@ -114,7 +116,8 @@
         }
       ],
       "deployed": false,
-      "actual_private_key_linked": true
+      "actual_private_key_linked": true,
+      "currently_installed": false
     }
   ],
   "physical_acceptance": false,
@@ -123,5 +126,11 @@
   "ci_run": 38480200839,
   "ci_status": "PASS",
   "application_boot_observed": false,
-  "next_action": "Guarded ROM flash then stationary qualification and axes/recenter trials."
+  "next_action": "Operator cold boot without buttons, keep flat face up and untouched, then capture stationary calibration/drift.",
+  "deployed_at_utc": "2026-10-13T22:55:45.100789+00:00",
+  "flash_verification": {
+    "live_mac_matched": true,
+    "esptool_all_three_region_digests_verified": true,
+    "independent_app_readback_verified": true
+  }
 }

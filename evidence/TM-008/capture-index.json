@@ -228,6 +228,18 @@
     {
       "capture": "gyro-bias-espnow-build.log",
       "sha256": "02ab7d9607679e1a218be432f6981c66b5001f8412bb9bf077442c03b99200d1"
+    },
+    {
+      "capture": "tiltmouse-gyro-bias-diag-write/result.json",
+      "sha256": "b5a06cba336f5e928556995cded14d3eca52bfd9c4a5fc69d963c40e655fab52"
+    },
+    {
+      "capture": "tiltmouse-gyro-bias-diag-write/application-readback.bin",
+      "sha256": "f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0"
+    },
+    {
+      "capture": "gyro-bias-linked-radio-initialization.json",
+      "sha256": "449aa1a431ec04506fa4a0ef49abaf1229b8bf25a54cda2d9ff08de3a5cbbfad"
     }
   ]
 }

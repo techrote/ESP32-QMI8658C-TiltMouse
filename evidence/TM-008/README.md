@@ -32,13 +32,20 @@ all 14 host tests and all four required gates in
 Local normal USB, diagnostic USB and real-pair ESP-NOW builds also pass, with
 linked USB descriptor comparison and wired-key-absence checks.
 
-[Exact gyro-bias artifacts](gyro-bias-candidate.json) are archived, not deployed
-at this checkpoint. Diagnostic app SHA-256 is
-`f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`.
+[Exact gyro-bias artifacts](gyro-bias-candidate.json) were flashed at
+22:55:45 UTC after fresh 303a:1001 ROM detection, matching live identity, all
+three region digests and independent application readback. Diagnostic app
+SHA-256 is `f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`.
+The operator has been asked to release BOOT, cold unplug/replug without buttons,
+and keep the board flat face up and untouched. Application boot and the new
+stationary calibration/drift capture are pending. [Linked binary inspection](linked-radio-initialization.json)
+finds no Wi-Fi/BLE initialization symbols in either wired image; the ESP-NOW
+image contains Wi-Fi initialization and no BLE initialization. This is build
+evidence, not an RF emissions measurement.
 The learned offset is frozen during use; the original cursor curve, deadzone,
 8-dps quiet threshold, wire/auth contract and click-motion semantics remain.
-Next: flash with live ROM identity/readback, repeat stationary calibration and
-drift, then axes/recenter/usability. Board A remains unchanged on config 2;
+Next: confirm cold boot and capture stationary calibration/drift, then
+axes/recenter/usability. Board A remains unchanged on config 2;
 receiver/RF acceptance is untested. Both issues remain open.
 
 The following sections retain earlier chronological checkpoints and their

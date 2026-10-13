@@ -38,7 +38,8 @@
         }
       ],
       "deployed": false,
-      "actual_private_key_linked": false
+      "actual_private_key_linked": false,
+      "currently_installed": false
     },
     {
       "mode": "usb-diagnostic",
@@ -75,8 +76,9 @@
           "bytes": 963
         }
       ],
-      "deployed": false,
-      "actual_private_key_linked": false
+      "deployed": true,
+      "actual_private_key_linked": false,
+      "currently_installed": true
     },
     {
       "mode": "espnow",
@@ -114,7 +116,8 @@
         }
       ],
       "deployed": false,
-      "actual_private_key_linked": true
+      "actual_private_key_linked": true,
+      "currently_installed": false
     }
   ],
   "physical_acceptance": false,
@@ -122,6 +125,12 @@
   "ci_run": 38483762002,
   "ci_status": "PASS",
   "host_tests_passed": 14,
-  "application_boot_observed": false,
-  "next_action": "Guarded diagnostic USB flash; cold boot; operator-aligned X/Y and BOOT recenter confirmation."
+  "application_boot_observed": true,
+  "next_action": "Complete operator-aligned X/Y and BOOT capture; touch and USB/RF acceptance remain.",
+  "deployed_at_utc": "2026-10-13T23:28:18.626736+00:00",
+  "flash_verification": {
+    "live_mac_matched": true,
+    "esptool_all_three_region_digests_verified": true,
+    "independent_app_readback_verified": true
+  }
 }

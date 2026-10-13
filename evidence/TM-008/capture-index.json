@@ -284,6 +284,30 @@
     {
       "capture": "x-sign-espnow-build.log",
       "sha256": "7bdd78cc76e8b5c1394dd5c36b83d206ad45eec7c677fc1f58533e6244806d5e"
+    },
+    {
+      "capture": "tiltmouse-x-sign-diag-write/result.json",
+      "sha256": "a060e5a6f6e4a033f63d5a50ce9f71c9fe79ec9bb71ebde57710c2401dd72f99"
+    },
+    {
+      "capture": "tiltmouse-x-sign-diag-write/application-readback.bin",
+      "sha256": "a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd"
+    },
+    {
+      "capture": "x-sign-stationary/result.json",
+      "sha256": "6d82ec10cdf855ca4c74b1c81cf6b72c6552ecb0baf2db7d67df91e7ca291a07"
+    },
+    {
+      "capture": "x-sign-stationary/serial.bin",
+      "sha256": "d2ec0a4ec828abb5624b7413eedaba73100ab2470f18914d976791cc0602389d"
+    },
+    {
+      "capture": "x-sign-boot-and-axes/result.json",
+      "sha256": "6d1a33967c59fcef22e4c0ac6fb35a737ae695e55550fa14248354d11cf5d6f4"
+    },
+    {
+      "capture": "x-sign-boot-and-axes/serial.bin",
+      "sha256": "08d56aaeb548589515036fd95378e66664c0764c6455a84f1c57e31287ab5cd9"
     }
   ]
 }

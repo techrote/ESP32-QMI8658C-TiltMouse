@@ -5,7 +5,7 @@ Status: **IN PROGRESS; NOT ACCEPTED**. Issue #8 remains open.
 
 ## Latest checkpoint: calibrated neutral and usable control; X-sign correction pending retest
 
-Installed source/build `3a33f41b0e2f5016b425bf28a955dfd777912bf8`, diagnostic app
+Earlier calibrated source/build `3a33f41b0e2f5016b425bf28a955dfd777912bf8`, diagnostic app
 `f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`, passed live
 ROM identity, three written-region checks and independent application readback.
 The operator cold-booted and left the board flat, LED face up and untouched.
@@ -34,9 +34,31 @@ corrected X signs with unchanged Y. Source/build
 `e8cfa99c3780df1296eb0fe76678224f67a33436` passes all 14 tests and all four gates
 in [CI 38483762002](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38483762002).
 Local USB/diagnostic/real-pair ESP-NOW builds and linked HID checks pass.
-[Exact X-correction artifacts](x-sign-candidate.json) are archived but unflashed;
-diagnostic app is `a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd`.
-Physical X/Y and BOOT recenter confirmation remain required.
+[Exact X-correction artifacts](x-sign-candidate.json) were flashed at
+23:28:18 UTC with live identity, all region checks and independent readback,
+then operator cold-booted. Diagnostic app is
+`a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd`.
+The [repeated 30-second stationary capture](x-sign-stationary-result.json) has
+neutral=1, quiet=32/32, zero host motion/faults/removal and frozen gyro offset
+(-2499,11059,-838) mdps. Qualification completed 8.637 seconds after boot
+after 73 rejected candidate windows. Maximum local loop gap is 11127 us;
+three pose snapshots differ from neutral by at most 0.252 degrees. No
+two-second startup or full button-neutral state is inferred from this record.
+The [closed 300-second operator capture](x-sign-operator-result.json) confirms
+recenter 0 -> 1 and a changed neutral pose after the reported two-second BOOT
+gesture. Gyro offsets stayed frozen and USB/sensors remained fault-free.
+The operator reports control "Seems pretty good" and LEDs dark. It records
+9676 moving host events and logical movement drops 0 -> 235, with local loop
+maximum 12020 us. Sampled diagnostic logical cadence is about 100 reports/s;
+this is not RF loss or host-pointer latency. Mixed button events remain
+unassigned; stationary-click and individual electrode acceptance are open.
+
+On 14 October local time, the operator explicitly chose to swap click locations
+and requested a very dim sensor representation in the next build. Next trial:
+GPIO5-7 left / GPIO1-3 right, sensitivity unchanged; diagnostic touch readouts
+and a dim tilt indicator. This explicit diagnostic request updates the earlier
+dark-matrix diagnostic constraint. Normal release/radio LED defaults remain off.
+The new layout/indicator require implementation, CI and physical qualification.
 
 [Derived capture results](gyro-bias-physical-results.json) identify exact source,
 artifact, timing and limits. [Mixed click windows](gyro-bias-mixed-click-windows.csv)

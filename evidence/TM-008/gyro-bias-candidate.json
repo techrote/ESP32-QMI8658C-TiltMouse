@@ -78,7 +78,7 @@
       ],
       "deployed": true,
       "actual_private_key_linked": false,
-      "currently_installed": true
+      "currently_installed": false
     },
     {
       "mode": "espnow",

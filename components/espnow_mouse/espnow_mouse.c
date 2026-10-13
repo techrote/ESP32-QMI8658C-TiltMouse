@@ -8,16 +8,22 @@
 #include "esp_event.h"
 #include "nvs_flash.h"
 #include "esp_now.h"
+#include "esp_timer.h"
 #include "esp_random.h"
 #include "esp_wifi.h"
 #include "psa/crypto.h"
 #include "tiltmouse/espnow_codec.h"
+#include "tiltmouse/espnow_health.h"
 
 static tm_fnr_sender_t s_sender;
 static tm_mouse_transport_t s_transport;
+static tm_espnow_health_t s_health;
+static tm_espnow_mouse_config_t s_config;
 static uint8_t s_receiver_mac[6];
 static atomic_int s_completion; /* 0=pending, 1=MAC success, 2=MAC failure */
-static bool s_initialized;
+static esp_err_t s_last_error;
+static bool s_configured;
+static bool s_radio_up;
 
 static void wipe(void *buffer, size_t length)
 {
@@ -82,7 +88,8 @@ static bool idf_hmac(void *context, const uint8_t *key, size_t key_size,
 static bool radio_ready(void *context)
 {
     (void)context;
-    return s_initialized && atomic_load(&s_completion) == 0;
+    return s_configured && s_radio_up && !s_health.recovery_pending &&
+           atomic_load(&s_completion) == 0;
 }
 
 static bool radio_submit(void *context, const tm_mouse_report_t *report)
@@ -96,7 +103,14 @@ static bool radio_submit(void *context, const tm_mouse_report_t *report)
     }
     /* Successful API submission consumes motion. Callback status is MAC
      * evidence only; receiver-level application ACK is not defined in v1. */
-    return esp_now_send(s_receiver_mac, wire, length) == ESP_OK;
+    const esp_err_t err = esp_now_send(s_receiver_mac, wire, length);
+    const bool accepted = err == ESP_OK;
+    tm_espnow_health_submit(
+        &s_health, accepted, (uint64_t)esp_timer_get_time());
+    if (!accepted) {
+        s_last_error = err;
+    }
+    return accepted;
 }
 
 static void on_send(const esp_now_send_info_t *info,
@@ -110,9 +124,17 @@ static void drain_completion(void)
 {
     const int result = atomic_exchange(&s_completion, 0);
     if (result != 0) {
+        const bool success = result == 1;
+        const uint64_t now_us = (uint64_t)esp_timer_get_time();
+        tm_espnow_health_callback(&s_health, success, now_us);
         const uint64_t ticket = tm_mouse_transport_pending_ticket(&s_transport);
         if (ticket != 0) {
-            (void)tm_mouse_transport_complete(&s_transport, ticket, result == 1);
+            (void)tm_mouse_transport_complete(&s_transport, ticket, success);
+        }
+        if (!success) {
+            s_last_error = ESP_FAIL;
+        } else {
+            s_last_error = ESP_OK;
         }
     }
 }
@@ -201,9 +223,60 @@ static esp_err_t init_wifi_and_peer(const tm_espnow_mouse_config_t *cfg,
     return err;
 }
 
+
+static void teardown_radio(void)
+{
+    if (!s_radio_up) {
+        return;
+    }
+    (void)esp_now_unregister_send_cb();
+    (void)esp_now_deinit();
+    (void)esp_wifi_stop();
+    (void)esp_wifi_deinit();
+    s_radio_up = false;
+    atomic_store(&s_completion, 0);
+}
+
+static bool activate_transport(void)
+{
+    const tm_mouse_transport_sink_t sink = {
+        .ready = radio_ready,
+        .submit = radio_submit,
+        .context = NULL,
+    };
+    return tm_mouse_transport_activate(
+        &s_transport, TM_MOUSE_TRANSPORT_ESPNOW, sink);
+}
+
+static void recover_radio_if_due(void)
+{
+    if (!s_configured) {
+        return;
+    }
+    const uint64_t now_us = (uint64_t)esp_timer_get_time();
+    if (!tm_espnow_health_recovery_due(&s_health, now_us)) {
+        return;
+    }
+    if (tm_mouse_transport_pending_ticket(&s_transport) != 0u) {
+        return;
+    }
+
+    const bool preserve_quiesce = s_transport.quiescing;
+    teardown_radio();
+    tm_fnr_auth_context_t auth = {0};
+    const esp_err_t err = init_wifi_and_peer(&s_config, &auth);
+    bool success = err == ESP_OK && activate_transport();
+    if (success && preserve_quiesce) {
+        success = tm_mouse_transport_begin_quiesce(&s_transport);
+    }
+    s_radio_up = success;
+    s_last_error = success ? ESP_OK : (err == ESP_OK ? ESP_FAIL : err);
+    tm_espnow_health_recovery_result(&s_health, success, now_us);
+}
+
 esp_err_t tm_espnow_mouse_init(const tm_espnow_mouse_config_t *cfg)
 {
-    if (s_initialized) {
+    if (s_configured) {
         return ESP_ERR_INVALID_STATE;
     }
     if (psa_crypto_init() != PSA_SUCCESS) {
@@ -212,10 +285,16 @@ esp_err_t tm_espnow_mouse_init(const tm_espnow_mouse_config_t *cfg)
     if (!valid_sender_config(cfg)) {
         return ESP_ERR_INVALID_ARG;
     }
+    const tm_espnow_health_config_t health_config =
+        tm_espnow_health_default_config();
+    if (!tm_espnow_health_init(&s_health, &health_config)) {
+        return ESP_FAIL;
+    }
     tm_fnr_auth_context_t auth = {0};
     esp_err_t err = init_wifi_and_peer(cfg, &auth);
     if (err != ESP_OK) {
-        return err; /* Fail closed; never try unencrypted transmission. */
+        s_last_error = err;
+        return err; /* Fail closed; caller may perform a bounded retry. */
     }
 
     /* RF-backed ESP random value, fresh nonzero u64 per sender activation. */
@@ -230,34 +309,75 @@ esp_err_t tm_espnow_mouse_init(const tm_espnow_mouse_config_t *cfg)
         (void)esp_wifi_deinit();
         return ESP_ERR_INVALID_ARG;
     }
+    memcpy(&s_config, cfg, sizeof(s_config));
     memcpy(s_receiver_mac, cfg->receiver_mac, 6);
     atomic_store(&s_completion, 0);
-    const tm_mouse_transport_sink_t sink = {
-        .ready = radio_ready,
-        .submit = radio_submit,
-        .context = NULL,
-    };
-    if (!tm_mouse_transport_activate(
-            &s_transport, TM_MOUSE_TRANSPORT_ESPNOW, sink)) {
+    s_configured = true;
+    s_radio_up = true;
+    s_last_error = ESP_OK;
+    if (!activate_transport()) {
+        s_configured = false;
+        s_radio_up = false;
         wipe(&s_sender, sizeof(s_sender));
+        wipe(&s_config, sizeof(s_config));
+        (void)esp_now_unregister_send_cb();
         (void)esp_now_deinit();
         (void)esp_wifi_stop();
         (void)esp_wifi_deinit();
+        s_last_error = ESP_FAIL;
         return ESP_FAIL;
     }
-    s_initialized = true;
     return ESP_OK;
 }
 
 bool tm_espnow_mouse_initialized(void)
 {
-    return s_initialized;
+    return s_configured && s_radio_up;
+}
+
+tm_espnow_mouse_status_t tm_espnow_mouse_status(void)
+{
+    drain_completion();
+    recover_radio_if_due();
+    return (tm_espnow_mouse_status_t){
+        .configured = s_configured,
+        .radio_up = s_radio_up,
+        .recovery_pending = s_health.recovery_pending,
+        .quiescing = s_transport.quiescing,
+        .quiesced = tm_mouse_transport_is_quiesced(&s_transport),
+        .session = s_sender.session,
+        .next_sequence = s_sender.next_sequence,
+        .consecutive_failures = s_health.consecutive_failures,
+        .send_attempts = s_health.send_attempts,
+        .immediate_failures = s_health.immediate_failures,
+        .callback_successes = s_health.callback_successes,
+        .callback_failures = s_health.callback_failures,
+        .recovery_attempts = s_health.recovery_attempts,
+        .recovery_successes = s_health.recovery_successes,
+        .recovery_failures = s_health.recovery_failures,
+        .next_recovery_us = s_health.next_recovery_us,
+        .last_error = s_last_error,
+    };
+}
+
+bool tm_espnow_mouse_begin_quiesce(void)
+{
+    drain_completion();
+    return tm_mouse_transport_begin_quiesce(&s_transport);
+}
+
+bool tm_espnow_mouse_is_quiesced(void)
+{
+    drain_completion();
+    recover_radio_if_due();
+    return tm_mouse_transport_is_quiesced(&s_transport);
 }
 
 tm_mouse_publish_result_t tm_espnow_mouse_publish(
     const tm_mouse_report_t *report, uint64_t now_us, uint64_t deadline_us)
 {
     drain_completion();
+    recover_radio_if_due();
     return tm_mouse_transport_publish(
         &s_transport, TM_MOUSE_TRANSPORT_ESPNOW,
         report, now_us, deadline_us);
@@ -266,6 +386,7 @@ tm_mouse_publish_result_t tm_espnow_mouse_publish(
 tm_mouse_publish_result_t tm_espnow_mouse_service(void)
 {
     drain_completion();
+    recover_radio_if_due();
     return tm_mouse_transport_service(
         &s_transport, TM_MOUSE_TRANSPORT_ESPNOW);
 }

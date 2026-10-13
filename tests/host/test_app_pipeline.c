@@ -9,8 +9,10 @@
 typedef struct {
     unsigned calls;
     unsigned serviced;
+    unsigned quiesce_calls;
     tm_mouse_report_t reports[256];
     bool drop;
+    bool quiesced;
 } fake_transport_t;
 
 static tm_mouse_publish_result_t fake_publish(
@@ -34,6 +36,18 @@ static tm_mouse_publish_result_t fake_service(void *ctx)
     return (tm_mouse_publish_result_t){0};
 }
 
+static bool fake_begin_quiesce(void *ctx)
+{
+    fake_transport_t *f = ctx;
+    ++f->quiesce_calls;
+    return true;
+}
+
+static bool fake_is_quiesced(void *ctx)
+{
+    return ((fake_transport_t *)ctx)->quiesced;
+}
+
 static void setup(tm_app_pipeline_t *app, fake_transport_t *fake,
                   tm_mouse_transport_id_t route)
 {
@@ -43,6 +57,8 @@ static void setup(tm_app_pipeline_t *app, fake_transport_t *fake,
         .owner = route,
         .publish = fake_publish,
         .service = fake_service,
+        .begin_quiesce = fake_begin_quiesce,
+        .is_quiesced = fake_is_quiesced,
     };
     tm_app_config_t config = tm_app_default_config();
     config.startup_quiet_samples = 4;
@@ -186,13 +202,19 @@ static void test_buttons_reference_failure_and_drag(void)
     r = next(&app, 168000);
     assert(r.kind == TM_MOUSE_REPORT_RELEASE_ALL);
     assert(!tm_app_make_report(&app, 176000, &r));
-    touch(&app, 184000, 2000, 1000, 2000);
-    r = next(&app, 184000);
+    /* A fault invalidates the old baseline: fully recalibrate before
+     * a new physical press can become logical state again. */
+    for (unsigned i = 0; i < 16; ++i) {
+        touch(&app, 184000 + UINT64_C(8000) * i, 1000, 1000, 1000);
+    }
+    touch(&app, 312000, 2000, 1000, 2000);
+    touch(&app, 320000, 2000, 1000, 2000);
+    r = next(&app, 320000);
     assert(r.kind == TM_MOUSE_REPORT_CURRENT &&
            r.buttons == TM_MOUSE_BUTTON_ALL);
 
     tm_app_imu_error(&app);
-    r = next(&app, 192000);
+    r = next(&app, 328000);
     assert(r.dx == 0 && r.dy == 0 &&
            r.buttons == TM_MOUSE_BUTTON_ALL);
     assert(!app.orientation.neutral_valid);
@@ -242,6 +264,181 @@ static void test_reject_reused_timestamps(void)
     assert(app.last_touch_us == 128000);
 }
 
+static void test_touch_fault_requires_recalibration_and_single_release(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+    calibrate_touch(&app);
+    calibrate_imu(&app);
+    assert(app.touch_valid);
+
+    tm_app_touch_error(&app);
+    assert(!app.touch_valid && app.touch_recalibrations == 1u);
+    tm_mouse_report_t r = next(&app, 140000);
+    assert(r.kind == TM_MOUSE_REPORT_RELEASE_ALL);
+    assert(!tm_app_make_report(&app, 141000, &r));
+
+    for (unsigned i = 0; i < 15; ++i) {
+        touch(&app, 142000 + UINT64_C(8000) * i, 1000, 1000, 1000);
+        assert(!app.touch_valid);
+    }
+    touch(&app, 142000 + UINT64_C(8000) * 15u, 1000, 1000, 1000);
+    assert(app.touch_valid);
+    assert(app.touch_recoveries == 1u);
+}
+
+static void test_stale_sources_count_once_and_recover(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+    calibrate_touch(&app);
+    calibrate_imu(&app);
+    tm_mouse_report_t r = next(&app, 128000);
+    (void)r;
+
+    assert(tm_app_make_report(&app, 240001, &r));
+    assert(app.imu_stale == 1u && app.touch_stale == 1u);
+    assert(!app.imu_valid && !app.touch_valid);
+    assert(r.kind == TM_MOUSE_REPORT_RELEASE_ALL);
+    assert(!tm_app_make_report(&app, 241000, &r));
+    assert(app.imu_stale == 1u && app.touch_stale == 1u);
+
+    sample_imu(&app, 244000, 0.0f);
+    assert(app.imu_recoveries == 1u);
+}
+
+static tm_app_output_t fake_output(
+    fake_transport_t *fake, tm_mouse_transport_id_t owner)
+{
+    return (tm_app_output_t){
+        .context = fake,
+        .owner = owner,
+        .publish = fake_publish,
+        .service = fake_service,
+        .begin_quiesce = fake_begin_quiesce,
+        .is_quiesced = fake_is_quiesced,
+    };
+}
+
+static void test_switch_waits_for_quiesce_and_all_up_rearm(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t usb, radio;
+    setup(&app, &usb, TM_MOUSE_TRANSPORT_USB);
+    memset(&radio, 0, sizeof(radio));
+    calibrate_touch(&app);
+    calibrate_imu(&app);
+
+    tm_app_output_t next_output = fake_output(&radio, TM_MOUSE_TRANSPORT_ESPNOW);
+    assert(tm_app_request_output_switch(&app, next_output));
+    assert(app.switch_pending && usb.quiesce_calls == 1u);
+    tm_mouse_publish_result_t result = {0};
+    assert(!tm_app_dispatch(&app, 130000, &result));
+
+    tm_app_service(&app);
+    assert(app.output.owner == TM_MOUSE_TRANSPORT_USB);
+    usb.quiesced = true;
+    tm_app_service(&app);
+    assert(app.output.owner == TM_MOUSE_TRANSPORT_ESPNOW);
+    assert(!app.switch_pending && app.switch_rearm);
+    assert(app.switch_completions == 1u);
+    assert(radio.serviced == 1u);
+
+    /* Held input does not migrate to the new host. */
+    touch(&app, 136000, 2000, 1000, 1000);
+    touch(&app, 144000, 2000, 1000, 1000);
+    assert(app.buttons.left_pressed);
+    assert(!tm_app_dispatch(&app, 144000, &result));
+    assert(radio.calls == 0u);
+
+    /* Fresh all-up input arms the new transport with zero motion only. */
+    touch(&app, 152000, 1000, 1000, 1000);
+    touch(&app, 160000, 1000, 1000, 1000);
+    assert(!app.buttons.left_pressed);
+    assert(tm_app_dispatch(&app, 160000, &result));
+    assert(radio.calls == 1u);
+    assert(radio.reports[0].buttons == 0u);
+    assert(radio.reports[0].dx == 0 && radio.reports[0].dy == 0);
+    assert(!app.switch_rearm);
+}
+
+static void test_diagnostics_snapshot(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+    calibrate_touch(&app);
+    calibrate_imu(&app);
+    tm_mouse_publish_result_t result = {0};
+    assert(tm_app_dispatch(&app, 130000, &result));
+
+    tm_app_diagnostics_t diag;
+    tm_app_diagnostics(&app, 132000, &diag);
+    assert(diag.selected == TM_MOUSE_TRANSPORT_USB);
+    assert(diag.reports_published == 1u);
+    assert(diag.imu_age_us == 8000u);
+    assert(diag.touch_age_us == 4000u);
+    assert(diag.neutral_valid && diag.touch_valid);
+}
+
+static void test_click_motion_window_tracks_post_transition_peak(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+
+    /* Construct a fresh, calibrated logical state without relying on the
+     * physical touch fixture; this isolates telemetry arithmetic. */
+    app.touch_valid = true;
+    app.last_touch_us = 100000;
+    app.buttons.calibrated = true;
+    app.buttons.left_pressed = true;
+    app.imu_valid = true;
+    app.last_imu_us = 100000;
+    app.orientation.initialized = true;
+    app.orientation.neutral_valid = true;
+    app.orientation.neutral_roll_deg = 0.0f;
+    app.orientation.neutral_pitch_deg = 0.0f;
+    app.orientation.roll_deg = 20.0f;
+    app.orientation.pitch_deg = 0.0f;
+    app.last_report_us = 92000;
+    app.inhibit_motion_once = false;
+
+    tm_mouse_report_t r = next(&app, 100000);
+    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(app.last_button_transition_us == 100000);
+    assert(app.click_motion_window_until_us == 200000);
+    assert(app.click_motion_samples == 1u);
+
+    const int8_t first_peak = app.click_peak_dx;
+    app.orientation.roll_deg = 35.0f;
+    app.last_imu_us = 108000;
+    r = next(&app, 108000);
+    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(app.click_motion_samples == 2u);
+    assert((app.click_peak_dx < 0 ? -app.click_peak_dx : app.click_peak_dx) >=
+           (first_peak < 0 ? -first_peak : first_peak));
+
+    /* Reports after the 100-ms observation window leave the retained peak. */
+    const int8_t retained = app.click_peak_dx;
+    const uint32_t samples = app.click_motion_samples;
+    app.orientation.roll_deg = 35.0f;
+    app.last_imu_us = 208001;
+    app.last_touch_us = 208001;
+    (void)next(&app, 208001);
+    assert(app.click_motion_samples == samples);
+    assert(app.click_peak_dx == retained);
+
+    tm_app_diagnostics_t diag;
+    tm_app_diagnostics(&app, 208001, &diag);
+    assert(diag.last_button_transition_us == 100000);
+    assert(diag.click_motion_window_until_us == 200000);
+    assert(diag.click_motion_samples == samples);
+    assert(diag.click_peak_dx == retained);
+}
+
 int main(void)
 {
     test_startup_neutral_and_stale_sources();
@@ -249,5 +446,10 @@ int main(void)
     test_buttons_reference_failure_and_drag();
     test_single_transport_and_latest_only();
     test_reject_reused_timestamps();
+    test_touch_fault_requires_recalibration_and_single_release();
+    test_stale_sources_count_once_and_recover();
+    test_switch_waits_for_quiesce_and_all_up_rearm();
+    test_diagnostics_snapshot();
+    test_click_motion_window_tracks_post_transition_peak();
     return 0;
 }

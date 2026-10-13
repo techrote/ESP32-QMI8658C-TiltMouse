@@ -44,6 +44,31 @@ void tm_mouse_transport_deactivate(tm_mouse_transport_t *transport)
     }
 }
 
+bool tm_mouse_transport_begin_quiesce(tm_mouse_transport_t *transport)
+{
+    if (transport == NULL || transport->selected == TM_MOUSE_TRANSPORT_NONE) {
+        return false;
+    }
+    if (!transport->quiescing) {
+        transport->quiescing = true;
+        transport->fault_latched = true;
+        transport->desired_buttons = 0u;
+        transport->release_debt = TM_MOUSE_BUTTON_ALL;
+        ++transport->state_revision;
+        ++transport->release_revision;
+        transport->dirty = true;
+    }
+    return true;
+}
+
+bool tm_mouse_transport_is_quiesced(const tm_mouse_transport_t *transport)
+{
+    return transport != NULL && transport->quiescing &&
+           transport->selected != TM_MOUSE_TRANSPORT_NONE &&
+           !transport->in_flight && transport->release_debt == 0u &&
+           !transport->dirty;
+}
+
 static tm_mouse_publish_result_t try_submit(
     tm_mouse_transport_t *transport, int8_t dx, int8_t dy,
     tm_mouse_publish_result_t result, bool force_report)
@@ -115,7 +140,7 @@ tm_mouse_publish_result_t tm_mouse_transport_publish(
 
     /* Never mutate state, submit or fail over on a wrong-owner publication. */
     if (transport == NULL || owner == TM_MOUSE_TRANSPORT_NONE ||
-        transport->selected != owner) {
+        transport->selected != owner || transport->quiescing) {
         result.reason = TM_MOUSE_REASON_INACTIVE;
         result.motion = TM_MOUSE_MOTION_DROPPED;
         return result;

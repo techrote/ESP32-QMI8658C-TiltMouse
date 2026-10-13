@@ -87,6 +87,14 @@ static atomic_bool s_suspended;
 /* TinyUSB runs callbacks on its own task. Handoff is atomic; all publisher
  * state mutation is confined to the calling application task. */
 static atomic_int s_completion; /* 0=pending, 1=completed, 2=failed */
+static atomic_bool s_lifecycle_reset;
+static atomic_uint_fast32_t s_attaches;
+static atomic_uint_fast32_t s_detaches;
+static atomic_uint_fast32_t s_suspends;
+static atomic_uint_fast32_t s_resumes;
+static atomic_uint_fast32_t s_completions;
+static atomic_uint_fast32_t s_transfer_failures;
+static atomic_uint_fast32_t s_lifecycle_resets;
 static tm_mouse_transport_t s_usb_publisher;
 
 static bool usb_sink_ready(void *context)
@@ -107,8 +115,26 @@ static bool usb_sink_submit(void *context, const tm_mouse_report_t *report)
     return tud_hid_report(0, &usb_report, sizeof(usb_report));
 }
 
-static void usb_process_completion(void)
+static void usb_process_events(void)
 {
+    /* Lifecycle reset fences any accepted pre-disconnect/suspend work. The
+     * newly activated publisher starts with an all-up release obligation. */
+    if (atomic_exchange(&s_lifecycle_reset, false)) {
+        const bool preserve_quiesce = s_usb_publisher.quiescing;
+        atomic_store(&s_completion, 0);
+        const tm_mouse_transport_sink_t sink = {
+            .ready = usb_sink_ready,
+            .submit = usb_sink_submit,
+            .context = NULL,
+        };
+        if (tm_mouse_transport_activate(
+                &s_usb_publisher, TM_MOUSE_TRANSPORT_USB, sink) &&
+            preserve_quiesce) {
+            (void)tm_mouse_transport_begin_quiesce(&s_usb_publisher);
+        }
+        atomic_fetch_add(&s_lifecycle_resets, 1u);
+    }
+
     /* Call only from the single owner of the publisher, never from TinyUSB. */
     const int event = atomic_exchange(&s_completion, 0);
     if (event != 0) {
@@ -117,6 +143,11 @@ static void usb_process_completion(void)
         if (ticket != 0u) {
             (void)tm_mouse_transport_complete(
                 &s_usb_publisher, ticket, event == 1);
+        }
+        if (event == 1) {
+            atomic_fetch_add(&s_completions, 1u);
+        } else {
+            atomic_fetch_add(&s_transfer_failures, 1u);
         }
     }
 }
@@ -133,17 +164,21 @@ static void tiltmouse_usb_hid_mouse_device_event(
 
     switch (event->id) {
     case TINYUSB_EVENT_ATTACHED:
+        atomic_fetch_add(&s_attaches, 1u);
         atomic_store(&s_suspended, false);
         break;
     case TINYUSB_EVENT_DETACHED:
+        atomic_fetch_add(&s_detaches, 1u);
         atomic_store(&s_suspended, false);
-        /* A detached in-flight endpoint must not block future safety state. */
-        atomic_store(&s_completion, 2);
+        atomic_store(&s_lifecycle_reset, true);
         break;
     case TINYUSB_EVENT_SUSPENDED:
+        atomic_fetch_add(&s_suspends, 1u);
         atomic_store(&s_suspended, true);
+        atomic_store(&s_lifecycle_reset, true);
         break;
     case TINYUSB_EVENT_RESUMED:
+        atomic_fetch_add(&s_resumes, 1u);
         atomic_store(&s_suspended, false);
         break;
     default:
@@ -158,6 +193,14 @@ esp_err_t tiltmouse_usb_hid_mouse_init(void)
     }
 
     atomic_store(&s_suspended, false);
+    atomic_store(&s_lifecycle_reset, false);
+    atomic_store(&s_attaches, 0u);
+    atomic_store(&s_detaches, 0u);
+    atomic_store(&s_suspends, 0u);
+    atomic_store(&s_resumes, 0u);
+    atomic_store(&s_completions, 0u);
+    atomic_store(&s_transfer_failures, 0u);
+    atomic_store(&s_lifecycle_resets, 0u);
 
     tinyusb_config_t tusb_cfg = TINYUSB_DEFAULT_CONFIG();
     tusb_cfg.event_cb = tiltmouse_usb_hid_mouse_device_event;
@@ -200,10 +243,41 @@ bool tiltmouse_usb_hid_mouse_is_suspended(void)
     return s_initialized && atomic_load(&s_suspended);
 }
 
+tm_usb_hid_mouse_status_t tiltmouse_usb_hid_mouse_status(void)
+{
+    usb_process_events();
+    return (tm_usb_hid_mouse_status_t){
+        .initialized = s_initialized,
+        .mounted = s_initialized && tud_mounted(),
+        .suspended = s_initialized && atomic_load(&s_suspended),
+        .quiescing = s_usb_publisher.quiescing,
+        .quiesced = tm_mouse_transport_is_quiesced(&s_usb_publisher),
+        .attaches = (uint32_t)atomic_load(&s_attaches),
+        .detaches = (uint32_t)atomic_load(&s_detaches),
+        .suspends = (uint32_t)atomic_load(&s_suspends),
+        .resumes = (uint32_t)atomic_load(&s_resumes),
+        .completions = (uint32_t)atomic_load(&s_completions),
+        .transfer_failures = (uint32_t)atomic_load(&s_transfer_failures),
+        .lifecycle_resets = (uint32_t)atomic_load(&s_lifecycle_resets),
+    };
+}
+
+bool tiltmouse_usb_hid_mouse_begin_quiesce(void)
+{
+    usb_process_events();
+    return tm_mouse_transport_begin_quiesce(&s_usb_publisher);
+}
+
+bool tiltmouse_usb_hid_mouse_is_quiesced(void)
+{
+    usb_process_events();
+    return tm_mouse_transport_is_quiesced(&s_usb_publisher);
+}
+
 tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_publish(
     const tm_mouse_report_t *report, uint64_t now_us, uint64_t deadline_us)
 {
-    usb_process_completion();
+    usb_process_events();
     return tm_mouse_transport_publish(
         &s_usb_publisher, TM_MOUSE_TRANSPORT_USB,
         report, now_us, deadline_us);
@@ -211,7 +285,7 @@ tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_publish(
 
 tm_mouse_publish_result_t tiltmouse_usb_hid_mouse_service(void)
 {
-    usb_process_completion();
+    usb_process_events();
     return tm_mouse_transport_service(
         &s_usb_publisher, TM_MOUSE_TRANSPORT_USB);
 }

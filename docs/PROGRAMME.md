@@ -70,9 +70,11 @@ The ESP32-S3 transmitter now maps TM-005A reports into the frozen faikeow FNR-00
 
 Join IMU, orientation, motion and touch into one logical report stream, then route reports through exactly one selected output: direct USB or ESP-NOW. Add startup neutral calibration, BOOT-button re-centre and optional diagnostics.
 
-### TM-007 / #7 — Robustness and usability hardening
+### TM-007 / #7 — Robustness and usability hardening — software implementation
 
-Harden USB lifecycle, ESP-NOW link/sequence/timeout behavior, transport transitions, IMU failures, touch failures, stale data and safe button release. Add deterministic fault/replay tests and physical acceptance telemetry.
+The transmitter now fences USB detach/suspend/reconnect behind an all-up barrier; preserves terminal movement semantics through failures; performs bounded ESP-NOW radio recovery without resetting the FNR sender session/sequence; recalibrates touch after faults/staleness; re-neutralizes IMU after errors/stale gaps; and exposes deterministic transport quiesce/re-arm semantics for host switching. Host tests exercise USB lifecycle directly against the production adapter plus generic fault/replay state machines. TM-008 telemetry includes generated/dropped motion, button-transition motion, source ages/recoveries, task-loop gaps/stack watermark, USB lifecycle state and ESP-NOW send/recovery/session/sequence counters.
+
+No click-motion freeze/damping is enabled. Physical USB/RF/ergonomic acceptance remains TM-008.
 
 ### TM-008 / #8 — Physical USB + faikeow ESP-NOW acceptance and tuning
 

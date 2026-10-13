@@ -246,7 +246,7 @@ Pivot/integration work:
 - TM-005A / #15: logical mouse-report and transport abstraction (implemented).
 - TM-005B / #16: ESP-NOW sender implementing faikeow platform v1 / relative_mouse v1 plus authenticated FNR-007 radio wrapper (implemented in software).
 - TM-006 / #6: integrated tilt mouse with selectable USB/ESP-NOW output.
-- TM-007 / #7: wired/wireless fault tolerance and hardening.
+- TM-007 / #7: wired/wireless fault tolerance, bounded recovery, quiesced handoff and TM-008 telemetry (implemented in software).
 - TM-008 / #8: physical USB + ESP-NOW acceptance and tuning.
 - TM-009 / #9: v0.1 wired/wireless release consolidation.
 

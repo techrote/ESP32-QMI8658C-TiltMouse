@@ -73,6 +73,7 @@ typedef struct {
     bool in_flight;
     bool dirty;
     bool fault_latched;
+    bool quiescing;
 } tm_mouse_transport_t;
 
 /* Activating/switching transport fences prior pending reports and starts with
@@ -81,6 +82,12 @@ bool tm_mouse_transport_activate(
     tm_mouse_transport_t *transport, tm_mouse_transport_id_t id,
     tm_mouse_transport_sink_t sink);
 void tm_mouse_transport_deactivate(tm_mouse_transport_t *transport);
+
+/* Stop accepting normal reports and establish a zero-motion/all-up barrier.
+ * Existing accepted work is consumed (never moved to another sink). Service
+ * must continue until quiesced before a caller activates another transport. */
+bool tm_mouse_transport_begin_quiesce(tm_mouse_transport_t *transport);
+bool tm_mouse_transport_is_quiesced(const tm_mouse_transport_t *transport);
 
 /* A publication is terminal; never re-offer a candidate to recover movement.
  * deadline_us=0 disables motion expiry (for producers with bounded immediate

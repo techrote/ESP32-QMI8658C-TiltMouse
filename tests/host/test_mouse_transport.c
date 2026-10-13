@@ -222,6 +222,66 @@ static void test_revision_and_exclusive_route(void)
     assert(result.reason == TM_MOUSE_REASON_INACTIVE);
 }
 
+static void test_quiesce_fences_old_work_and_requires_neutral(void)
+{
+    fake_t fake = {.ready = true, .accepts = true};
+    tm_mouse_transport_t pub = {0};
+    activate(&pub, &fake, TM_MOUSE_TRANSPORT_USB);
+    /* Every activation begins behind a neutral barrier. Establish it before
+     * testing an ordinary pressed movement. */
+    (void)tm_mouse_transport_service(&pub, TM_MOUSE_TRANSPORT_USB);
+    assert(fake.count == 1u && fake.output[0].buttons == 0u);
+    complete(&pub, true);
+
+    tm_mouse_report_t move = report(31, -4, TM_MOUSE_BUTTON_LEFT);
+    tm_mouse_publish_result_t result = tm_mouse_transport_publish(
+        &pub, TM_MOUSE_TRANSPORT_USB, &move, 0u, 0u);
+    assert(result.motion == TM_MOUSE_MOTION_ACCEPTED);
+    const uint64_t old_ticket = tm_mouse_transport_pending_ticket(&pub);
+    assert(old_ticket != 0u);
+
+    assert(tm_mouse_transport_begin_quiesce(&pub));
+    assert(!tm_mouse_transport_is_quiesced(&pub));
+    result = tm_mouse_transport_publish(
+        &pub, TM_MOUSE_TRANSPORT_USB, &move, 0u, 0u);
+    assert(result.reason == TM_MOUSE_REASON_INACTIVE);
+    assert(result.motion == TM_MOUSE_MOTION_DROPPED);
+
+    /* Completion of pre-quiesce movement cannot clear the newer release debt. */
+    assert(tm_mouse_transport_complete(&pub, old_ticket, true));
+    assert(pub.release_debt == TM_MOUSE_BUTTON_ALL);
+    assert(!tm_mouse_transport_is_quiesced(&pub));
+
+    (void)tm_mouse_transport_service(&pub, TM_MOUSE_TRANSPORT_USB);
+    assert(fake.count == 3u);
+    assert(fake.output[2].buttons == 0u);
+    assert(fake.output[2].dx == 0 && fake.output[2].dy == 0);
+    complete(&pub, true);
+    assert(tm_mouse_transport_is_quiesced(&pub));
+
+    /* Re-activation is a new local generation and starts neutral again. */
+    const uint64_t last_ticket = pub.last_ticket;
+    activate(&pub, &fake, TM_MOUSE_TRANSPORT_ESPNOW);
+    assert(!pub.quiescing && !tm_mouse_transport_is_quiesced(&pub));
+    tm_mouse_report_t neutral = report(0, 0, 0u);
+    (void)tm_mouse_transport_publish(
+        &pub, TM_MOUSE_TRANSPORT_ESPNOW, &neutral, 0u, 0u);
+    assert(tm_mouse_transport_pending_ticket(&pub) > last_ticket);
+}
+
+static void test_failed_quiesce_release_remains_pending(void)
+{
+    fake_t fake = {.ready = true, .accepts = false};
+    tm_mouse_transport_t pub = {0};
+    activate(&pub, &fake, TM_MOUSE_TRANSPORT_USB);
+    assert(tm_mouse_transport_begin_quiesce(&pub));
+    tm_mouse_publish_result_t result =
+        tm_mouse_transport_service(&pub, TM_MOUSE_TRANSPORT_USB);
+    assert(result.reason == TM_MOUSE_REASON_SUBMIT_FAILED);
+    assert(pub.release_debt == TM_MOUSE_BUTTON_ALL);
+    assert(!tm_mouse_transport_is_quiesced(&pub));
+}
+
 int main(void)
 {
     test_report();
@@ -229,5 +289,7 @@ int main(void)
     test_button_repair_and_release_barrier();
     test_invalid_failed_and_expired();
     test_revision_and_exclusive_route();
+    test_quiesce_fences_old_work_and_requires_neutral();
+    test_failed_quiesce_release_remains_pending();
     return 0;
 }

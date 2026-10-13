@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <math.h>
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -61,10 +62,11 @@ qmi8658_status_t qmi8658_read_sample(qmi8658_device_t *imu, qmi8658_sample_t *sa
     memset(sample, 0, sizeof(*sample));
     clock_us += 100; /* The target driver timestamps only after its I2C burst. */
     sample->host_time_us = clock_us;
-    sample->accel_g[2] = 1.0f;
+    /* Confirmed Matrix LED-face-up mounting: native sensor Z is negative. */
+    sample->accel_g[2] = -1.0f;
     if (iterations > 160 && iterations < 500) {
-        sample->accel_g[1] = 0.3f;
-        sample->accel_g[2] = 0.9539392f;
+        sample->accel_g[1] = -0.3f;
+        sample->accel_g[2] = -0.9539392f;
     }
     return QMI8658_OK;
 }
@@ -113,6 +115,8 @@ int main(void)
     assert(s_app.imu_stale == 0);
     assert(s_app.touch_stale == 0);
     assert(s_app.orientation.neutral_valid);
+    assert(fabsf(s_app.orientation.neutral_roll_deg) < 1.0f);
+    assert(fabsf(s_app.orientation.neutral_pitch_deg) < 1.0f);
     assert(s_app.touch_valid);
     assert(movement > 0);
     return 0;

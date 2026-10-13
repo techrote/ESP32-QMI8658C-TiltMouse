@@ -112,8 +112,10 @@ requirement is inferred. Recenter counters remained zero in captured periodic
 snapshots, so BOOT recenter is not established by this trial. Raw Input can
 coalesce reports; event counts are not a packet-loss measurement.
 
-The operator reported Y inverted and the response difficult to start, then
-hard to control in motion. TM-008 tuning candidate 1 inverts Y, reduces gain
+The operator initially reported Y inverted, then corrected that assessment:
+directions are correct when held the intended way with the cable in hand.
+The response was difficult to start, then hard to control in motion.
+TM-008 tuning candidate 1 preserves the original axis signs, reduces gain
 from 900 to 450 counts/s and changes exponent from 1.6 to 0.9. The 3 degree
 deadzone remains unchanged because corrected idle was quiet. See
 [the mapping contract](../../docs/ORIENTATION-MOTION.md) for predicted speeds.

@@ -288,7 +288,7 @@ static void test_physical_tuning_candidate_response(void)
     };
     tiltmouse_mouse_velocity_t velocity;
 
-    /* Retain the physically quiet neutral range and correct board Y direction. */
+    /* Retain the quiet neutral range and operator-confirmed board directions. */
     pose.roll_deg = 3.0f;
     pose.pitch_deg = -3.0f;
     assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
@@ -309,14 +309,14 @@ static void test_physical_tuning_candidate_response(void)
         assert(velocity.x_counts_per_s >= lower[i]);
         assert(velocity.x_counts_per_s <= upper[i]);
         assert(velocity.x_counts_per_s >= previous);
-        assert_close(velocity.y_counts_per_s, -velocity.x_counts_per_s, 0.0001f);
+        assert_close(velocity.y_counts_per_s, velocity.x_counts_per_s, 0.0001f);
         previous = velocity.x_counts_per_s;
         pose.roll_deg = -tilts[i];
         pose.pitch_deg = -tilts[i];
         assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
                TILTMOUSE_MOUSE_MOTION_OK);
         assert_close(velocity.x_counts_per_s, -previous, 0.0001f);
-        assert_close(velocity.y_counts_per_s, previous, 0.0001f);
+        assert_close(velocity.y_counts_per_s, -previous, 0.0001f);
     }
 }
 

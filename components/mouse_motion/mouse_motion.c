@@ -41,7 +41,7 @@ tiltmouse_mouse_motion_config_t tiltmouse_mouse_motion_default_config(void)
         },
         .y = {
             .source = TILTMOUSE_MOTION_AXIS_PITCH,
-            .invert = true,
+            .invert = false,
             .deadzone_deg = 3.0f,
             .max_tilt_deg = 35.0f,
             .response_exponent = 0.9f,

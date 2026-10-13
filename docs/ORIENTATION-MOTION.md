@@ -61,7 +61,7 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | Setting | X | Y |
 | --- | ---: | ---: |
 | source | roll | pitch |
-| invert | no | yes |
+| invert | no | no |
 | deadzone | 3° | 3° |
 | max useful tilt | 35° | 35° |
 | response exponent | 0.9 | 0.9 |
@@ -71,8 +71,10 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 Axis source and inversion are explicit so physical acceptance can change board-to-pointer mapping without changing estimator mathematics.
 
 TM-008 candidate 1 follows the operator's 13 October 2026 corrected-firmware
-trial: Y felt inverted, movement was hard to start, and larger motion was hard
-to control. It inverts Y and uses a mildly concave response with half the prior
+trial: movement was hard to start and larger motion was hard to control. The
+operator corrected the initial Y-inversion report after holding the board in
+the intended orientation with the cable in hand; the original axis signs are
+retained. The candidate uses a mildly concave response with half the prior
 900 counts/s gain. At 5/10/20/35 degrees, speeds are approximately
 37/115/255/450 counts/s, compared with 11/79/327/900 before. The 3 degree
 deadzone is retained because the corrected 25 second idle capture was quiet.

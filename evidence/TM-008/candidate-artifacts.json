@@ -143,15 +143,15 @@
     "host_tests_passed": 12
   },
   "current_deployed_app": {
-    "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
-    "mode": "USB HID + CDC telemetry",
-    "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af",
+    "source_commit": "62c17de5aaf3e41baf6384ff6cf19bd5b84071ae",
+    "mode": "USB HID + CDC native IMU observer",
+    "sha256": "167fb83c9ce1182a1eff8e07f06f38c7cf2f0d070adaf2a1b2df4af4943b043a",
     "exact_app_readback_verified": true,
     "diagnostic_usb_boot_observed": true,
     "clock_fix_in_this_deployed_app": true,
     "response_exponent": 1.6,
     "gain_counts_per_second": 900,
-    "physical_result": "Diagnosis stopped control trials: unexplained serial failure and neutral not ready"
+    "physical_result": "Confirmed face-up frame and gyro-offset defects; no control acceptance"
   },
-  "next_physical_action": "Keep board connected and untouched; qualify diagnostic raw-sample observer, then attribute neutral failure before further movement/recenter/RF trials."
+  "next_physical_action": "Qualify frame correction and native window statistics; collect stationary data before any bias/curve change."
 }

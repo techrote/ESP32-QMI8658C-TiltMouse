@@ -194,3 +194,42 @@ calibration/recalibration and faults, normal USB lifecycle, bounded click-motion
 correlation, authenticated receiver interoperability, RF/lifecycle recovery,
 cadence/loss/latency/soak and evidence-backed final defaults. Untested cases must
 remain open; compilation is not physical acceptance.
+
+## Confirmed face-up frame and stationary gyro observations
+
+Observer source `62c17de5aaf3e41baf6384ff6cf19bd5b84071ae` passed all four gates
+in [CI 38472932806](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38472932806).
+App SHA-256 `167fb83c9ce1182a1eff8e07f06f38c7cf2f0d070adaf2a1b2df4af4943b043a`
+passed live ROM identity, three flash-region digests and independent readback,
+then cold-booted as healthy diagnostic HID plus CDC. Original motion settings
+were retained. Exact artifacts are in [observer hashes](imu-observer-candidate.json).
+
+The operator explicitly confirmed flat, LED face up, still and untouched during
+the 30-second `imu-observer-stationary` capture. It had no serial/observer errors,
+HID removal or target movement. The [three periodic native snapshots](faceup-stationary-snapshots.csv)
+show acceleration approximately (44,-5,-1001) mg and native gyro Y between
+8781 and 9437 mdps. Quiet progress stayed 0/32 against the unchanged 8 dps
+startup limit. Roll stayed near -85 degrees rather than a flat pose near zero.
+These are ten-second snapshots, not a full-rate trace or precise noise estimate.
+
+This establishes an inappropriate native-to-estimator frame for the confirmed
+face-up pose, and an observed stationary gyro offset that blocks startup quiet
+calibration. The raw samples explain why changing the cursor curve alone could
+not qualify usability. No gyro-bias compensation or threshold relaxation has
+been applied. A dense fixed-capacity mean/spread window is needed before
+selecting a bias correction.
+
+Regression-first source `617dd2f0d642db0329057daf69e31f2a82bdeafc` supplies the
+confirmed negative native Z mounting to the actual target main loop, with zero
+gyro to isolate the frame defect. [CI 38474100635](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38474100635)
+fails the flat-neutral assertion while the other 11 tests pass: 286 publications,
+216 movement reports and no false freshness episodes. Small native Y changes
+across the -Z branch can therefore create large false roll transitions.
+
+The focused correction rotates both acceleration and gyro by 180 degrees
+about native X before the portable estimator: (X,Y,Z) -> (X,-Y,-Z). Driver bytes
+and native sample contract stay unchanged. Tests cover flat neutral in actual
+main, matching accel/gyro signs, proper rotation and quiet output under small
+native Y noise. Diagnostic-only bounded native mean/spread windows add no I2C
+reads, calibration decisions or movement semantics. Corrected CI, stationary
+bias observations and repeated physical axes/neutral tests remain required.

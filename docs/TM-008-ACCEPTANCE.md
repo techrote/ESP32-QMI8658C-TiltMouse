@@ -42,6 +42,13 @@ truncates toward zero. It performs no additional I2C transactions and changes
 no calibration limits, curve, recovery timing or input decisions. Normal USB
 and ESP-NOW builds exclude this additional observation state and output.
 
+The observer also aggregates native acceleration/gyro mean and peak-to-peak
+spread between diagnostics, with no sample queue and a 4096-acquisition cap.
+Each window logs its count and whether the cap was reached, then resets.
+These measurements diagnose bias/stationarity; they do not change the existing
+quiet calibration predicate or estimate/compensate gyro bias. Raw readouts
+remain native-frame; pose readouts use the target's corrected estimator frame.
+
 CI builds both wired variants and checks their actual linked descriptor bytes:
 
 ```sh

@@ -136,6 +136,30 @@
     {
       "capture": "restored-baseline-usb-passive/serial.bin",
       "sha256": "dffaf594f97946c58bbfceb8cce7877b7ecaf012e003de9b3129ded27346fb32"
+    },
+    {
+      "capture": "sender-candidate-builds-62c17de.json",
+      "sha256": "7e638a15d4e9e8005d36873475fcadb81b1166fe629a6127af7ab3ec940405c5"
+    },
+    {
+      "capture": "tiltmouse-imu-observer-diag-write/result.json",
+      "sha256": "a1f9991830ee14f132e3c8f5aa4fe32c599dc0abc6053f8295b247d7b8c4434e"
+    },
+    {
+      "capture": "tiltmouse-imu-observer-diag-write/application-readback.bin",
+      "sha256": "167fb83c9ce1182a1eff8e07f06f38c7cf2f0d070adaf2a1b2df4af4943b043a"
+    },
+    {
+      "capture": "imu-observer-stationary/result.json",
+      "sha256": "1542da27cddad60d081c731fa579465f294833a0b4ed317374e10a8101969736"
+    },
+    {
+      "capture": "imu-observer-stationary/serial.bin",
+      "sha256": "dc81cad861eaf744c5c907301b233d44f77074d97eaeb2c250ad79ed4797169c"
+    },
+    {
+      "capture": "faceup-regression-host-job.log",
+      "sha256": "ae00a6b4fe173490b3ae0f9f185dd5e1a2998c3bae63b83dd75382dd7011c692"
     }
   ]
 }

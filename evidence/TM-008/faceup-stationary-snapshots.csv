@@ -1,0 +1,4 @@
+device_log_ms,sample_host_us,sensor_timestamp,ax_mg,ay_mg,az_mg,gx_mdps,gy_mdps,gz_mdps,quiet_samples,quiet_target,roll_mdeg,pitch_mdeg,neutral_roll_mdeg,neutral_pitch_mdeg
+30989,30750748,6740,46,-4,-1002,-1625,8812,-671,0,32,-85000,1680,0,0
+40999,40758764,8976,44,-6,-1000,-1968,9437,-656,0,32,-84516,2237,0,0
+50999,50758766,11209,43,-5,-1002,-1640,8781,-937,0,32,-85000,2128,0,0

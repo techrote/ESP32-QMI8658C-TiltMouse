@@ -10,7 +10,18 @@ TM-004 is pure host-testable logic. It does not call ESP-IDF, TinyUSB, touch sen
 - `accel_g[3]`: native sensor X/Y/Z acceleration in g;
 - `gyro_dps[3]`: native sensor X/Y/Z angular rate in degrees per second.
 
-TM-004 estimates roll about sensor +X and pitch about sensor +Y. Gyro Z is ignored. Yaw and magnetometer support are out of scope.
+The pure estimator expects a consistent right-handed frame with positive Z
+gravity in the intended flat pose. It estimates roll about frame +X and pitch
+about frame +Y. Gyro Z is ignored by orientation integration. Yaw and
+magnetometer support are out of scope.
+
+TM-008 physical capture with the Matrix flat, LED face up and untouched showed
+native QMI gravity near (0,0,-1) g. Passing it directly to the estimator drove
+roll to the 85 degree bound. The target adapter now applies a fixed 180 degree
+rotation about native X: (X,Y,Z) becomes (X,-Y,-Z), for both acceleration and
+gyro. This is a proper rotation, not a Z-only reflection. The QMI driver still
+returns native data; portable estimator fixtures already use estimator-frame
+data. Physical axis signs and usable tilt remain acceptance work.
 
 ## Estimator
 

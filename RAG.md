@@ -59,6 +59,12 @@ The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9
 
 Do not use free-running gyro integration as the tilt estimate.
 
+TM-008's confirmed LED-face-up gravity is native QMI -Z. The target rotates both
+acceleration and gyro by 180 degrees about native X before estimation, mapping
+(X,Y,Z) to (X,-Y,-Z). QMI acquisition remains native-frame. This correction does
+not by itself resolve the observed stationary gyro offset or complete physical
+axis/neutral acceptance; see `evidence/TM-008/`.
+
 Use:
 1. accelerometer-derived gravity direction as the long-term reference;
 2. gyroscope angular rate for low-latency short-term motion;

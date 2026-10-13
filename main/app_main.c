@@ -11,6 +11,7 @@
 #include "freertos/task.h"
 #include "tiltmouse/app_pipeline.h"
 #include "tiltmouse/board.h"
+#include "tiltmouse/board_imu_frame.h"
 #include "tiltmouse/board_pins.h"
 #include "tiltmouse/qmi8658.h"
 #include "tiltmouse/qmi8658_esp_idf.h"
@@ -47,6 +48,14 @@ typedef struct {
     qmi8658_sample_t last_sample;
     uint32_t sample_count;
     uint32_t no_data_count;
+    uint32_t window_samples;
+    bool window_capped;
+    float accel_sum[3];
+    float accel_min[3];
+    float accel_max[3];
+    float gyro_sum[3];
+    float gyro_min[3];
+    float gyro_max[3];
 #endif
 } tm_imu_runtime_t;
 
@@ -192,12 +201,39 @@ static void read_imu(
     if (runtime->sample_count != UINT32_MAX) {
         ++runtime->sample_count;
     }
+    if (runtime->window_samples < 4096u) {
+        for (size_t i = 0; i < 3u; ++i) {
+            const float accel = hardware.accel_g[i];
+            const float gyro = hardware.gyro_dps[i];
+            if (runtime->window_samples == 0u) {
+                runtime->accel_sum[i] = 0.0f;
+                runtime->gyro_sum[i] = 0.0f;
+                runtime->accel_min[i] = runtime->accel_max[i] = accel;
+                runtime->gyro_min[i] = runtime->gyro_max[i] = gyro;
+            }
+            runtime->accel_sum[i] += accel;
+            runtime->gyro_sum[i] += gyro;
+            if (accel < runtime->accel_min[i]) {
+                runtime->accel_min[i] = accel;
+            }
+            if (accel > runtime->accel_max[i]) {
+                runtime->accel_max[i] = accel;
+            }
+            if (gyro < runtime->gyro_min[i]) {
+                runtime->gyro_min[i] = gyro;
+            }
+            if (gyro > runtime->gyro_max[i]) {
+                runtime->gyro_max[i] = gyro;
+            }
+        }
+        ++runtime->window_samples;
+    } else {
+        runtime->window_capped = true;
+    }
 #endif
     tiltmouse_imu_sample_t sample = {.timestamp_us = hardware.host_time_us};
-    for (size_t i = 0; i < 3; ++i) {
-        sample.accel_g[i] = hardware.accel_g[i];
-        sample.gyro_dps[i] = hardware.gyro_dps[i];
-    }
+    tiltmouse_board_imu_to_mouse_frame(hardware.accel_g, sample.accel_g);
+    tiltmouse_board_imu_to_mouse_frame(hardware.gyro_dps, sample.gyro_dps);
     (void)tm_app_on_imu(&s_app, &sample);
 }
 
@@ -407,6 +443,30 @@ void app_main(void)
                      (int32_t)(s_app.orientation.neutral_roll_deg * 1000.0f),
                      (int32_t)(s_app.orientation.neutral_pitch_deg * 1000.0f),
                      (int)s_app.boot_armed, (int)s_app.boot_down);
+            if (imu_runtime.window_samples != 0u) {
+                const float scale = 1000.0f / (float)imu_runtime.window_samples;
+                ESP_LOGI(TAG,
+                         "imu-window n=%" PRIu32 " capped=%d"
+                         " accel_mean_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " accel_span_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " gyro_mean_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " gyro_span_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")",
+                         imu_runtime.window_samples, (int)imu_runtime.window_capped,
+                         (int32_t)(imu_runtime.accel_sum[0] * scale),
+                         (int32_t)(imu_runtime.accel_sum[1] * scale),
+                         (int32_t)(imu_runtime.accel_sum[2] * scale),
+                         (int32_t)((imu_runtime.accel_max[0] - imu_runtime.accel_min[0]) * 1000.0f),
+                         (int32_t)((imu_runtime.accel_max[1] - imu_runtime.accel_min[1]) * 1000.0f),
+                         (int32_t)((imu_runtime.accel_max[2] - imu_runtime.accel_min[2]) * 1000.0f),
+                         (int32_t)(imu_runtime.gyro_sum[0] * scale),
+                         (int32_t)(imu_runtime.gyro_sum[1] * scale),
+                         (int32_t)(imu_runtime.gyro_sum[2] * scale),
+                         (int32_t)((imu_runtime.gyro_max[0] - imu_runtime.gyro_min[0]) * 1000.0f),
+                         (int32_t)((imu_runtime.gyro_max[1] - imu_runtime.gyro_min[1]) * 1000.0f),
+                         (int32_t)((imu_runtime.gyro_max[2] - imu_runtime.gyro_min[2]) * 1000.0f));
+                imu_runtime.window_samples = 0u;
+                imu_runtime.window_capped = false;
+            }
 #endif
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32

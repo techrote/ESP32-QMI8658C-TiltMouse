@@ -83,6 +83,7 @@ add_executable(
 target_include_directories(
     orientation_motion
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include
         ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
         ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
 )

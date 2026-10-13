@@ -202,13 +202,19 @@ static void test_buttons_reference_failure_and_drag(void)
     r = next(&app, 168000);
     assert(r.kind == TM_MOUSE_REPORT_RELEASE_ALL);
     assert(!tm_app_make_report(&app, 176000, &r));
-    touch(&app, 184000, 2000, 1000, 2000);
-    r = next(&app, 184000);
+    /* A fault invalidates the old baseline: fully recalibrate before
+     * a new physical press can become logical state again. */
+    for (unsigned i = 0; i < 16; ++i) {
+        touch(&app, 184000 + UINT64_C(8000) * i, 1000, 1000, 1000);
+    }
+    touch(&app, 312000, 2000, 1000, 2000);
+    touch(&app, 320000, 2000, 1000, 2000);
+    r = next(&app, 320000);
     assert(r.kind == TM_MOUSE_REPORT_CURRENT &&
            r.buttons == TM_MOUSE_BUTTON_ALL);
 
     tm_app_imu_error(&app);
-    r = next(&app, 192000);
+    r = next(&app, 328000);
     assert(r.dx == 0 && r.dy == 0 &&
            r.buttons == TM_MOUSE_BUTTON_ALL);
     assert(!app.orientation.neutral_valid);

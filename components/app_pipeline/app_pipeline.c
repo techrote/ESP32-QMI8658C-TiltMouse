@@ -276,6 +276,10 @@ bool tm_app_make_report(tm_app_pipeline_t *app, uint64_t now_us,
         return false;
     }
     *report = (tm_mouse_report_t){0};
+    if (app->imu_valid &&
+        !recent(app->last_imu_us, now_us, app->config.imu_fresh_us)) {
+        invalidate_imu(app, false);
+    }
     if (app->touch_valid &&
         !recent(app->last_touch_us, now_us, app->config.touch_fresh_us)) {
         reset_touch_after_fault(app, false);
@@ -296,10 +300,6 @@ bool tm_app_make_report(tm_app_pipeline_t *app, uint64_t now_us,
         (app->buttons.right_pressed ? TM_MOUSE_BUTTON_RIGHT : 0u);
     int8_t x = 0;
     int8_t y = 0;
-    if (app->imu_valid &&
-        !recent(app->last_imu_us, now_us, app->config.imu_fresh_us)) {
-        invalidate_imu(app, false);
-    }
     const bool fresh_imu = app->imu_valid &&
         app->orientation.neutral_valid;
     const bool new_clock = app->last_report_us != 0 &&

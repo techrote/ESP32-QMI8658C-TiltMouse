@@ -89,7 +89,7 @@ static void test_suspend_resume_neutral_fence(void)
     assert(g.last[0] == 0u && g.last[1] == 0u && g.last[2] == 0u);
     complete_last(true);
     status = tiltmouse_usb_hid_mouse_status();
-    assert(status.completions == 1u);
+    assert(status.completions == 2u);
 
     r = current(5, 1, TM_MOUSE_BUTTON_LEFT);
     result = tiltmouse_usb_hid_mouse_publish(&r, 200, 200);
@@ -142,6 +142,13 @@ int main(void)
 {
     g = (fake_usb_t){.mounted = true, .ready = true, .accept = true};
     assert(tiltmouse_usb_hid_mouse_init() == ESP_OK);
+    /* Initial activation itself is release-first; complete that barrier so
+     * lifecycle tests start from ordinary ready state. */
+    (void)tiltmouse_usb_hid_mouse_service();
+    assert(g.sends == 1u && g.last[0] == 0u && g.last[1] == 0u);
+    complete_last(true);
+    (void)tiltmouse_usb_hid_mouse_status();
+    g.sends = 0u;
     test_suspend_resume_neutral_fence();
     test_detach_reconnect_and_failed_completion();
     test_quiesce();

@@ -227,6 +227,11 @@ static void test_quiesce_fences_old_work_and_requires_neutral(void)
     fake_t fake = {.ready = true, .accepts = true};
     tm_mouse_transport_t pub = {0};
     activate(&pub, &fake, TM_MOUSE_TRANSPORT_USB);
+    /* Every activation begins behind a neutral barrier. Establish it before
+     * testing an ordinary pressed movement. */
+    (void)tm_mouse_transport_service(&pub, TM_MOUSE_TRANSPORT_USB);
+    assert(fake.count == 1u && fake.output[0].buttons == 0u);
+    complete(&pub, true);
 
     tm_mouse_report_t move = report(31, -4, TM_MOUSE_BUTTON_LEFT);
     tm_mouse_publish_result_t result = tm_mouse_transport_publish(
@@ -248,9 +253,9 @@ static void test_quiesce_fences_old_work_and_requires_neutral(void)
     assert(!tm_mouse_transport_is_quiesced(&pub));
 
     (void)tm_mouse_transport_service(&pub, TM_MOUSE_TRANSPORT_USB);
-    assert(fake.count == 2u);
-    assert(fake.output[1].buttons == 0u);
-    assert(fake.output[1].dx == 0 && fake.output[1].dy == 0);
+    assert(fake.count == 3u);
+    assert(fake.output[2].buttons == 0u);
+    assert(fake.output[2].dx == 0 && fake.output[2].dy == 0);
     complete(&pub, true);
     assert(tm_mouse_transport_is_quiesced(&pub));
 

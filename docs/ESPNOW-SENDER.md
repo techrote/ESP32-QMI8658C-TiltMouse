@@ -27,8 +27,10 @@
 ## Security boundary and provisioning
 
 Production wireless mode requires a **per-device 16-byte key**, exact
-receiver station MAC, channel 1..14, nonzero public config ID and
-generation. Supply these at application initialization from an
+sender and receiver station MACs, channel 1..14, nonzero public config ID and
+generation. The sender must compare its actual station MAC to the public
+FNR-007 provisioned sender MAC and fail closed on mismatch. The app supplies
+these credentials only from a local, ignored per-device configuration header. Supply these at application initialization from an
 operator-specific source that matches the FNR-007 paired receiver
 configuration. No example key, secret value or default universal key
 is linked into TiltMouse.
@@ -47,7 +49,7 @@ The application-level HMAC is mandatory even with CCMP link encryption:
 encrypted peer registration alone did not prove each packet encrypted
 or authenticated on the receiver's pinned SDK.
 
-HMAC implementation uses the pinned ESP-IDF mbedTLS SHA-256 provider.
+HMAC implementation uses ESP-IDF v6.1's Mbed TLS 4 PSA Crypto HMAC-SHA256 provider.
 No key or digest is printed. Temporary derived material is wiped.
 
 ## Lifecycle and evidence

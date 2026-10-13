@@ -16,6 +16,7 @@ extern "C" {
  * public config identity/generation and LMK must match the receiver build.
  */
 typedef struct {
+    uint8_t sender_mac[6]; /* Must match this ESP32-S3 station MAC. */
     uint8_t receiver_mac[6];
     uint8_t peer_key[16];
     uint8_t channel;

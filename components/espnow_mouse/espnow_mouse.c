@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "esp_event.h"
+#include "nvs_flash.h"
 #include "esp_now.h"
 #include "esp_random.h"
 #include "esp_wifi.h"
@@ -42,7 +43,8 @@ static bool valid_sender_config(const tm_espnow_mouse_config_t *cfg)
 {
     if (cfg == NULL || cfg->channel < 1u || cfg->channel > 14u ||
         cfg->config_id == 0 || cfg->generation == 0 ||
-        !valid_receiver_mac(cfg->receiver_mac)) {
+        !valid_receiver_mac(cfg->receiver_mac) ||
+        !valid_receiver_mac(cfg->sender_mac)) {
         return false;
     }
     uint8_t any = 0;
@@ -118,7 +120,11 @@ static void drain_completion(void)
 static esp_err_t init_wifi_and_peer(const tm_espnow_mouse_config_t *cfg,
                                     tm_fnr_auth_context_t *auth)
 {
-    esp_err_t err = esp_event_loop_create_default();
+    esp_err_t err = nvs_flash_init();
+    if (err != ESP_OK) {
+        return err;
+    }
+    err = esp_event_loop_create_default();
     if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
         return err;
     }
@@ -141,6 +147,10 @@ static esp_err_t init_wifi_and_peer(const tm_espnow_mouse_config_t *cfg,
         if (err != ESP_OK) break;
         err = esp_wifi_get_mac(WIFI_IF_STA, auth->sender_mac);
         if (err != ESP_OK) break;
+        if (memcmp(auth->sender_mac, cfg->sender_mac, 6) != 0) {
+            err = ESP_ERR_INVALID_STATE;
+            break; /* Fail closed if receiver provisioning expects another sender. */
+        }
         memcpy(auth->receiver_mac, cfg->receiver_mac, 6);
         auth->config_id = cfg->config_id;
         auth->generation = cfg->generation;

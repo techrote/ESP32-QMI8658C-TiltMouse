@@ -41,6 +41,7 @@ typedef struct {
     uint32_t reinit_attempts;
     uint32_t reinit_successes;
     uint64_t next_retry_us;
+    uint64_t no_data_since_us;
     qmi8658_status_t last_status;
 } tm_imu_runtime_t;
 
@@ -124,6 +125,25 @@ static void wake_app(void *arg)
     xTaskNotifyGive((TaskHandle_t)arg);
 }
 
+static void try_imu_reinit(
+    qmi8658_device_t *imu, const qmi8658_bus_t *bus,
+    tm_imu_runtime_t *runtime, uint64_t now_us)
+{
+    if (runtime->consecutive_failures < TM_DRIVER_FAILURE_THRESHOLD ||
+        now_us < runtime->next_retry_us) {
+        return;
+    }
+    ++runtime->reinit_attempts;
+    const qmi8658_status_t recovery = qmi8658_init(imu, bus);
+    runtime->last_status = recovery;
+    runtime->next_retry_us = now_us + TM_DRIVER_RETRY_US;
+    if (recovery == QMI8658_OK) {
+        ++runtime->reinit_successes;
+        runtime->consecutive_failures = 0;
+        runtime->no_data_since_us = now_us;
+    }
+}
+
 static void read_imu(
     qmi8658_device_t *imu, const qmi8658_bus_t *bus,
     tm_imu_runtime_t *runtime, uint64_t now_us)
@@ -132,24 +152,27 @@ static void read_imu(
     const qmi8658_status_t status = qmi8658_read_sample(imu, &hardware);
     runtime->last_status = status;
     if (status == QMI8658_NO_DATA) {
+        if (runtime->no_data_since_us == 0u) {
+            runtime->no_data_since_us = now_us;
+            return;
+        }
+        if (now_us >= runtime->no_data_since_us &&
+            now_us - runtime->no_data_since_us >
+                s_app.config.imu_fresh_us) {
+            if (runtime->consecutive_failures != UINT32_MAX) {
+                ++runtime->consecutive_failures;
+            }
+            try_imu_reinit(imu, bus, runtime, now_us);
+        }
         return;
     }
+    runtime->no_data_since_us = 0u;
     if (status != QMI8658_OK) {
         tm_app_imu_error(&s_app);
         if (runtime->consecutive_failures != UINT32_MAX) {
             ++runtime->consecutive_failures;
         }
-        if (runtime->consecutive_failures >= TM_DRIVER_FAILURE_THRESHOLD &&
-            now_us >= runtime->next_retry_us) {
-            ++runtime->reinit_attempts;
-            const qmi8658_status_t recovery = qmi8658_init(imu, bus);
-            runtime->last_status = recovery;
-            runtime->next_retry_us = now_us + TM_DRIVER_RETRY_US;
-            if (recovery == QMI8658_OK) {
-                ++runtime->reinit_successes;
-                runtime->consecutive_failures = 0;
-            }
-        }
+        try_imu_reinit(imu, bus, runtime, now_us);
         return;
     }
     runtime->consecutive_failures = 0;

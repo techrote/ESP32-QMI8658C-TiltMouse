@@ -29,6 +29,30 @@ typedef struct {
 esp_err_t tm_espnow_mouse_init(const tm_espnow_mouse_config_t *config);
 bool tm_espnow_mouse_initialized(void);
 
+typedef struct {
+    bool configured;
+    bool radio_up;
+    bool recovery_pending;
+    bool quiescing;
+    bool quiesced;
+    uint64_t session;
+    uint32_t next_sequence;
+    uint32_t consecutive_failures;
+    uint32_t send_attempts;
+    uint32_t immediate_failures;
+    uint32_t callback_successes;
+    uint32_t callback_failures;
+    uint32_t recovery_attempts;
+    uint32_t recovery_successes;
+    uint32_t recovery_failures;
+    uint64_t next_recovery_us;
+    esp_err_t last_error;
+} tm_espnow_mouse_status_t;
+
+tm_espnow_mouse_status_t tm_espnow_mouse_status(void);
+bool tm_espnow_mouse_begin_quiesce(void);
+bool tm_espnow_mouse_is_quiesced(void);
+
 /* Fully mirrors the TM-005A logical publication contract. One selected
  * sender, full-state button updates, terminal deltas, no retry queue.
  * ESP_NOW_SEND_SUCCESS does not prove remote application delivery. */

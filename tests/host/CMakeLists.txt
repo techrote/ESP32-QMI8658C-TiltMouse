@@ -192,3 +192,28 @@ target_include_directories(
 target_compile_features(usb_lifecycle PRIVATE c_std_11)
 target_compile_options(usb_lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_test(NAME usb_lifecycle COMMAND usb_lifecycle)
+
+add_executable(app_main_timing
+    test_app_main_timing.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/touch_buttons.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c)
+target_include_directories(app_main_timing PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/main_fakes
+    ${CMAKE_CURRENT_LIST_DIR}/fakes
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/qmi8658/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_input/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/include)
+target_compile_features(app_main_timing PRIVATE c_std_11)
+target_compile_options(app_main_timing PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(app_main_timing PRIVATE m)
+add_test(NAME app_main_timing COMMAND app_main_timing)

@@ -57,9 +57,23 @@ No key or digest is printed. Temporary derived material is wiped.
 An ESP-NOW send callback only records a bounded atomic status; the
 single foreground owner drains it and completes the TM-005A state
 machine. MAC-level success does not prove receiver application
-delivery or perfect short button-release reconstruction. Receiver
-timeout-neutralization and later transmitter lifecycle hardening
-belong to faikeow/FNR-008 and TiltMouse/TM-007 respectively.
+delivery or perfect short button-release reconstruction.
+
+TM-007 adds transmitter-local recovery without altering FNR bytes:
+immediate esp_now_send refusal and MAC callback failure are counted,
+and three consecutive failures schedule Wi-Fi/ESP-NOW reinitialization
+after a 50 ms backoff. Failed recovery doubles that delay to a maximum
+of 1 s. Each service iteration performs at most one due recovery attempt.
+The already-created FNR sender object is retained, so a local radio reset
+does not fabricate a new application session or rewind its u32 sequence.
+On recovery the local mouse transport is re-activated behind a zero-motion
+all-buttons-up barrier. Movement that failed or was in flight is never
+retransmitted.
+
+The public status snapshot exposes session/next sequence, send/API/callback
+failure counters and recovery state but no key/digest material. Receiver
+timeout/ordering/neutralization remains faikeow-owned; physical recovery
+and interoperability remain TM-008.
 
 The native OpenSSL host test checks FNR-006 envelope golden values,
 FNR-007's published public HMAC vector, an independently calculated

@@ -120,3 +120,27 @@ commit, paste, or print real key material. Wireless builds without it
 fail at compile time. Runtime rejects station-MAC mismatch and invalid
 pairing, without switching to USB or sending plaintext/unwrapped data.
 See docs/TM-006-INTEGRATION.md and docs/ESPNOW-SENDER.md.
+
+## TM-007 runtime bounds and diagnostics
+
+Normal scheduling remains a single serialized application owner driven by a
+4 ms timer notification. IMU polling is nominally 4 ms; touch and logical
+report cadence are nominally 8 ms. Notifications collapse rather than queue,
+so delayed work produces a measured gap and dropped interval instead of a
+catch-up cursor burst. The motion layer caps accepted report dt at 50 ms and
+the application source freshness hypothesis remains 100 ms pending TM-008.
+
+Repeated QMI or touch-driver failures cause at most one reinitialization
+attempt per 100 ms after a three-error threshold. ESP-NOW recovery likewise
+performs one bounded radio setup attempt when due, with exponential 50 ms to
+1 s backoff. There is still only one logical report in flight and no relative
+movement retry queue.
+
+The 10-second diagnostic snapshot records application report/movement/drop
+counts, IMU/touch errors/staleness/recovery/recalibration, maximum observed
+loop gap, collapsed timer slots and FreeRTOS stack high-water mark. USB mode
+also records mount/suspend and lifecycle-reset/completion failures. Wireless
+mode records send attempts, immediate/callback failures, recovery attempts,
+sender session and next platform sequence. Button transitions log generated
+X/Y at the transition timestamp for TM-008 click-motion correlation.
+No secret/key material is exposed.

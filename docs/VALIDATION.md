@@ -99,17 +99,18 @@ TM-008 must record the exact TiltMouse commit/artifact and, for wireless accepta
 
 ## Failure handling tests
 
-Before v0.1:
+TM-007 automated qualification establishes:
 
-- I2C NACK/timeouts do not wedge the main loop;
-- stale IMU data stops motion safely;
-- touch failure releases button state;
-- USB unmount/suspend does not build an unbounded report backlog;
-- ESP-NOW failure does not build an unbounded retransmission backlog;
-- TiltMouse sender tests establish fresh/full-state output while faikeow's own tests establish receiver timeout neutralization;
-- transport transitions cannot duplicate reports;
-- reconnect/recovery does not emit large stale movement;
-- re-centre clears residual motion.
+- QMI driver NACK/timeout/error propagation plus application invalidation; repeated target-driver errors trigger a rate-limited reinitialization attempt and successful samples require neutral recovery before movement;
+- stale IMU is counted once per fault episode and stops motion without replay;
+- touch driver/staleness faults force all-buttons release and reset the touch calibration state; normal input is withheld until the configured calibration sequence completes again;
+- the production USB adapter is host-exercised through suspend/resume and detach/reconnect; pre-lifecycle movement is consumed, a new neutral barrier is established, failed completion repairs only zero-motion state, and no unbounded queue exists;
+- ESP-NOW immediate/API failures and callback failures feed a bounded recovery controller (three consecutive failures; 50 ms exponential backoff capped at 1 s). Local radio reinitialization preserves the application sender session and monotonic sequence while re-activating output behind a neutral barrier;
+- generic handoff quiesces the old route behind all-up, refuses normal reports during the fence, installs the new already-initialized output only after local quiescence, and requires a fresh all-buttons-up observation before re-arming. Held gestures/movement never migrate between hosts;
+- reconnect/recovery never refunds or retries accepted relative movement;
+- re-centre/fault/switch paths clear fractional residual motion.
+
+Receiver timeout/order/HID behavior remains faikeow-owned and is not duplicated here.
 
 ## BLE boundary
 

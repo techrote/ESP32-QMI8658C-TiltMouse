@@ -26,7 +26,7 @@ The legacy USB-only three-byte construction helper remains available, including 
 
 The publisher retains desired complete button state and sticky release debt. If a newly requested press conflicts with owed release, a zero-motion release barrier must first complete before the new pressed state is emitted. The three result axes (`motion`, `state`, `reason`) distinguish accepted movement from retained buttons; state retention is not delivery evidence.
 
-Activation/switching fences the prior route, uses monotonically advancing local tickets and starts with an all-buttons-up obligation on the new route. Wrong-owner publications neither mutate state nor submit anything. Callers must not offer a dropped motion candidate to an alternate sink as a fallback.
+TM-007 makes activation/switching an explicit quiesce protocol. Once quiesce starts, the old route rejects normal reports, consumes any already-accepted movement without migration, and services only retained zero-motion state until an all-buttons-up barrier completes. Only then may the application install an already-initialized new route. The new route must observe fresh all-buttons-up input before normal reports re-arm; a held drag is deliberately not transferred between hosts. Local tickets remain monotonically advancing. Wrong-owner publications neither mutate state nor submit anything, and dropped motion is never offered to an alternate sink as fallback.
 
 The backend copies its report during successful `submit()` and must not retain its pointer. `complete()` is a transport endpoint signal, not proof of host application delivery. Matching tickets and release/state revisions prevent old completion signals from clearing newer release obligations.
 
@@ -42,6 +42,6 @@ The historical descriptor accidentally described button padding without emitting
 
 Host tests exercise report validation, USB conversion, busy/rejected/expired movement drops, invalid-input neutralization, owed release-before-repress, stale completion fencing, single-owner routing and the descriptor layout. The firmware CI target build verifies compatibility with the pinned ESP-IDF/TinyUSB stack; neither proves enumeration on the actual board.
 
-TM-006 owns independent input freshness, neutral calibration, scheduling and routing. TM-007 owns fully hardened USB lifecycle, concurrent callback/event fencing and reconnect/suspend behavior. TM-008 owns physical USB, IMU/touch, cursor feel and cross-repository RF acceptance.
+TM-006 owns independent input freshness, neutral calibration, scheduling and routing. TM-007 adds host-qualified USB lifecycle fencing, transport quiesce/re-arm, bounded radio recovery and fault telemetry. TM-008 still owns physical USB, IMU/touch, cursor feel and cross-repository RF acceptance.
 
 Future ESP-NOW send success is only a MAC-level signal, not an acknowledgement that the receiver applied the event. Repeating full current button state cannot reconstruct a release wholly lost between a press and re-press; stronger guarantees require the eventual accepted receiver contract or fail-closed timeout/rearm handling.

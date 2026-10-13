@@ -45,10 +45,10 @@ Completed components now include:
 - corrected 24-bit HID descriptor with genuine left/right button Input data;
 - ESP-NOW sender with exact faikeow platform/profile v1 encoding, paired-key HMAC authentication, session/sequence management and native Wi-Fi TX adapter.
 
-TM-006 integration now connects the sensors and controls to exactly one selected output. USB is the default; ESP-NOW requires a private paired configuration header. Physical usability/interoperability acceptance remains TM-008. Software integration must pass its own CI before merge. Subsequent work:
+TM-006 integration now connects the sensors and controls to exactly one selected output. USB is the default; ESP-NOW requires a private paired configuration header. Physical usability/interoperability acceptance remains TM-008. Software integration must pass its own CI before merge. TM-007 adds deterministic transmitter lifecycle/fault recovery and acceptance telemetry. Subsequent work:
 
-1. **TM-007 / #7** — harden the transmitter lifecycle and recovery;
-2. **TM-008 / #8** — qualify physical USB and ESP-NOW interoperability.
+1. **TM-008 / #8** — qualify physical USB, sensors, controls and faikeow ESP-NOW interoperability;
+2. **TM-009 / #9** — consolidate the evidence-backed v0.1 release.
 
 See [docs/ESPNOW-SENDER.md](docs/ESPNOW-SENDER.md) for accepted receiver compatibility and provisioning boundaries. The default wired path must not initialize Wi-Fi unnecessarily. ESP-NOW mode may initialize the ESP32-S3 Wi-Fi subsystem only as required for connectionless ESP-NOW; it does not require infrastructure Wi-Fi or IP networking. Bluetooth/BLE remains uninitialized for v0.1.
 

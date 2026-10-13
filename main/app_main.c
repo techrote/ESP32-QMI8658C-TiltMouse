@@ -13,6 +13,7 @@
 #include "tiltmouse/board.h"
 #include "tiltmouse/board_imu_frame.h"
 #include "tiltmouse/board_pins.h"
+#include "tiltmouse/gyro_bias.h"
 #include "tiltmouse/qmi8658.h"
 #include "tiltmouse/qmi8658_esp_idf.h"
 #include "tiltmouse/touch_input.h"
@@ -44,8 +45,10 @@ typedef struct {
     uint64_t next_retry_us;
     uint64_t no_data_since_us;
     qmi8658_status_t last_status;
+    tm_gyro_bias_t bias;
 #if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
     qmi8658_sample_t last_sample;
+    float last_corrected_gyro[3];
     uint32_t sample_count;
     uint32_t no_data_count;
     uint32_t window_samples;
@@ -148,6 +151,7 @@ static void try_imu_reinit(
         return;
     }
     ++runtime->reinit_attempts;
+    tm_gyro_bias_reset(&runtime->bias);
     const qmi8658_status_t recovery = qmi8658_init(imu, bus);
     runtime->last_status = recovery;
     runtime->next_retry_us = now_us + TM_DRIVER_RETRY_US;
@@ -187,6 +191,7 @@ static void read_imu(
     }
     runtime->no_data_since_us = 0u;
     if (status != QMI8658_OK) {
+        tm_gyro_bias_reset(&runtime->bias);
         tm_app_imu_error(&s_app);
         if (runtime->consecutive_failures != UINT32_MAX) {
             ++runtime->consecutive_failures;
@@ -231,9 +236,24 @@ static void read_imu(
         runtime->window_capped = true;
     }
 #endif
+    float corrected_gyro[3];
+    const tm_gyro_bias_result_t bias_result = tm_gyro_bias_update(
+        &runtime->bias, hardware.accel_g, hardware.gyro_dps,
+        hardware.host_time_us, corrected_gyro);
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    for (size_t i = 0; i < 3u; ++i) {
+        runtime->last_corrected_gyro[i] = corrected_gyro[i];
+    }
+#endif
+    if (bias_result != TM_GYRO_BIAS_READY) {
+        if (bias_result == TM_GYRO_BIAS_INVALID_SAMPLE) {
+            tm_app_imu_error(&s_app);
+        }
+        return;
+    }
     tiltmouse_imu_sample_t sample = {.timestamp_us = hardware.host_time_us};
     tiltmouse_board_imu_to_mouse_frame(hardware.accel_g, sample.accel_g);
-    tiltmouse_board_imu_to_mouse_frame(hardware.gyro_dps, sample.gyro_dps);
+    tiltmouse_board_imu_to_mouse_frame(corrected_gyro, sample.gyro_dps);
     (void)tm_app_on_imu(&s_app, &sample);
 }
 
@@ -443,6 +463,19 @@ void app_main(void)
                      (int32_t)(s_app.orientation.neutral_roll_deg * 1000.0f),
                      (int32_t)(s_app.orientation.neutral_pitch_deg * 1000.0f),
                      (int)s_app.boot_armed, (int)s_app.boot_down);
+            ESP_LOGI(TAG,
+                     "imu-bias ready=%d n=%" PRIu32 " rejected=%" PRIu32
+                     " qualified_us=%" PRIu64
+                     " offset_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " corrected_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")",
+                     (int)imu_runtime.bias.ready, imu_runtime.bias.samples,
+                     imu_runtime.bias.rejected_windows, imu_runtime.bias.qualified_us,
+                     (int32_t)(imu_runtime.bias.bias_dps[0] * 1000.0f),
+                     (int32_t)(imu_runtime.bias.bias_dps[1] * 1000.0f),
+                     (int32_t)(imu_runtime.bias.bias_dps[2] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[0] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[1] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[2] * 1000.0f));
             if (imu_runtime.window_samples != 0u) {
                 const float scale = 1000.0f / (float)imu_runtime.window_samples;
                 ESP_LOGI(TAG,

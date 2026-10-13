@@ -196,12 +196,14 @@ add_test(NAME usb_lifecycle COMMAND usb_lifecycle)
 
 add_executable(app_main_timing
     test_app_main_timing.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/gyro_bias.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/app_pipeline.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/touch_buttons.c
     ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c)
 target_include_directories(app_main_timing PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/include
     ${CMAKE_CURRENT_LIST_DIR}/main_fakes
     ${CMAKE_CURRENT_LIST_DIR}/fakes
     ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/include
@@ -229,3 +231,13 @@ target_compile_features(app_main_bias PRIVATE c_std_11)
 target_compile_options(app_main_bias PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(app_main_bias PRIVATE m)
 add_test(NAME app_main_bias COMMAND app_main_bias)
+
+add_executable(gyro_bias
+    test_gyro_bias.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/gyro_bias.c)
+target_include_directories(gyro_bias PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/include)
+target_compile_features(gyro_bias PRIVATE c_std_11)
+target_compile_options(gyro_bias PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(gyro_bias PRIVATE m)
+add_test(NAME gyro_bias COMMAND gyro_bias)

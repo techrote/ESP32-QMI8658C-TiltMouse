@@ -17,6 +17,9 @@ outputs normally and does not perform automatic switching.
   QMI8658 polls, 8-ms touch and report slots. Missed slots are dropped.
 - Host-testable IMU orientation, tilt velocity mapping, seven independent
   touch channels, and logical current/release reports.
+- TM-008 target adaptation first learns a bounded stationary gyro mean
+  (at least one second/128 samples), frozen during use and discarded
+  after a sensor error or stale gap. See `ORIENTATION-MOTION.md`.
 - Startup neutral capture only after 32 quiet valid sensor samples. No
   relative motion before neutral, after stale IMU, or on an excessive
   scheduling gap. Provisional limits: 100-ms input freshness, 50-ms

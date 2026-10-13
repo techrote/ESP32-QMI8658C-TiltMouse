@@ -7,8 +7,8 @@ TM-004 is pure host-testable logic. It does not call ESP-IDF, TinyUSB, touch sen
 `tiltmouse_imu_sample_t` intentionally mirrors the parts of TM-003's `qmi8658_sample_t` used here:
 
 - `timestamp_us`: monotonic host timestamp in microseconds;
-- `accel_g[3]`: native sensor X/Y/Z acceleration in g;
-- `gyro_dps[3]`: native sensor X/Y/Z angular rate in degrees per second.
+- `accel_g[3]`: estimator-frame X/Y/Z acceleration in g;
+- `gyro_dps[3]`: estimator-frame X/Y/Z angular rate in degrees per second.
 
 The pure estimator expects a consistent right-handed frame with positive Z
 gravity in the intended flat pose. It estimates roll about frame +X and pitch
@@ -22,6 +22,37 @@ rotation about native X: (X,Y,Z) becomes (X,-Y,-Z), for both acceleration and
 gyro. This is a proper rotation, not a Z-only reflection. The QMI driver still
 returns native data; portable estimator fixtures already use estimator-frame
 data. Physical axis signs and usable tilt remain acceptance work.
+
+## Target gyro zero-rate calibration
+
+The confirmed stationary Matrix capture after frame correction showed native
+gyro means near (-1.9, 10.3, -0.83) dps. The Y offset exceeds the unchanged
+8-dps startup quiet gate. Three roughly 1500-sample stationary windows had
+per-axis gyro spans at most 3.609 dps and acceleration spans at most 0.062 g.
+The actual-main regression with this offset reproduces failed neutral capture.
+
+The target adapter now learns a bounded stationary mean before forwarding IMU
+samples to the pipeline. It uses at least 128 samples spanning at least one
+second, with no gap over 100 ms. Each window requires acceleration magnitude
+0.75–1.25 g, per-axis acceleration span at most 0.10 g, per-axis gyro span at
+most 4 dps, and raw gyro magnitude at most 16 dps per axis. The last bound is
+an application guard covering the measured offset, not a QMI manufacturing
+tolerance. The window contains only fixed sums/min/max and at most 1024 samples;
+movement or excess count restarts it without queuing samples.
+
+After qualification the native gyro mean is subtracted and then rotated into
+the estimator frame. The offset remains frozen through normal motion and BOOT
+recenter. Sensor errors/reinitialization, invalid/non-monotonic samples, or a
+gap over 100 ms discard qualification. Motion remains withheld while a fresh
+stationary window is pending, followed by the existing 32-sample/8-dps neutral
+gate. Touch acquisition and fresh full-state button reports continue.
+
+The board must be still during startup and after sensor recovery. A six-axis
+IMU cannot distinguish constant yaw rotation from a gyro zero-rate offset;
+these stationarity checks are a bounded heuristic. No offset is persisted or
+hard-coded for this board. Diagnostic USB logs retain native samples and add
+qualification, frozen offset and corrected gyro values for physical review.
+This implementation still requires physical calibration/drift/axes acceptance.
 
 ## Estimator
 

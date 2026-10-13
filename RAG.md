@@ -61,9 +61,12 @@ Do not use free-running gyro integration as the tilt estimate.
 
 TM-008's confirmed LED-face-up gravity is native QMI -Z. The target rotates both
 acceleration and gyro by 180 degrees about native X before estimation, mapping
-(X,Y,Z) to (X,-Y,-Z). QMI acquisition remains native-frame. This correction does
-not by itself resolve the observed stationary gyro offset or complete physical
-axis/neutral acceptance; see `evidence/TM-008/`.
+(X,Y,Z) to (X,-Y,-Z). QMI acquisition remains native-frame. A bounded stationary
+startup window learns native gyro zero-rate offsets before this rotation and
+the existing 32-sample/8-dps neutral gate. The learned offset is frozen during
+use and discarded after sensor error/reinitialization or a gap over 100 ms.
+Keep the board still for startup; physical axis/neutral acceptance remains open.
+See `docs/ORIENTATION-MOTION.md` and `evidence/TM-008/`.
 
 Use:
 1. accelerometer-derived gravity direction as the long-term reference;

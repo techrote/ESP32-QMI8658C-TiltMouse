@@ -313,10 +313,11 @@ void app_main(void)
                     event_diag.last_button_transition_us;
                 ESP_LOGI(TAG,
                          "button-transition t=%" PRIu64
-                         " buttons=%u motion=(%d,%d)",
+                         " buttons=%u motion=(%d,%d) window_until=%" PRIu64,
                          event_diag.last_button_transition_us,
                          (unsigned)event_diag.last_buttons,
-                         (int)event_diag.last_dx, (int)event_diag.last_dy);
+                         (int)event_diag.last_dx, (int)event_diag.last_dy,
+                         event_diag.click_motion_window_until_us);
             }
         }
         if (diag_poll_us == 0 || now_us - diag_poll_us >= TM_DIAG_POLL_US) {
@@ -331,6 +332,7 @@ void app_main(void)
                      " touch(err=%" PRIu32 " stale=%" PRIu32
                      " recal=%" PRIu32 " rec=%" PRIu32
                      " drv_retry=%" PRIu32 "/%" PRIu32 ")"
+                     " click_peak=(%d,%d)/%" PRIu32
                      " loop_max=%" PRIu64 " collapsed=%" PRIu32
                      " stack_words=%u",
                      diag.reports_published, diag.movement_reports,
@@ -341,6 +343,8 @@ void app_main(void)
                      diag.touch_recalibrations, diag.touch_recoveries,
                      touch_runtime.reinit_successes,
                      touch_runtime.reinit_attempts,
+                     (int)diag.click_peak_dx, (int)diag.click_peak_dy,
+                     diag.click_motion_samples,
                      max_loop_gap_us, collapsed_ticks,
                      (unsigned)uxTaskGetStackHighWaterMark(NULL));
 #if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)

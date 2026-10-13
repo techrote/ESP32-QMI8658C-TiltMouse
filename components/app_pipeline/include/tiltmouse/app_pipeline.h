@@ -21,6 +21,7 @@ typedef struct {
     uint64_t max_report_gap_us;
     uint64_t boot_hold_min_us;
     uint64_t boot_hold_max_us;
+    uint64_t click_motion_window_us;
     uint32_t startup_quiet_samples;
     float startup_gyro_limit_dps;
     tiltmouse_orientation_config_t orientation;
@@ -53,6 +54,8 @@ typedef struct {
     uint64_t last_report_us;
     uint64_t boot_down_us;
     uint64_t last_button_transition_us;
+    uint64_t click_motion_window_until_us;
+    uint32_t click_motion_samples;
     uint32_t quiet_samples;
     uint32_t reports_published;
     uint32_t movement_reports;
@@ -69,6 +72,8 @@ typedef struct {
     uint32_t switch_completions;
     int8_t last_dx;
     int8_t last_dy;
+    int8_t click_peak_dx;
+    int8_t click_peak_dy;
     uint8_t last_buttons;
     bool imu_valid;
     bool imu_faulted;
@@ -88,6 +93,8 @@ typedef struct {
     uint64_t imu_age_us;
     uint64_t touch_age_us;
     uint64_t last_button_transition_us;
+    uint64_t click_motion_window_until_us;
+    uint32_t click_motion_samples;
     uint32_t reports_published;
     uint32_t movement_reports;
     uint32_t dropped_motion;
@@ -103,6 +110,8 @@ typedef struct {
     uint32_t switch_completions;
     int8_t last_dx;
     int8_t last_dy;
+    int8_t click_peak_dx;
+    int8_t click_peak_dy;
     uint8_t last_buttons;
     bool neutral_valid;
     bool touch_valid;

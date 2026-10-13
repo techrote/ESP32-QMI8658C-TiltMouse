@@ -383,6 +383,62 @@ static void test_diagnostics_snapshot(void)
     assert(diag.neutral_valid && diag.touch_valid);
 }
 
+static void test_click_motion_window_tracks_post_transition_peak(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+
+    /* Construct a fresh, calibrated logical state without relying on the
+     * physical touch fixture; this isolates telemetry arithmetic. */
+    app.touch_valid = true;
+    app.last_touch_us = 100000;
+    app.buttons.calibrated = true;
+    app.buttons.left_pressed = true;
+    app.imu_valid = true;
+    app.last_imu_us = 100000;
+    app.orientation.initialized = true;
+    app.orientation.neutral_valid = true;
+    app.orientation.neutral_roll_deg = 0.0f;
+    app.orientation.neutral_pitch_deg = 0.0f;
+    app.orientation.roll_deg = 20.0f;
+    app.orientation.pitch_deg = 0.0f;
+    app.last_report_us = 92000;
+    app.inhibit_motion_once = false;
+
+    tm_mouse_report_t r = next(&app, 100000);
+    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(app.last_button_transition_us == 100000);
+    assert(app.click_motion_window_until_us == 200000);
+    assert(app.click_motion_samples == 1u);
+
+    const int8_t first_peak = app.click_peak_dx;
+    app.orientation.roll_deg = 35.0f;
+    app.last_imu_us = 108000;
+    r = next(&app, 108000);
+    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(app.click_motion_samples == 2u);
+    assert((app.click_peak_dx < 0 ? -app.click_peak_dx : app.click_peak_dx) >=
+           (first_peak < 0 ? -first_peak : first_peak));
+
+    /* Reports after the 100-ms observation window leave the retained peak. */
+    const int8_t retained = app.click_peak_dx;
+    const uint32_t samples = app.click_motion_samples;
+    app.orientation.roll_deg = 35.0f;
+    app.last_imu_us = 208001;
+    app.last_touch_us = 208001;
+    (void)next(&app, 208001);
+    assert(app.click_motion_samples == samples);
+    assert(app.click_peak_dx == retained);
+
+    tm_app_diagnostics_t diag;
+    tm_app_diagnostics(&app, 208001, &diag);
+    assert(diag.last_button_transition_us == 100000);
+    assert(diag.click_motion_window_until_us == 200000);
+    assert(diag.click_motion_samples == samples);
+    assert(diag.click_peak_dx == retained);
+}
+
 int main(void)
 {
     test_startup_neutral_and_stale_sources();
@@ -394,5 +450,6 @@ int main(void)
     test_stale_sources_count_once_and_recover();
     test_switch_waits_for_quiesce_and_all_up_rearm();
     test_diagnostics_snapshot();
+    test_click_motion_window_tracks_post_transition_peak();
     return 0;
 }

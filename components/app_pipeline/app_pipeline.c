@@ -9,6 +9,7 @@
 #define TM_REPORT_GAP_US UINT64_C(50000)
 #define TM_BOOT_HOLD_MIN_US UINT64_C(600000)
 #define TM_BOOT_HOLD_MAX_US UINT64_C(4000000)
+#define TM_CLICK_MOTION_WINDOW_US UINT64_C(100000)
 
 static bool recent(uint64_t last_us, uint64_t now_us, uint64_t limit_us)
 {
@@ -23,6 +24,7 @@ tm_app_config_t tm_app_default_config(void)
         .max_report_gap_us = TM_REPORT_GAP_US,
         .boot_hold_min_us = TM_BOOT_HOLD_MIN_US,
         .boot_hold_max_us = TM_BOOT_HOLD_MAX_US,
+        .click_motion_window_us = TM_CLICK_MOTION_WINDOW_US,
         .startup_quiet_samples = 32,
         .startup_gyro_limit_dps = 8.0f,
         .orientation = tiltmouse_orientation_default_config(),
@@ -46,6 +48,7 @@ static bool config_valid(const tm_app_config_t *cfg)
            cfg->max_report_gap_us <= cfg->imu_fresh_us &&
            cfg->boot_hold_min_us > 0 &&
            cfg->boot_hold_max_us >= cfg->boot_hold_min_us &&
+           cfg->click_motion_window_us > 0 &&
            cfg->startup_quiet_samples > 0 &&
            isfinite(cfg->startup_gyro_limit_dps) &&
            cfg->startup_gyro_limit_dps > 0.0f &&
@@ -252,19 +255,51 @@ void tm_app_boot_sample(tm_app_pipeline_t *app, bool pressed, uint64_t now_us)
     }
 }
 
+static unsigned magnitude_i8(int8_t value)
+{
+    return value < 0 ? (unsigned)(-(int)value) : (unsigned)value;
+}
+
+static uint64_t saturating_add_u64(uint64_t a, uint64_t b)
+{
+    return UINT64_MAX - a < b ? UINT64_MAX : a + b;
+}
+
+static void update_click_peak(tm_app_pipeline_t *app, int8_t dx, int8_t dy)
+{
+    if (magnitude_i8(dx) > magnitude_i8(app->click_peak_dx)) {
+        app->click_peak_dx = dx;
+    }
+    if (magnitude_i8(dy) > magnitude_i8(app->click_peak_dy)) {
+        app->click_peak_dy = dy;
+    }
+    if (app->click_motion_samples != UINT32_MAX) {
+        ++app->click_motion_samples;
+    }
+}
+
 static void record_candidate(
     tm_app_pipeline_t *app, const tm_mouse_report_t *report, uint64_t now_us)
 {
-    const uint8_t buttons = report->kind == TM_MOUSE_REPORT_CURRENT
-        ? report->buttons : 0u;
-    if (buttons != app->last_buttons) {
+    const bool current = report->kind == TM_MOUSE_REPORT_CURRENT;
+    const uint8_t buttons = current ? report->buttons : 0u;
+    if (current && buttons != app->last_buttons) {
         app->last_button_transition_us = now_us;
+        app->click_motion_window_until_us =
+            saturating_add_u64(now_us, app->config.click_motion_window_us);
+        app->click_motion_samples = 0u;
+        app->click_peak_dx = 0;
+        app->click_peak_dy = 0;
     }
     app->last_buttons = buttons;
-    app->last_dx = report->kind == TM_MOUSE_REPORT_CURRENT ? report->dx : 0;
-    app->last_dy = report->kind == TM_MOUSE_REPORT_CURRENT ? report->dy : 0;
+    app->last_dx = current ? report->dx : 0;
+    app->last_dy = current ? report->dy : 0;
     if (app->last_dx != 0 || app->last_dy != 0) {
         ++app->movement_reports;
+    }
+    if (current && app->last_button_transition_us != 0u &&
+        now_us <= app->click_motion_window_until_us) {
+        update_click_peak(app, app->last_dx, app->last_dy);
     }
 }
 
@@ -419,6 +454,8 @@ void tm_app_diagnostics(
     out->touch_age_us = app->last_touch_us != 0 && now_us >= app->last_touch_us
         ? now_us - app->last_touch_us : UINT64_MAX;
     out->last_button_transition_us = app->last_button_transition_us;
+    out->click_motion_window_until_us = app->click_motion_window_until_us;
+    out->click_motion_samples = app->click_motion_samples;
     out->reports_published = app->reports_published;
     out->movement_reports = app->movement_reports;
     out->dropped_motion = app->dropped_motion;
@@ -434,6 +471,8 @@ void tm_app_diagnostics(
     out->switch_completions = app->switch_completions;
     out->last_dx = app->last_dx;
     out->last_dy = app->last_dy;
+    out->click_peak_dx = app->click_peak_dx;
+    out->click_peak_dy = app->click_peak_dy;
     out->last_buttons = app->last_buttons;
     out->neutral_valid = app->orientation.neutral_valid;
     out->touch_valid = app->touch_valid;

@@ -101,3 +101,22 @@ Neither proves:
 - touch reliability.
 
 Those are TM-008 physical evidence.
+
+## TM-006 output selection and private provisioning
+
+Normal builds use the USB HID mouse only and do not initialize Wi-Fi.
+To build the provisioned ESP-NOW mode, select TILTMOUSE_OUTPUT_ESPNOW
+with idf.py menuconfig, and create an untracked local header at
+main/tiltmouse_sender_config.local.h defining TM_ESPNOW_LOCAL_CONFIG.
+The macro expands to a tm_espnow_mouse_config_t struct initializer with
+sender_mac (this ESP32-S3 station MAC), receiver_mac (paired radio MAC),
+peer_key (the exact per-device 16-byte FNR-007 LMK), channel (1..14),
+config_id (nonzero u64), and generation (nonzero u32). Source values
+must match the same FNR-007 JSON used to build the receiver pair;
+peer_mac in that JSON is the TiltMouse sender station MAC.
+
+The header is gitignored because it contains the pairing key. Do not
+commit, paste, or print real key material. Wireless builds without it
+fail at compile time. Runtime rejects station-MAC mismatch and invalid
+pairing, without switching to USB or sending plaintext/unwrapped data.
+See docs/TM-006-INTEGRATION.md and docs/ESPNOW-SENDER.md.

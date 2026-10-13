@@ -2,3 +2,6 @@
 /sdkconfig
 /sdkconfig.old
 /managed_components/
+
+# Secret per-device sender configuration; never commit.
+main/tiltmouse_sender_config.local.h

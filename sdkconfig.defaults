@@ -1,13 +1,8 @@
-# Target selection is explicit: `idf.py set-target esp32s3`.
-# TM-002 enables exactly one native TinyUSB HID interface. Espressif's pinned
-# defaults leave CDC and the other USB device classes disabled, so the normal
-# firmware identity is mouse-only.
+# Default wired-only startup and mouse-only TinyUSB identity.
 CONFIG_TINYUSB_HID_COUNT=1
-
-# Route USB lifecycle state through esp_tinyusb's device-event callback. These
-# options make esp_tinyusb own the TinyUSB suspend/resume callbacks as well.
 CONFIG_TINYUSB_SUSPEND_CALLBACK=y
 CONFIG_TINYUSB_RESUME_CALLBACK=y
+CONFIG_TILTMOUSE_OUTPUT_USB=y
 
-# IMU, touch sensing, Wi-Fi, Bluetooth, and RGB effects are not initialized by
-# the current application.
+# Select wireless in menuconfig and supply ignored local paired credentials.
+# No infrastructure Wi-Fi/IP, Bluetooth or RGB effects in v0.1.

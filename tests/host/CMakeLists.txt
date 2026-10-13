@@ -137,3 +137,27 @@ target_compile_features(espnow_sender PRIVATE c_std_11)
 target_compile_options(espnow_sender PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(espnow_sender PRIVATE OpenSSL::Crypto)
 add_test(NAME espnow_sender COMMAND espnow_sender)
+
+add_executable(
+    app_pipeline
+    test_app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/touch_buttons.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
+)
+target_include_directories(
+    app_pipeline
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_input/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+)
+target_compile_features(app_pipeline PRIVATE c_std_11)
+target_compile_options(app_pipeline PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(app_pipeline PRIVATE m)
+add_test(NAME app_pipeline COMMAND app_pipeline)

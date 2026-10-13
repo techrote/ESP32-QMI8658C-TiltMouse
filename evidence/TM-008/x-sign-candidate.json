@@ -1,0 +1,127 @@
+{
+  "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+  "source_clean": true,
+  "builds": [
+    {
+      "mode": "usb",
+      "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "e4ae42492e383fdd3daa1b1de4bcd10ac80cc3ec4fd8bd47e6c25f54705c47c1",
+          "bytes": 262784
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "6e3a97d2fe062e9fd5604235e1a9f4d80fcccb35d06c50d711371a76a8d2b2fb",
+          "bytes": 4894680
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "b3c393b97da31028b60f37f632be922f991bfd0e2444e9c9ca27b0be1796e4b2",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "f76430a7d898fc358aa51cf64e69b8b17aa1a2b649b7f3adbab6f5cd4113f46f",
+          "bytes": 51617
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "usb-diagnostic",
+      "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd",
+          "bytes": 274400
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "4237ad86774bf994b52756c881b8c8e2da28aa6764d5f04388b6a0b9a03343b9",
+          "bytes": 5003520
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "54059f7a215d51d1a80dad0aa08be6678df6b95d6dc95362e099ce7da889e9da",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "9d0128b7380e3b7250b4378a60777935c687a6d764883cfae2ce4485ac56dc6e",
+          "bytes": 51928
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "espnow",
+      "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "a644f887a5cb2bc4983ea7f628a52ef2bb21a6978ee51f03f0eb9d7db36fb5ca",
+          "bytes": 726528
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "747d281cf864939306f78a98f9bb9d520745a98e4f20e3284402b92d8749f9d8",
+          "bytes": 8454936
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "4882c2d634d585b1113cd0d204cee5b4ef67b319baac8d365d923f65d552f1ad",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "6df68e8106295fb6f2535235156b145fb3ee53c3f2bc87c9176e02817f5641d0",
+          "bytes": 51620
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": true
+    }
+  ],
+  "physical_acceptance": false,
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "ci_run": 38483762002,
+  "ci_status": "PASS",
+  "host_tests_passed": 14,
+  "application_boot_observed": false,
+  "next_action": "Guarded diagnostic USB flash; cold boot; operator-aligned X/Y and BOOT recenter confirmation."
+}

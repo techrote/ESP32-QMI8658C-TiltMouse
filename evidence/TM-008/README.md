@@ -30,8 +30,13 @@ Operator report with LED face up and USB toward the operator: "Feels good,
 x axis swapped". The narrow correction in this branch inverts default cursor
 X only, preserving Y, the original 1.6/900 response and 3-degree deadzone.
 The default-response regression retains the magnitude table and checks both
-corrected X signs with unchanged Y. Build/CI and physical X confirmation are
-required before this correction is accepted.
+corrected X signs with unchanged Y. Source/build
+`e8cfa99c3780df1296eb0fe76678224f67a33436` passes all 14 tests and all four gates
+in [CI 38483762002](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38483762002).
+Local USB/diagnostic/real-pair ESP-NOW builds and linked HID checks pass.
+[Exact X-correction artifacts](x-sign-candidate.json) are archived but unflashed;
+diagnostic app is `a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd`.
+Physical X/Y and BOOT recenter confirmation remain required.
 
 [Derived capture results](gyro-bias-physical-results.json) identify exact source,
 artifact, timing and limits. [Mixed click windows](gyro-bias-mixed-click-windows.csv)

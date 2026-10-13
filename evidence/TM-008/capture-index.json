@@ -264,6 +264,26 @@
     {
       "capture": "gyro-bias-axes-operator-window/serial.bin",
       "sha256": "4a9bc74b8974bffa97f39ca9431b2b42d98d39a7e45cbcd2430a025ce8859b99"
+    },
+    {
+      "capture": "sender-candidate-builds-e8cfa99.json",
+      "sha256": "87415d73c05fda27292ffe7c9dba194922b26c175187de2ab117f3e4a182aeda"
+    },
+    {
+      "capture": "x-sign-host-job.log",
+      "sha256": "aec484417de21cd0635bc6b2b673cb0bb960ac11da8244160ddd4990a8f51466"
+    },
+    {
+      "capture": "x-sign-usb-build.log",
+      "sha256": "7a72074cd345037d551df46164b3b8801e21cb792244ee3eee98d44c3ce34a08"
+    },
+    {
+      "capture": "x-sign-usb-diag-build.log",
+      "sha256": "99db6f342e1e175cea926810d1e7f7edb52e08ee80c8f26ea5ec002997000688"
+    },
+    {
+      "capture": "x-sign-espnow-build.log",
+      "sha256": "7bdd78cc76e8b5c1394dd5c36b83d206ad45eec7c677fc1f58533e6244806d5e"
     }
   ]
 }

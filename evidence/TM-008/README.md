@@ -233,3 +233,28 @@ main, matching accel/gyro signs, proper rotation and quiet output under small
 native Y noise. Diagnostic-only bounded native mean/spread windows add no I2C
 reads, calibration decisions or movement semantics. Corrected CI, stationary
 bias observations and repeated physical axes/neutral tests remain required.
+
+## Frame candidate software qualification; downloader diagnosis pending
+
+Frame correction source `2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f` passes all
+four gates in [CI 38474705997](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38474705997),
+including the now-passing actual-main regression and all 12 host tests.
+Supplemental normal/diagnostic builds and linked descriptor checks pass.
+[Frame observer artifacts](frame-observer-candidate.json) are archived; diagnostic
+app SHA-256 is `e9695c98bcd56af1ddff01a5c46ef86163c36c80e957fcf9709320da38ec4299`.
+These candidates are not flashed or physically qualified.
+
+After operator reported cold downloader entry ready, fresh port/PnP inventories
+still showed the running 303a:4005 application rather than 303a:1001 ROM.
+No flash attempt followed. A bounded button-input diagnosis was requested:
+hold BOOT for 12 seconds and release without reset/unplug. It deliberately
+exceeds the 4-second recenter limit. The 60-second observation and separate
+30-second later window were USB/serial stable, with no target motion,
+no reset/recenter and BOOT down=0 in their periodic snapshots. Operator
+completion/timing confirmation is pending; this does not establish a failed
+button or wrong GPIO. Do not repeat automatic resets or flash the application
+serial port. Verify the physical button input/downloader path first.
+
+Current installed image remains source 62c17de / app 167fb83c, with the
+uncorrected frame and raw observer. Gyro-bias compensation is not implemented.
+Both issues/PRs remain open, with control/RF trials stopped for diagnosis.

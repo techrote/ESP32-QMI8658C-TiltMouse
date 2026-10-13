@@ -1,0 +1,90 @@
+{
+  "source_commit": "2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f",
+  "source_clean": true,
+  "builds": [
+    {
+      "mode": "usb",
+      "source_commit": "2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "a7d274fedd97ee8e6b5eb0fa64b4b394e5c34718f4d48ea9460a51a48d52ae7f",
+          "bytes": 261680
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "d89abcf25a000af2d3befae210cd1ea266ddd28e558acd2a43692d989293c5b5",
+          "bytes": 4881652
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "b3c393b97da31028b60f37f632be922f991bfd0e2444e9c9ca27b0be1796e4b2",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "f76430a7d898fc358aa51cf64e69b8b17aa1a2b649b7f3adbab6f5cd4113f46f",
+          "bytes": 51617
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "usb-diagnostic",
+      "source_commit": "2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "e9695c98bcd56af1ddff01a5c46ef86163c36c80e957fcf9709320da38ec4299",
+          "bytes": 272736
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "1e9c4745be6529c0f7f3b3e1d4bc57cc2784ac21915f3dcb8a83f675151dd6b3",
+          "bytes": 4990248
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "54059f7a215d51d1a80dad0aa08be6678df6b95d6dc95362e099ce7da889e9da",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "9d0128b7380e3b7250b4378a60777935c687a6d764883cfae2ce4485ac56dc6e",
+          "bytes": 51928
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    }
+  ],
+  "physical_acceptance": false,
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "host_tests_passed": 12,
+  "ci_run": 38474705997,
+  "ci_status": "PASS",
+  "frame_transform": "Native (X,Y,Z) to estimator (X,-Y,-Z), both accel and gyro",
+  "application_boot_observed": false,
+  "next_action": "Verify operator BOOT input/downloader entry before any write; then stationary frame and gyro-window capture."
+}

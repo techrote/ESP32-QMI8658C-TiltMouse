@@ -160,6 +160,26 @@
     {
       "capture": "faceup-regression-host-job.log",
       "sha256": "ae00a6b4fe173490b3ae0f9f185dd5e1a2998c3bae63b83dd75382dd7011c692"
+    },
+    {
+      "capture": "sender-candidate-builds-2ee4f77.json",
+      "sha256": "ce287ea7d33bcdece92390d63e7fa9672482af0e985a944d74c0f07d1acb0b9b"
+    },
+    {
+      "capture": "imu-observer-boot-button-diagnosis/result.json",
+      "sha256": "1f321a68c98c4b8637ef19d98c5c3072ee7f6b9403893a1d70e639916fee80d1"
+    },
+    {
+      "capture": "imu-observer-boot-button-diagnosis/serial.bin",
+      "sha256": "8eeeb220a88778c707870eff8f8a5f0e97eaf90f873e1fb695a90421464e5ee7"
+    },
+    {
+      "capture": "imu-observer-boot-button-late/result.json",
+      "sha256": "2f3cf50199ec3a61d98e45a5051cdfee91ce13ead91fe41d4724eff726ce9dd7"
+    },
+    {
+      "capture": "imu-observer-boot-button-late/serial.bin",
+      "sha256": "80a3a2f3a0013d3f039eb5fd65e574f4cacff190f03833f7eb0ee8a09fa207e0"
     }
   ]
 }

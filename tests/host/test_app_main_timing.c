@@ -64,7 +64,14 @@ qmi8658_status_t qmi8658_read_sample(qmi8658_device_t *imu, qmi8658_sample_t *sa
     sample->host_time_us = clock_us;
     /* Confirmed Matrix LED-face-up mounting: native sensor Z is negative. */
     sample->accel_g[2] = -1.0f;
-    if (iterations > 160 && iterations < 500) {
+#if defined(TM_TEST_GYRO_BIAS)
+    /* Measured stationary Matrix offset, not deliberate rotation. */
+    sample->gyro_dps[0] = -1.9f;
+    sample->gyro_dps[1] = 10.3f;
+    sample->gyro_dps[2] = -0.83f;
+#endif
+    /* Leave enough initial quiet time for a bounded stationary calibration. */
+    if (iterations > 320 && iterations < 500) {
         sample->accel_g[1] = -0.3f;
         sample->accel_g[2] = -0.9539392f;
     }

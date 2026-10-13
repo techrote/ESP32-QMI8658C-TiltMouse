@@ -131,7 +131,9 @@ catch-up cursor burst. The motion layer caps accepted report dt at 50 ms and
 the application source freshness hypothesis remains 100 ms pending TM-008.
 
 Repeated QMI or touch-driver failures cause at most one reinitialization
-attempt per 100 ms after a three-error threshold. ESP-NOW recovery likewise
+attempt per 100 ms after a three-error threshold. Persistent QMI `NO_DATA`
+beyond the configured IMU freshness interval enters that same bounded recovery
+path without treating ordinary empty polls as errors. ESP-NOW recovery likewise
 performs one bounded radio setup attempt when due, with exponential 50 ms to
 1 s backoff. There is still only one logical report in flight and no relative
 movement retry queue.

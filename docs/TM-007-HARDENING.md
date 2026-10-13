@@ -24,7 +24,7 @@ Initial selected-radio startup remains fail-closed. app_main performs at most th
 
 ## Sensor and touch faults
 
-QMI read errors invalidate neutral/motion immediately. Repeated target-driver errors trigger at most one re-probe/reconfiguration attempt per 100 ms after three failures. A later valid sample counts as acquisition recovery but movement remains gated until neutral is captured again. Pure staleness is separately counted once per fault episode.
+QMI read errors invalidate neutral/motion immediately. Repeated target-driver errors trigger at most one re-probe/reconfiguration attempt per 100 ms after three failures. A prolonged `NO_DATA` condition is separately detected after the IMU freshness interval and feeds the same bounded reinitialization path, so a sensor that stops asserting data-ready cannot remain permanently inert without recovery attempts. A later valid sample counts as acquisition recovery but movement remains gated until neutral is captured again. Pure application staleness is separately counted once per fault episode.
 
 Touch read failure or freshness expiry releases buttons and recreates the software calibration state. Fresh input remains invalid until the complete calibration sample count is observed again. The target touch controller is rate-limited similarly after repeated hardware read failures.
 

@@ -261,10 +261,14 @@ static void recover_radio_if_due(void)
         return;
     }
 
+    const bool preserve_quiesce = s_transport.quiescing;
     teardown_radio();
     tm_fnr_auth_context_t auth = {0};
     const esp_err_t err = init_wifi_and_peer(&s_config, &auth);
-    const bool success = err == ESP_OK && activate_transport();
+    bool success = err == ESP_OK && activate_transport();
+    if (success && preserve_quiesce) {
+        success = tm_mouse_transport_begin_quiesce(&s_transport);
+    }
     s_radio_up = success;
     s_last_error = success ? ESP_OK : (err == ESP_OK ? ESP_FAIL : err);
     tm_espnow_health_recovery_result(&s_health, success, now_us);

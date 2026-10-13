@@ -10,7 +10,7 @@
 
 ## USB lifecycle
 
-Detach and suspend callbacks latch an atomic lifecycle reset. The serialized application owner consumes that event, fences/discards the old local in-flight ledger and re-activates USB with an all-buttons-up obligation. Resume/reconnect must service that neutral barrier before current buttons can be restored. Pre-disconnect relative movement is never replayed.
+Detach and suspend callbacks latch an atomic lifecycle reset. The serialized application owner consumes that event, fences/discards the old local in-flight ledger and re-activates USB with an all-buttons-up obligation. Resume/reconnect must service that neutral barrier before current buttons can be restored. If a lifecycle reset occurs while a deliberate transport quiesce is active, that quiesce intent is restored on the new local generation rather than cancelling the handoff. ESP-NOW recovery preserves the same quiesce intent. Pre-disconnect relative movement is never replayed.
 
 Diagnostics count attach, detach, suspend, resume, successful completion, failed completion and lifecycle resets. The production USB adapter is compiled against a fake TinyUSB backend in host tests, exercising suspend, detach, reconnect, failed transfer repair and quiescence.
 

@@ -132,6 +132,17 @@ static void test_quiesce(void)
     complete_last(true);
     (void)tiltmouse_usb_hid_mouse_status();
     assert(tiltmouse_usb_hid_mouse_begin_quiesce());
+
+    /* A disconnect during handoff is a new USB generation but must not
+     * silently cancel the application's quiesce intent. */
+    event(TINYUSB_EVENT_DETACHED);
+    g.mounted = false;
+    tm_usb_hid_mouse_status_t status = tiltmouse_usb_hid_mouse_status();
+    assert(status.quiescing && !status.quiesced);
+    assert(!tiltmouse_usb_hid_mouse_is_quiesced());
+
+    g.mounted = true;
+    event(TINYUSB_EVENT_ATTACHED);
     (void)tiltmouse_usb_hid_mouse_service();
     assert(g.last[0] == 0u && g.last[1] == 0u && g.last[2] == 0u);
     complete_last(true);

@@ -120,14 +120,18 @@ static void usb_process_events(void)
     /* Lifecycle reset fences any accepted pre-disconnect/suspend work. The
      * newly activated publisher starts with an all-up release obligation. */
     if (atomic_exchange(&s_lifecycle_reset, false)) {
+        const bool preserve_quiesce = s_usb_publisher.quiescing;
         atomic_store(&s_completion, 0);
         const tm_mouse_transport_sink_t sink = {
             .ready = usb_sink_ready,
             .submit = usb_sink_submit,
             .context = NULL,
         };
-        (void)tm_mouse_transport_activate(
-            &s_usb_publisher, TM_MOUSE_TRANSPORT_USB, sink);
+        if (tm_mouse_transport_activate(
+                &s_usb_publisher, TM_MOUSE_TRANSPORT_USB, sink) &&
+            preserve_quiesce) {
+            (void)tm_mouse_transport_begin_quiesce(&s_usb_publisher);
+        }
         atomic_fetch_add(&s_lifecycle_resets, 1u);
     }
 

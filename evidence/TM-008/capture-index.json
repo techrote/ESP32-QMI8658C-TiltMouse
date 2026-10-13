@@ -1,0 +1,53 @@
+{
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "captures": [
+    {
+      "capture": "tiltmouse-chip-id.log",
+      "sha256": "b134f2e4aec74b0615d3a4ce71875d89854a126f899a83718c42893bb1b738fa"
+    },
+    {
+      "capture": "tiltmouse-flash-id.log",
+      "sha256": "fa12a338023b090a6cf4428fdb986d0c442fbb70b5831d72024b8c29b5f89387"
+    },
+    {
+      "capture": "tiltmouse-usb-build-manifest.json",
+      "sha256": "ddb32da90b7cd9e0692ff334ebd0b185000cf5581e3b3acb4d457025b4093521"
+    },
+    {
+      "capture": "tiltmouse-usb-initial-idle/result.json",
+      "sha256": "b6844d82f43b2ef6c45172e75db95cf2d6258256f682daf41ed9acbb6e6b87fa"
+    },
+    {
+      "capture": "tiltmouse-usb-normal-active-axes/result.json",
+      "sha256": "75ea69591264029f6087fa1c6c387ce6dee7ea8149a766853bb60928badc4b5b"
+    },
+    {
+      "capture": "tiltmouse-usb-diag-build-manifest.json",
+      "sha256": "b431d62c0649a69fe869bf3b6b11594b26e9e873502d0c987fbcfc2559f4723d"
+    },
+    {
+      "capture": "tiltmouse-usb-diag-flash.log",
+      "sha256": "8c2e2516758842e2e7bd4e3fd855ba8b3525451641d97fd2c5f679dc13f8e5b1"
+    },
+    {
+      "capture": "tiltmouse-diag-77aa8e1-app-readback.bin",
+      "sha256": "e837e8c535351ede8957c04fa75006da6fe87de001f83b4fe4d7ab0b85d43ffe"
+    },
+    {
+      "capture": "tiltmouse-boot-pin-read.log",
+      "sha256": "07fc235eac1160ebc4ac3cd383bde54a90c7a7a5ab67670eb07f630132051653"
+    },
+    {
+      "capture": "tiltmouse-diag-software-boot.log",
+      "sha256": "7a9cfad032d5156aad599a19a47eb575c8f0fc651b0ff05f31b658bfced557ea"
+    },
+    {
+      "capture": "regression-host-job.log",
+      "sha256": "f2db0e4f2cebc4fca8bef6f825e3d7dc7764a19086e91df9c4b57cf1d80ac402"
+    },
+    {
+      "capture": "clock-fix-host-job.log",
+      "sha256": "69ddf4032994c1dd3dbc90431f920a9c42fb8d4abb774dbc6f8ecc0983f7ae11"
+    }
+  ]
+}

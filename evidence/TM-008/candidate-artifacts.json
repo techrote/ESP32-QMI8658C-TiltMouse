@@ -1,0 +1,154 @@
+{
+  "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
+  "source_clean": true,
+  "builds": [
+    {
+      "mode": "usb",
+      "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "495b267e7a9ba4a18908edb7c71e31305a4e62a2a8e9d8d48d6b1a5b832ddd33",
+          "bytes": 261664
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "9fe79b3fc195753b1ad64bf5c31304d08ee6f56e08f045cf837616733bd4891b",
+          "bytes": 4881132
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "b3c393b97da31028b60f37f632be922f991bfd0e2444e9c9ca27b0be1796e4b2",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "f76430a7d898fc358aa51cf64e69b8b17aa1a2b649b7f3adbab6f5cd4113f46f",
+          "bytes": 51617
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "usb-diagnostic",
+      "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af",
+          "bytes": 271312
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "33eb7e7d686130d2c2f471c70d97907de7d811f7eb162173d08eaffdea0f8e21",
+          "bytes": 4988140
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "54059f7a215d51d1a80dad0aa08be6678df6b95d6dc95362e099ce7da889e9da",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "9d0128b7380e3b7250b4378a60777935c687a6d764883cfae2ce4485ac56dc6e",
+          "bytes": 51928
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "espnow",
+      "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "ff68288c40746cca2cea1f9224cf352461646461567b68870df4c573b07026e9",
+          "bytes": 725376
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "27f9052d6161222834ff07c0e8994e552961c673e3b7723a05eaab2357d9d91b",
+          "bytes": 8445440
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "4882c2d634d585b1113cd0d204cee5b4ef67b319baac8d365d923f65d552f1ad",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "6df68e8106295fb6f2535235156b145fb3ee53c3f2bc87c9176e02817f5641d0",
+          "bytes": 51620
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": true
+    }
+  ],
+  "physical_acceptance": false,
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "session_started_at_utc": "2026-10-13T19:52:29.4250701Z",
+  "timezone": "Europe/London",
+  "host_os": "Windows 11 Pro 64-bit 10.0.26300",
+  "esp_idf": "v6.1 (6.1.0)",
+  "esp_idf_commit": "fff9895c82d744c7237be8847347bdd1b07c6643",
+  "xtensa_toolchain": "esp-15.2.0_20251204",
+  "components": {
+    "esp_tinyusb": "2.3.0",
+    "tinyusb": "0.21.0~1"
+  },
+  "receiver_source": "a49d95e61dc910c7db139db0280f80a31d10bfc8",
+  "public_config_id": "0x28df6312548b3111",
+  "public_config_generation": 3,
+  "channel": 1,
+  "sender_station_mac_sha256": "47e318a576d408439c0eac06c612580ab13aec47ee8d73f20b5be19b0af2b4f7",
+  "receiver_station_mac": "ec:94:cb:b3:c4:65",
+  "receiver_freshness_ms": 250,
+  "ci": {
+    "run": 38462974058,
+    "head": "5f07be236680d6232081923615c0433d643c4fdf",
+    "all_four_jobs_passed": true,
+    "host_tests_passed": 12
+  },
+  "current_deployed_app": {
+    "source_commit": "77aa8e1be31e473fdf9e1261ef041d59a13c4807",
+    "mode": "USB HID + CDC telemetry",
+    "sha256": "e837e8c535351ede8957c04fa75006da6fe87de001f83b4fe4d7ab0b85d43ffe",
+    "exact_app_readback_verified": true,
+    "diagnostic_usb_boot_observed": false,
+    "clock_fix_in_this_deployed_app": false
+  },
+  "next_physical_action": "Release BOOT and tap RESET once; verify diagnostic USB startup before any further write."
+}

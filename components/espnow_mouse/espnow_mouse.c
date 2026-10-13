@@ -9,7 +9,7 @@
 #include "esp_now.h"
 #include "esp_random.h"
 #include "esp_wifi.h"
-#include "mbedtls/md.h"
+#include "psa/crypto.h"
 #include "tiltmouse/espnow_codec.h"
 
 static tm_fnr_sender_t s_sender;
@@ -57,9 +57,24 @@ static bool idf_hmac(void *context, const uint8_t *key, size_t key_size,
                      uint8_t digest[32])
 {
     (void)context;
-    const mbedtls_md_info_t *md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
-    return md != NULL && mbedtls_md_hmac(
-        md, key, key_size, message, message_size, digest) == 0;
+    psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+    psa_set_key_type(&attributes, PSA_KEY_TYPE_HMAC);
+    psa_set_key_bits(&attributes, key_size * 8u);
+    psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_MESSAGE);
+    psa_set_key_algorithm(&attributes, PSA_ALG_HMAC(PSA_ALG_SHA_256));
+    psa_key_id_t key_id = 0;
+    const psa_status_t imported =
+        psa_import_key(&attributes, key, key_size, &key_id);
+    psa_reset_key_attributes(&attributes);
+    if (imported != PSA_SUCCESS) {
+        return false;
+    }
+    size_t written = 0;
+    const psa_status_t status = psa_mac_compute(
+        key_id, PSA_ALG_HMAC(PSA_ALG_SHA_256),
+        message, message_size, digest, TM_FNR_SHA256_SIZE, &written);
+    (void)psa_destroy_key(key_id);
+    return status == PSA_SUCCESS && written == TM_FNR_SHA256_SIZE;
 }
 
 static bool radio_ready(void *context)
@@ -180,6 +195,9 @@ esp_err_t tm_espnow_mouse_init(const tm_espnow_mouse_config_t *cfg)
 {
     if (s_initialized) {
         return ESP_ERR_INVALID_STATE;
+    }
+    if (psa_crypto_init() != PSA_SUCCESS) {
+        return ESP_FAIL;
     }
     if (!valid_sender_config(cfg)) {
         return ESP_ERR_INVALID_ARG;

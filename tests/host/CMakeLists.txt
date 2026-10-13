@@ -161,3 +161,16 @@ target_compile_features(app_pipeline PRIVATE c_std_11)
 target_compile_options(app_pipeline PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(app_pipeline PRIVATE m)
 add_test(NAME app_pipeline COMMAND app_pipeline)
+
+add_executable(
+    espnow_health
+    test_espnow_health.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/espnow_health.c
+)
+target_include_directories(
+    espnow_health PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/include
+)
+target_compile_features(espnow_health PRIVATE c_std_11)
+target_compile_options(espnow_health PRIVATE -Wall -Wextra -Wpedantic -Werror)
+add_test(NAME espnow_health COMMAND espnow_health)

@@ -143,14 +143,15 @@
     "host_tests_passed": 12
   },
   "current_deployed_app": {
-    "source_commit": "b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf",
+    "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
     "mode": "USB HID + CDC telemetry",
-    "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2",
+    "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af",
     "exact_app_readback_verified": true,
     "diagnostic_usb_boot_observed": true,
     "clock_fix_in_this_deployed_app": true,
-    "tuning_candidate": 1,
-    "physical_result": "REJECTED speed curve; baseline restoration pending"
+    "response_exponent": 1.6,
+    "gain_counts_per_second": 900,
+    "physical_result": "Diagnosis stopped control trials: unexplained serial failure and neutral not ready"
   },
-  "next_physical_action": "Put only TiltMouse into downloader, verify live identity and restore archived 5f07be2 diagnostic image; then controlled BOOT recenter in actual grip."
+  "next_physical_action": "Keep board connected and untouched; qualify diagnostic raw-sample observer, then attribute neutral failure before further movement/recenter/RF trials."
 }

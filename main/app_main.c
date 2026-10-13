@@ -43,6 +43,11 @@ typedef struct {
     uint64_t next_retry_us;
     uint64_t no_data_since_us;
     qmi8658_status_t last_status;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    qmi8658_sample_t last_sample;
+    uint32_t sample_count;
+    uint32_t no_data_count;
+#endif
 } tm_imu_runtime_t;
 
 typedef struct {
@@ -152,6 +157,11 @@ static void read_imu(
     const qmi8658_status_t status = qmi8658_read_sample(imu, &hardware);
     runtime->last_status = status;
     if (status == QMI8658_NO_DATA) {
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+        if (runtime->no_data_count != UINT32_MAX) {
+            ++runtime->no_data_count;
+        }
+#endif
         if (runtime->no_data_since_us == 0u) {
             runtime->no_data_since_us = now_us;
             return;
@@ -176,6 +186,13 @@ static void read_imu(
         return;
     }
     runtime->consecutive_failures = 0;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    /* Observe exactly the acquisition consumed below; no extra sensor reads. */
+    runtime->last_sample = hardware;
+    if (runtime->sample_count != UINT32_MAX) {
+        ++runtime->sample_count;
+    }
+#endif
     tiltmouse_imu_sample_t sample = {.timestamp_us = hardware.host_time_us};
     for (size_t i = 0; i < 3; ++i) {
         sample.accel_g[i] = hardware.accel_g[i];
@@ -364,6 +381,33 @@ void app_main(void)
             diag_poll_us = now_us;
             tm_app_diagnostics_t diag;
             tm_app_diagnostics(&s_app, output_now_us, &diag);
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+            const qmi8658_sample_t *observed = &imu_runtime.last_sample;
+            ESP_LOGI(TAG,
+                     "imu-observe t=%" PRIu64 " sensor=%" PRIu32
+                     " samples=%" PRIu32 " no_data=%" PRIu32 " status=%s"
+                     " accel_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " gyro_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " quiet=%" PRIu32 "/%" PRIu32
+                     " pose_mdeg=(%" PRId32 ",%" PRId32 ")"
+                     " neutral_mdeg=(%" PRId32 ",%" PRId32 ")"
+                     " boot_armed=%d boot_down=%d",
+                     observed->host_time_us, observed->sensor_timestamp,
+                     imu_runtime.sample_count, imu_runtime.no_data_count,
+                     qmi8658_status_string(imu_runtime.last_status),
+                     (int32_t)(observed->accel_g[0] * 1000.0f),
+                     (int32_t)(observed->accel_g[1] * 1000.0f),
+                     (int32_t)(observed->accel_g[2] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[0] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[1] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[2] * 1000.0f),
+                     s_app.quiet_samples, s_app.config.startup_quiet_samples,
+                     (int32_t)(s_app.orientation.roll_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.pitch_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.neutral_roll_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.neutral_pitch_deg * 1000.0f),
+                     (int)s_app.boot_armed, (int)s_app.boot_down);
+#endif
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32
                      " neutral=%d touch_ready=%d age_us=(%" PRIu64 ",%" PRIu64 ")"

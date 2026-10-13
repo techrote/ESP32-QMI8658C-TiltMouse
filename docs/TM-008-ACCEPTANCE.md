@@ -33,6 +33,15 @@ click trials separately as host behavior. Periodic snapshots also expose
 neutral/touch readiness and actual IMU/touch ages. Instrumentation changes no
 input, movement, button or transport semantics.
 
+The diagnostic USB build additionally snapshots the same successful QMI
+acquisition consumed by the application. At the existing ten-second diagnostic
+cadence it logs acceleration in mg, angular rate in mdps, sensor/host timestamps,
+successful/no-data counts, current acquisition status, quiet-sample progress,
+filtered/neutral angles in millidegrees and BOOT state. Integer presentation
+truncates toward zero. It performs no additional I2C transactions and changes
+no calibration limits, curve, recovery timing or input decisions. Normal USB
+and ESP-NOW builds exclude this additional observation state and output.
+
 CI builds both wired variants and checks their actual linked descriptor bytes:
 
 ```sh

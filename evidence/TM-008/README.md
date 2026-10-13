@@ -137,6 +137,45 @@ BOOT recenter in the actual grip before further response tuning. Original
 axis signs remain unchanged. No click-motion freeze or damping is added.
 [Candidate 1 hashes/results](tuning-candidate-1.json) retain this failed trial.
 
+
+## Baseline restored; control trials stopped for diagnosis
+
+The archived 5f07be2 diagnostic image was restored after fresh ROM identity,
+three written-region digests and independent application readback matched.
+Operator cold unplug/replug established healthy 303a:4005 HID plus CDC again.
+The original exponent 1.6 / gain 900 and original axis directions are running.
+
+The 12 second `restored-baseline-startup` capture lost serial with Windows
+ClearCommError error 22. The operator reported it disconnected by itself and
+no unusual heat. Its 913 retained serial bytes show neutral not ready, touch
+ready, no input errors and successful USB transfers before interruption. The
+original wrapper failed to save the Raw Input result on this exception, so
+whole-device removal versus CDC-only failure is not established by that run.
+Movement/recenter/RF experiments were stopped; no reset or reflash followed.
+
+The separate 30 second `restored-baseline-usb-passive` diagnostic observation
+retained both channels even if serial were to fail. It had no serial/observer
+errors, no HID removal or target motion, and unchanged serial-port presence.
+Device uptime advanced from 170994 to 191004 ms in retained snapshots; USB
+attach=1, detach/suspend/resume/fail/reset=0 throughout. This bounded interval
+does not explain or erase the earlier interruption.
+
+The same snapshots expose a distinct input problem: neutral=0, IMU stale=1,
+recovery=1, driver reinitialization=1/1, maximum loop gap 279667 us, collapsed
+slots=68 and dropped logical movement=208. No additional increments occurred
+within the captured snapshots. Recovery's existing 200 ms plus 80 ms delays
+are consistent with the large loop gap; the initiating no-data event and
+failed subsequent quiet calibration are not yet attributed. No threshold,
+workload, axis, curve or recovery timing is changed to force a result.
+
+A new optional diagnostic-only observer retains the very same successful IMU
+sample already used by the pipeline and logs raw/scaled values, quiet progress,
+pose/neutral and BOOT state at the existing ten-second cadence. It adds no I2C
+reads or application commands. Qualify and deploy it through the confirmed
+cold ROM path, then diagnose stationary samples before resuming control tests.
+The register-address bit-7 check agrees with section 12.2 of the existing
+QMI8658C rev. 0.9 reference; no adapter addressing change is justified.
+
 Board A remains on its prior accepted config-2 production pair and received
 no flash/reset in this session. RF, receiver internal transport and joint
 recovery acceptance remain untested. The first normal baseline BIN was

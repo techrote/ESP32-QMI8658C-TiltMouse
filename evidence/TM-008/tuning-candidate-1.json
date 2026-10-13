@@ -99,5 +99,7 @@
   "operator_feedback": "Far less controllable than before; compared feel to flying a quadcopter in acro mode while drunk.",
   "capture": "tuning1b-diag-idle",
   "idle_result": "NOT ESTABLISHED: movement and buttons observed; operator handling not confirmed",
-  "next_action": "Restore archived 5f07be2 baseline response, then verify BOOT neutral capture in actual grip."
+  "next_action": "Diagnose restored baseline neutral and unexplained serial failure before further tuning.",
+  "currently_installed": false,
+  "restored_baseline_source": "5f07be236680d6232081923615c0433d643c4fdf"
 }

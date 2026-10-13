@@ -112,6 +112,30 @@
     {
       "capture": "tuning1b-diag-idle/serial.bin",
       "sha256": "16e1eb3d524096dd5979d4096ea5900658d85c2721617c9d0c48ea1f6614659a"
+    },
+    {
+      "capture": "tiltmouse-restore-baseline-diag-write/result.json",
+      "sha256": "e777d5e3dc34cfd0dc35a19763226e6565309932731f7a720994c8fb27bdbf69"
+    },
+    {
+      "capture": "tiltmouse-restore-baseline-diag-write/application-readback.bin",
+      "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af"
+    },
+    {
+      "capture": "restored-baseline-startup/serial.bin",
+      "sha256": "5195a9f1297e0f61f3c428e9e1a2e32d0a8ab557ed0b343ca11f108c4b08569c"
+    },
+    {
+      "capture": "restored-baseline-startup/observer-failure.json",
+      "sha256": "d16bc637d94c9e99cbc8550ebe4154beba776783bd289149bcf2cb6850b83acd"
+    },
+    {
+      "capture": "restored-baseline-usb-passive/result.json",
+      "sha256": "c0c0bd2846356e4aa2f2c709325abbee46355b5aef6bb535717eba7e6fb0ffe3"
+    },
+    {
+      "capture": "restored-baseline-usb-passive/serial.bin",
+      "sha256": "dffaf594f97946c58bbfceb8cce7877b7ecaf012e003de9b3129ded27346fb32"
     }
   ]
 }

@@ -9,6 +9,10 @@
 #include "sdkconfig.h"
 #include "tinyusb.h"
 #include "tinyusb_default_config.h"
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+#include "tinyusb_cdc_acm.h"
+#include "tinyusb_console.h"
+#endif
 #include "tiltmouse/usb_hid_mouse_report.h"
 #include "tiltmouse/mouse_report.h"
 #include "tiltmouse/mouse_transport.h"
@@ -18,13 +22,19 @@
 #endif
 
 enum {
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    TILTMOUSE_USB_INTERFACE_COUNT = 3,
+    TILTMOUSE_USB_CONFIG_DESC_TOTAL_LEN =
+        TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN + TUD_CDC_DESC_LEN,
+#else
     TILTMOUSE_USB_INTERFACE_COUNT = 1,
+    TILTMOUSE_USB_CONFIG_DESC_TOTAL_LEN = TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN,
+#endif
     TILTMOUSE_USB_HID_INTERFACE = 0,
     TILTMOUSE_USB_HID_STRING_INDEX = 4,
     TILTMOUSE_USB_HID_ENDPOINT_IN = 0x81,
     TILTMOUSE_USB_HID_ENDPOINT_SIZE = 8,
     TILTMOUSE_USB_HID_POLL_INTERVAL_MS = 8,
-    TILTMOUSE_USB_CONFIG_DESC_TOTAL_LEN = TUD_CONFIG_DESC_LEN + TUD_HID_DESC_LEN,
 };
 
 static const uint8_t s_hid_report_descriptor[] = {
@@ -62,6 +72,9 @@ static const char *s_string_descriptor[] = {
     "TiltMouse",
     "TM-002",
     "TiltMouse mouse",
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    "TiltMouse qualification telemetry",
+#endif
 };
 
 static const uint8_t s_configuration_descriptor[] = {
@@ -80,6 +93,10 @@ static const uint8_t s_configuration_descriptor[] = {
         TILTMOUSE_USB_HID_ENDPOINT_IN,
         TILTMOUSE_USB_HID_ENDPOINT_SIZE,
         TILTMOUSE_USB_HID_POLL_INTERVAL_MS),
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    /* CDC uses interfaces 1/2 and separate endpoints; HID stays byte-identical. */
+    TUD_CDC_DESCRIPTOR(1, 5, 0x82, 8, 0x03, 0x83, 64),
+#endif
 };
 
 static bool s_initialized;
@@ -217,6 +234,17 @@ esp_err_t tiltmouse_usb_hid_mouse_init(void)
     atomic_store(&s_completion, 0);
     const esp_err_t err = tinyusb_driver_install(&tusb_cfg);
     if (err == ESP_OK) {
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+        const tinyusb_config_cdcacm_t cdc = {.cdc_port = TINYUSB_CDC_ACM_0};
+        esp_err_t diag_err = tinyusb_cdcacm_init(&cdc);
+        if (diag_err == ESP_OK) {
+            /* Pinned VFS writes are nonblocking and bounded by the CDC FIFO. */
+            diag_err = tinyusb_console_init(TINYUSB_CDC_ACM_0);
+        }
+        if (diag_err != ESP_OK) {
+            return diag_err;
+        }
+#endif
         s_initialized = true;
         const tm_mouse_transport_sink_t sink = {
             .ready = usb_sink_ready,

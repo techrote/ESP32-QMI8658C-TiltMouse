@@ -1,6 +1,9 @@
 /build/
 /sdkconfig
 /sdkconfig.old
+/sdkconfig.usb-diag
+/sdkconfig.usb-diag.old
+/build-usb-diag/
 /managed_components/
 
 # Secret per-device sender configuration; never commit.

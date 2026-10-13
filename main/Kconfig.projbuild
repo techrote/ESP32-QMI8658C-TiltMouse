@@ -7,4 +7,14 @@ menu "TiltMouse output"
         config TILTMOUSE_OUTPUT_ESPNOW
             bool "Provisioned ESP-NOW to faikeow receiver"
     endchoice
+
+    config TILTMOUSE_USB_DIAGNOSTICS
+        bool "USB HID + CDC telemetry for physical qualification"
+        depends on TILTMOUSE_OUTPUT_USB
+        select TINYUSB_CDC_ENABLED
+        default n
+        help
+            Add a diagnostic serial interface and redirect the existing bounded
+            application logs to it. Normal wired firmware remains mouse-only.
+            This interface accepts no application commands or synthetic input.
 endmenu

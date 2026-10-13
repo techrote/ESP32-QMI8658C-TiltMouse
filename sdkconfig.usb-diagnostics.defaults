@@ -1,0 +1,4 @@
+# Qualification only: normal sdkconfig.defaults remains mouse-only.
+CONFIG_TILTMOUSE_USB_DIAGNOSTICS=y
+CONFIG_TINYUSB_CDC_COUNT=1
+CONFIG_TINYUSB_CDC_TX_BUFSIZE=2048

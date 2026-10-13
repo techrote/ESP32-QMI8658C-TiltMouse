@@ -1,0 +1,4 @@
+log_ms,samples,capped,accel_mean_mg_x,accel_mean_mg_y,accel_mean_mg_z,accel_span_mg_x,accel_span_mg_y,accel_span_mg_z,gyro_mean_mdps_x,gyro_mean_mdps_y,gyro_mean_mdps_z,gyro_span_mdps_x,gyro_span_mdps_y,gyro_span_mdps_z
+30974,1655,0,43,32,-999,11,10,42,-1933,10333,-833,2406,2390,562
+40974,1479,0,44,32,-999,12,32,62,-1900,10370,-837,1468,3609,1062
+50974,1516,0,43,32,-999,5,5,61,-1887,10234,-838,953,1265,578

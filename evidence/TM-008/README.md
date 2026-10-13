@@ -3,6 +3,47 @@
 Session: `joint-TM008-FNR008-2026-10-13`, started 13 October 2026, Europe/London.
 Status: **IN PROGRESS; NOT ACCEPTED**. Issue #8 remains open.
 
+## Latest checkpoint: corrected frame captured; gyro-bias candidate qualified in software
+
+The guarded held-BOOT procedure established ROM mode and matched the preserved
+live TiltMouse identity. Frame observer source `2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f`
+was flashed at 22:28:48 UTC with three region digests and independent application
+readback verified, then cold-booted. The 30-second stationary capture began at
+22:30:06 UTC. It had 2963 selected-device Raw Input events, zero motion, no
+USB removal, serial error or observer error. Flat pose is now about -2.8 degrees
+roll / -7.7 degrees pitch, rather than saturated near 85 degrees. This supports
+the board-frame correction; it does not establish axis signs or usability.
+
+[Three bounded acquisition windows](frame-stationary-windows.csv) show native
+gyro means around (-1.9, 10.3, -0.83) dps. Maximum per-axis spans are 3.609 dps
+and 0.062 g. Quiet progress remains 0/32 and neutral invalid against the
+unchanged 8-dps gate. No sensor/touch errors, stale episodes, driver retries,
+movement drops or resets occurred in the retained snapshots. Maximum local
+loop gap was 9975 us. [Derived result](frame-stationary-result.json) and hashed
+private originals distinguish this result from a complete calibration pass.
+
+Regression-first `579f9fd51694e76733377aaeb20111586ba3a45c` supplies the measured
+stationary offset to actual main and fails neutral capture (286 publications,
+zero motion, no freshness errors); the other 12 tests pass in CI 38478926087.
+Fix `3a33f41b0e2f5016b425bf28a955dfd777912bf8` adds the bounded stationary
+gyro-bias calibration documented in `docs/ORIENTATION-MOTION.md`. It passes
+all 14 host tests and all four required gates in
+[CI 38480200839](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38480200839).
+Local normal USB, diagnostic USB and real-pair ESP-NOW builds also pass, with
+linked USB descriptor comparison and wired-key-absence checks.
+
+[Exact gyro-bias artifacts](gyro-bias-candidate.json) are archived, not deployed
+at this checkpoint. Diagnostic app SHA-256 is
+`f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`.
+The learned offset is frozen during use; the original cursor curve, deadzone,
+8-dps quiet threshold, wire/auth contract and click-motion semantics remain.
+Next: flash with live ROM identity/readback, repeat stationary calibration and
+drift, then axes/recenter/usability. Board A remains unchanged on config 2;
+receiver/RF acceptance is untested. Both issues remain open.
+
+The following sections retain earlier chronological checkpoints and their
+then-current status; the latest checkpoint above takes precedence.
+
 ## Reconciled authority and baseline
 
 - TiltMouse main: `2be851985fefb55bc0df3063b66896c4ec900092`.

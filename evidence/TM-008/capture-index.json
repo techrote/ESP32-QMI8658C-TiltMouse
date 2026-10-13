@@ -188,6 +188,46 @@
     {
       "capture": "boot-hold-bounded-recording/serial.bin",
       "sha256": "fc2cab04b04aca119b71bf66834a6c6acba81fe088de0c4821152a3d2b52a17b"
+    },
+    {
+      "capture": "tiltmouse-frame-observer-diag-write/result.json",
+      "sha256": "6a50a8360d970c09692a6265b348f8b858c06f8839df9fe8f9f044d91aa36675"
+    },
+    {
+      "capture": "tiltmouse-frame-observer-diag-write/application-readback.bin",
+      "sha256": "e9695c98bcd56af1ddff01a5c46ef86163c36c80e957fcf9709320da38ec4299"
+    },
+    {
+      "capture": "frame-observer-stationary/result.json",
+      "sha256": "1467fcdc3436df17745eeb40b242a22c395a1608118d46e9e3c08245821e920d"
+    },
+    {
+      "capture": "frame-observer-stationary/serial.bin",
+      "sha256": "a2d3b9c50bcec9c2946af20bef24f82e69cf10a4cbd2c9c7480a1bc5fa74c4ce"
+    },
+    {
+      "capture": "gyro-bias-regression-host-job.log",
+      "sha256": "6a4b74c8ad51d93f4790c6249adb13b51177cfba0093db5642e05acddb5ac9d5"
+    },
+    {
+      "capture": "gyro-bias-fix-host-job.log",
+      "sha256": "1485da2381835d32494bf1ab662fc18ed449eb318d4febeea8fd0172f6a28d83"
+    },
+    {
+      "capture": "sender-candidate-builds-3a33f41.json",
+      "sha256": "82e90c60361c663263ee391bcb21b31f1ae063cb3d31a44fe793814fc9c9abf6"
+    },
+    {
+      "capture": "gyro-bias-usb-build.log",
+      "sha256": "5d539196215e5881e0557081e744f9bf274d9405b3b6d9154ad035d493f2ecd7"
+    },
+    {
+      "capture": "gyro-bias-usb-diag-build.log",
+      "sha256": "39e7ad7aa4445ae05cfd4732d5998c7d447da217c7b99908bc48ee5ace2532f8"
+    },
+    {
+      "capture": "gyro-bias-espnow-build.log",
+      "sha256": "02ab7d9607679e1a218be432f6981c66b5001f8412bb9bf077442c03b99200d1"
     }
   ]
 }

@@ -323,12 +323,16 @@ void app_main(void)
             read_touch(&touch, &touch_runtime, now_us);
         }
         tm_app_service(&s_app);
+        /* Acquisitions timestamp their successful completion, after loop entry.
+         * Keep slot scheduling above on the original clock, but assess freshness
+         * and publish only against a clock sampled after those acquisitions. */
+        const uint64_t output_now_us = (uint64_t)esp_timer_get_time();
         if (report_poll_us == 0 || now_us - report_poll_us >= TM_REPORT_POLL_US) {
             report_poll_us = now_us;
             tm_mouse_publish_result_t result = {0};
-            (void)tm_app_dispatch(&s_app, now_us, &result);
+            (void)tm_app_dispatch(&s_app, output_now_us, &result);
             tm_app_diagnostics_t event_diag;
-            tm_app_diagnostics(&s_app, now_us, &event_diag);
+            tm_app_diagnostics(&s_app, output_now_us, &event_diag);
             if (event_diag.last_button_transition_us != 0 &&
                 event_diag.last_button_transition_us !=
                     last_logged_button_transition_us) {
@@ -346,7 +350,7 @@ void app_main(void)
         if (diag_poll_us == 0 || now_us - diag_poll_us >= TM_DIAG_POLL_US) {
             diag_poll_us = now_us;
             tm_app_diagnostics_t diag;
-            tm_app_diagnostics(&s_app, now_us, &diag);
+            tm_app_diagnostics(&s_app, output_now_us, &diag);
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32
                      " dropped=%" PRIu32 " recenter=%" PRIu32

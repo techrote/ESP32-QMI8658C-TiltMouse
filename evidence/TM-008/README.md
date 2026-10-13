@@ -59,6 +59,29 @@ claimed by this record. No click-motion freeze/damping has been added.
 
 ## Outstanding acceptance
 
+## Retained target-loop timing failure
+
+The zero-motion observation prompted inspection of the real application loop.
+It captured `now_us` before acquisition, while successful IMU/touch reads stamp
+their completion. Dispatch then judged those fresh samples using the earlier
+time, so the deliberately strict freshness predicate treated them as future
+input and repeatedly invalidated calibration/motion.
+
+Regression-first commit `c558ded0faca1eb6dec811a742e35d2e91a53e62` includes the
+actual `main/app_main.c` with bounded fake timer/driver edges and the real
+pipeline/orientation/motion/touch logic. [CI 38461938110](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38461938110)
+reproduced the defect: 600 loop iterations, 19 publications, zero motion,
+300 IMU stale episodes and 18 touch stale episodes. The other 11 host tests
+passed. This is deterministic software evidence, not invented sensor evidence.
+
+The correction samples the output clock after acquisition and transport service.
+Poll-slot scheduling and the freshness limits stay unchanged. Dispatch and
+diagnostics use the new time; freshness checks still reject future timestamps.
+Corrected CI and repeated physical evidence remain required. The defect is
+TiltMouse-owned; no receiver or wire/authentication change is justified.
+
+## Outstanding acceptance
+
 The [campaign instructions](../../docs/TM-008-ACCEPTANCE.md) and issue #8 remain
 the gates: axes/signs, neutral/recenter, full left/right/GPIO4 touch matrix,
 calibration/recalibration and faults, normal USB lifecycle, bounded click-motion

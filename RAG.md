@@ -93,7 +93,7 @@ Do not duplicate the same motion report across both transports during normal ope
 
 ## ESP-NOW policy
 
-TM-005B / #16 owns the TiltMouse sender implementation. The generic ESP-NOW platform envelope, profile IDs and `relative_mouse` receiver contract are owned by `techrote/faikeow-now-reciever` (not by TiltMouse).
+TM-005B / #16 implements the TiltMouse sender in components/espnow_mouse using the exact FNR-006 protocol and mandatory FNR-007 authenticated wrapper; see docs/ESPNOW-SENDER.md. The generic ESP-NOW platform envelope, profile IDs and `relative_mouse` receiver contract are owned by `techrote/faikeow-now-reciever` (not by TiltMouse).
 
 The wireless protocol must:
 
@@ -244,7 +244,7 @@ Completed foundation/feature work:
 Pivot/integration work:
 
 - TM-005A / #15: logical mouse-report and transport abstraction (implemented).
-- TM-005B / #16: ESP-NOW sender implementing faikeow platform envelope + `relative_mouse` profile.
+- TM-005B / #16: ESP-NOW sender implementing faikeow platform v1 / relative_mouse v1 plus authenticated FNR-007 radio wrapper (implemented in software).
 - TM-006 / #6: integrated tilt mouse with selectable USB/ESP-NOW output.
 - TM-007 / #7: wired/wireless fault tolerance and hardening.
 - TM-008 / #8: physical USB + ESP-NOW acceptance and tuning.

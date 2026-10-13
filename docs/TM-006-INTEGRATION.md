@@ -1,66 +1,57 @@
-# TM-006 — Integration implementation and dependency hold
+# TM-006 — Integrated tilt and touch application
 
-## Status
+## Dependencies and scope
 
-This branch provides dependency-ready TM-006 integration but **does not meet
-the full issue #6 acceptance contract**. The genuine ESP-NOW sender belongs to
-TM-005B / issue #16, which has not yet merged. This branch must not merge,
-and issue #6 must remain open, until that predecessor is accepted and wired in.
+TM-006 is stacked onto the TM-005B sender implementation. Merge the
+TM-005B PR for issue 16 and verify exact main before accepting this PR.
+No firmware-to-firmware physical interchange is claimed.
 
-## Implemented on this branch
+The application has one explicit startup transport: native USB HID
+(default) or authenticated ESP-NOW. A selected radio that cannot initialize
+does not silently fall back to wired HID. The firmware never runs both
+outputs normally and does not perform automatic switching.
 
-- A hardware-independent controller (components/app_pipeline) combining the
-  accepted QMI8658 sample contract, TM-004 orientation/velocity engine,
-  TM-005 GPIO1–GPIO7 touch logic and TM-005A logical mouse reports.
-- Source freshness is based on last successful acquisition, never the report
-  timestamp. IMU and touch have independent provisional 100-ms age limits.
-- Startup motion is gated on valid IMU plus 32 consecutive quiet, gravity-
-  plausible samples. The first report after neutral capture is zero-motion.
-- A real ESP-IDF application loop with a 4-ms esp_timer notification samples
-  IMU at most once per tick and touch/reports at approximately 8-ms intervals.
-  Delayed timer notifications are collapsed; there is no catch-up queue.
-- BOOT/GPIO0 re-centres only after a deliberate 600–4000-ms press/release and
-  only after BOOT was seen released after startup. This preserves flashing
-  recovery and does not synthesize button presses/releases.
-- Fractional motion residual is discarded on re-centre, IMU failure, lack of
-  neutral, stale input or a delayed report gap longer than 50 ms.
-- Touch invalidity latches a single explicit safety release, with no stale
-  pressed-button state published. Fresh touch can retain held/drag state even
-  when IMU/motion is temporarily unavailable.
-- Output is initialized once with a single selected sink. The physical
-  application binds USB; host tests instantiate USB and mock ESP-NOW sinks to
-  check ownership without inventing a radio implementation.
-- Diagnostic logs contain only counters and calibration state, not secrets.
-  The existing USB descriptor/identity remains the accepted mouse-only HID.
-- No infrastructure Wi-Fi/IP, BLE, RGB or ESP-NOW initialization is introduced.
+## Input and safety
 
-Values/rates are hypotheses for TM-008 physical tuning, not final usability
-acceptance. Actual ESP-NOW binding is explicitly absent.
+- Single serialized ESP-IDF application loop: 4-ms timer, nominal 4-ms
+  QMI8658 polls, 8-ms touch and report slots. Missed slots are dropped.
+- Host-testable IMU orientation, tilt velocity mapping, seven independent
+  touch channels, and logical current/release reports.
+- Startup neutral capture only after 32 quiet valid sensor samples. No
+  relative motion before neutral, after stale IMU, or on an excessive
+  scheduling gap. Provisional limits: 100-ms input freshness, 50-ms
+  maximum report gap, 8-dps gyro stillness limit.
+- BOOT/GPIO0 must be seen released after startup. A deliberate
+  600–4000-ms held-then-released gesture re-centres orientation and
+  resets fractional X/Y motion without generating a click or dropping
+  independently fresh held buttons.
+- Touch acquisition/calibration failures trigger a sticky safety release
+  once; no stale pressed state is replayed. Failed IMU only suppresses
+  movement while fresh touch may still update buttons.
 
-## TM-005B prerequisite
+## Wireless compatibility
 
-TM-005B must merge first with the exact accepted faikeow contracts:
+The radio consumes the same validated TM-005A logical reports through
+TM-005B and emits exact FNR-006 platform-v1 relative_mouse-v1 bytes.
+FNR-007 requires the authenticated FNA1 44-byte payload, encrypted peer
+and per-device key. Actual sender station MAC, receiver station MAC,
+public config identity/generation, RF channel and 16-byte LMK must match
+the provisioned receiver pair.
 
-- FNR-006 platform v1 / relative_mouse v1 at receiver commit
-  136ef3b612f83fd9cad74a5dd50c2e5f629b44de, 18-byte envelope header,
-  four-byte mouse profile and sender session/sequence behavior;
-- FNR-007 authenticated radio wrapper v1 and paired provisioning at receiver
-  commit a49d95e61dc910c7db139db0280f80a31d10bfc8, with encrypted peer
-  admission and per-device HMAC authentication.
+Normal USB builds never initialize Wi-Fi; wireless builds require an
+ignored private header main/tiltmouse_sender_config.local.h defining
+TM_ESPNOW_LOCAL_CONFIG as a tm_espnow_mouse_config_t initializer. The
+header MUST NOT be committed. No universal key, plaintext fallback,
+infrastructure Wi-Fi/IP, Bluetooth or RGB feature is introduced.
 
-Once TM-005B is merged, replace the fixed USB startup binding with explicit
-USB-default or provisioned ESP-NOW startup selection, retaining one selected
-output owner. Integrate TM-005B's real sender API, preserve its session/sequence
-behavior, and add exact cross-repo compatibility and mode-selection tests.
+## Acceptance boundary
 
-The receiver owns ordering, timeout-neutralization, ESP8266–RP2040 transport
-and USB receiver; none are reimplemented here.
+Deterministic host tests validate neutral, touch fusion, deliberate
+re-centre, freshness, button and transport ownership. TM-005B host tests
+validate faikeow golden vectors, authenticated HMAC and sequence wrap.
+The ESP32-S3 CI build validates SDK compilation. Physical USB, RF link,
+click-induced movement and complete reference receiver acceptance remain
+TM-007/TM-008 gates, not claims of this PR.
 
-## Evidence policy
-
-The host suite checks timestamp freshness, startup calibration, re-centre,
-button fusion, GPIO4 isolation, safe fault release, USB/wireless-mock output
-routing, and delayed-motion drop. The required ESP32-S3 cross-build must also
-pass. Neither hosted test nor target build establishes physical USB
-enumeration, IMU orientation, touch ergonomics or RF receiver compatibility.
-TM-007 owns additional lifecycle hardening; TM-008 owns physical acceptance.
+Receiver FNR-006 frozen at 136ef3b612f83fd9cad74a5dd50c2e5f629b44de.
+FNR-007 provisioning/wrapper at a49d95e61dc910c7db139db0280f80a31d10bfc8.

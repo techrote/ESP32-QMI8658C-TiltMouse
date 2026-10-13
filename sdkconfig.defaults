@@ -1,8 +1,8 @@
-# Target selection is explicit: idf.py set-target esp32s3.
-# TM-002 native TinyUSB mouse-only identity; CDC is disabled.
+# Default wired-only startup and mouse-only TinyUSB identity.
 CONFIG_TINYUSB_HID_COUNT=1
 CONFIG_TINYUSB_SUSPEND_CALLBACK=y
 CONFIG_TINYUSB_RESUME_CALLBACK=y
+CONFIG_TILTMOUSE_OUTPUT_USB=y
 
-# TM-006 staging: IMU/touch integration in the default USB application.
-# ESP-NOW mode is dependency-held on TM-005B; no BLE, IP or RGB effects.
+# Select wireless in menuconfig and supply ignored local paired credentials.
+# No infrastructure Wi-Fi/IP, Bluetooth or RGB effects in v0.1.

@@ -74,7 +74,7 @@ Keep every application packet within **250 bytes**. This preserves ESP-NOW v1 in
 
 ### Logical contents
 
-The ESP-NOW application payload is the faikeow generic envelope plus the `relative_mouse` profile payload.
+The enclosed ESP-NOW application payload is the 22-byte faikeow platform-v1 envelope plus relative_mouse-v1 payload. Provisioned production frames additionally carry the FNR-007 FNA1 radio authentication wrapper (6-byte header + 16-byte HMAC tag, 44 bytes total).
 
 The generic envelope carries routing/order metadata such as platform version, profile ID, session/restart discriminator, sequence, flags/type and payload length.
 
@@ -109,7 +109,7 @@ faikeow owns receiver-side session/order/freshness semantics. TM-005B must gener
 
 Normal operation should prefer unicast. RF channel and peer identity must be explicit.
 
-Encryption should be supported where practical with the pinned stack, but key/provisioning behavior must be explicit; never embed one project-wide secret as the only production path.
+Provisioned v0.1 REQUIRES encrypted unicast and the FNR-007 authenticated wrapper v1, not optional encryption. The sender must receive an exact per-device 16-byte LMK, receiver station MAC, channel, nonzero public config ID/generation, and use actual sender station MAC for HMAC. No universal secret or plaintext production fallback is permitted. See docs/ESPNOW-SENDER.md.
 
 ESP-NOW mode does not require infrastructure Wi-Fi or IP networking.
 

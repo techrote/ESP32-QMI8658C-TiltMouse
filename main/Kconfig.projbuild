@@ -1,0 +1,10 @@
+menu "TiltMouse output"
+    choice TILTMOUSE_OUTPUT
+        prompt "Normal mouse output (startup only)"
+        default TILTMOUSE_OUTPUT_USB
+        config TILTMOUSE_OUTPUT_USB
+            bool "Native USB mouse (default, no Wi-Fi)"
+        config TILTMOUSE_OUTPUT_ESPNOW
+            bool "Provisioned ESP-NOW to faikeow receiver"
+    endchoice
+endmenu

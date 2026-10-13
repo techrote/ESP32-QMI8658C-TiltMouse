@@ -16,9 +16,14 @@
 #include "tiltmouse/qmi8658_esp_idf.h"
 #include "tiltmouse/touch_input.h"
 #include "tiltmouse/usb_hid_mouse.h"
+#include "tiltmouse/espnow_mouse.h"
+#include "sdkconfig.h"
 
-/* Provisional TM-006 integration pending TM-005B's separate ESP-NOW sender.
- * Startup binds exactly one real transport, direct USB. No fallback. */
+#if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
+#include "tiltmouse_sender_config.local.h"
+#endif
+
+/* Exactly one startup output owner, with no radio-to-USB fallback. */
 #define TM_IMU_POLL_US UINT64_C(4000)
 #define TM_TOUCH_POLL_US UINT64_C(8000)
 #define TM_REPORT_POLL_US UINT64_C(8000)
@@ -40,6 +45,22 @@ static tm_mouse_publish_result_t usb_service(void *context)
     (void)context;
     return tiltmouse_usb_hid_mouse_service();
 }
+
+#if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
+static tm_mouse_publish_result_t radio_publish(
+    void *context, const tm_mouse_report_t *report,
+    uint64_t now_us, uint64_t deadline_us)
+{
+    (void)context;
+    return tm_espnow_mouse_publish(report, now_us, deadline_us);
+}
+
+static tm_mouse_publish_result_t radio_service(void *context)
+{
+    (void)context;
+    return tm_espnow_mouse_service();
+}
+#endif
 
 static void wake_app(void *arg)
 {
@@ -77,7 +98,14 @@ static void read_touch(tiltmouse_touch_input_t *input)
 void app_main(void)
 {
     ESP_ERROR_CHECK(tiltmouse_board_init_safe());
+#if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
+    /* No universal key, plaintext fallback or implicit pairing. The ignored
+     * local header is required for an explicitly provisioned radio build. */
+    const tm_espnow_mouse_config_t credentials = TM_ESPNOW_LOCAL_CONFIG;
+    ESP_ERROR_CHECK(tm_espnow_mouse_init(&credentials));
+#else
     ESP_ERROR_CHECK(tiltmouse_usb_hid_mouse_init());
+#endif
 
     qmi8658_bus_t bus = {0};
     ESP_ERROR_CHECK(qmi8658_esp_idf_bus_init(&bus));
@@ -100,13 +128,24 @@ void app_main(void)
     ESP_ERROR_CHECK(gpio_config(&boot));
 
     const tm_app_config_t config = tm_app_default_config();
+#if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
+    const tm_mouse_transport_id_t selected = TM_MOUSE_TRANSPORT_ESPNOW;
+    const tm_app_output_t output = {
+        .context = NULL,
+        .owner = TM_MOUSE_TRANSPORT_ESPNOW,
+        .publish = radio_publish,
+        .service = radio_service,
+    };
+#else
+    const tm_mouse_transport_id_t selected = TM_MOUSE_TRANSPORT_USB;
     const tm_app_output_t output = {
         .context = NULL,
         .owner = TM_MOUSE_TRANSPORT_USB,
         .publish = usb_publish,
         .service = usb_service,
     };
-    if (!tm_app_init(&s_app, &config, TM_MOUSE_TRANSPORT_USB, output)) {
+#endif
+    if (!tm_app_init(&s_app, &config, selected, output)) {
         ESP_LOGE(TAG, "Mouse pipeline configuration rejected");
         (void)tiltmouse_touch_input_deinit(&touch);
         qmi8658_esp_idf_bus_deinit(&bus);
@@ -123,7 +162,8 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_timer_create(&timer_args, &timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(timer, TM_IMU_POLL_US));
 
-    ESP_LOGI(TAG, "TM-006 wired application active; tilt gated by neutral calibration");
+    ESP_LOGI(TAG, "TM-006 selected=%s; neutral calibration required",
+             selected == TM_MOUSE_TRANSPORT_USB ? "USB HID" : "ESP-NOW");
     uint64_t imu_poll_us = 0;
     uint64_t touch_poll_us = 0;
     uint64_t report_poll_us = 0;

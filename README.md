@@ -42,15 +42,15 @@ Completed components now include:
 - host-testable pitch/roll estimation and tilt-to-relative-motion mapping;
 - capacitive-touch acquisition and grouped logical buttons;
 - validated transport-neutral mouse reports, single-owner bounded publication and USB adaptation;
-- corrected 24-bit HID descriptor with genuine left/right button Input data.
+- corrected 24-bit HID descriptor with genuine left/right button Input data;
+- ESP-NOW sender with exact faikeow platform/profile v1 encoding, paired-key HMAC authentication, session/sequence management and native Wi-Fi TX adapter.
 
-The TM-006 application-integration increment is staged on a separate branch (not accepted or merged). The wireless binding remains blocked by TM-005B; main still has the original USB-only startup. The TM-005A logical report and USB adapter are implemented and tested; the next steps are:
+TM-006 integration now connects the sensors and controls to exactly one selected output. USB is the default; ESP-NOW requires a private paired configuration header. Physical usability/interoperability acceptance remains TM-008. Software integration must pass its own CI before merge. Subsequent work:
 
-1. **TM-005B / #16** — add ESP-NOW TX and encode faikeow's generic platform envelope + `relative_mouse` profile;
-2. **TM-006 / #6** — integrate the complete input pipeline with selectable USB or ESP-NOW output;
-3. **TM-007 / #7** — harden the full transmitter lifecycle and recovery.
+1. **TM-007 / #7** — harden the transmitter lifecycle and recovery;
+2. **TM-008 / #8** — qualify physical USB and ESP-NOW interoperability.
 
-The default wired path must not initialize Wi-Fi unnecessarily. ESP-NOW mode may initialize the ESP32-S3 Wi-Fi subsystem only as required for connectionless ESP-NOW; it does not require infrastructure Wi-Fi or IP networking. Bluetooth/BLE remains uninitialized for v0.1.
+See [docs/ESPNOW-SENDER.md](docs/ESPNOW-SENDER.md) for accepted receiver compatibility and provisioning boundaries. The default wired path must not initialize Wi-Fi unnecessarily. ESP-NOW mode may initialize the ESP32-S3 Wi-Fi subsystem only as required for connectionless ESP-NOW; it does not require infrastructure Wi-Fi or IP networking. Bluetooth/BLE remains uninitialized for v0.1.
 
 See [docs/LOGICAL-REPORT.md](docs/LOGICAL-REPORT.md) for the TM-005A semantics and limitations and [docs/BUILDING.md](docs/BUILDING.md) for exact commands.
 

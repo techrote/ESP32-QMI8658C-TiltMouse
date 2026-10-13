@@ -180,6 +180,14 @@
     {
       "capture": "imu-observer-boot-button-late/serial.bin",
       "sha256": "80a3a2f3a0013d3f039eb5fd65e574f4cacff190f03833f7eb0ee8a09fa207e0"
+    },
+    {
+      "capture": "boot-hold-bounded-recording/result.json",
+      "sha256": "d19d7277cd2a35b8432e78500d6e17bc1bfd93881fcec04d20943e241f8c32a8"
+    },
+    {
+      "capture": "boot-hold-bounded-recording/serial.bin",
+      "sha256": "fc2cab04b04aca119b71bf66834a6c6acba81fe088de0c4821152a3d2b52a17b"
     }
   ]
 }

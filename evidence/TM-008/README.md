@@ -258,3 +258,26 @@ serial port. Verify the physical button input/downloader path first.
 Current installed image remains source 62c17de / app 167fb83c, with the
 uncorrected frame and raw observer. Gyro-bias compensation is not implemented.
 Both issues/PRs remain open, with control/RF trials stopped for diagnosis.
+
+## BOOT completion report and bounded recording
+
+The operator reported completing the requested 12-second hold. The separate
+`boot-hold-bounded-recording` on installed observer source 62c17de ran for
+114.563 seconds, retained 6779 serial bytes without errors and closed its
+serial handle on a host stop flag. It issued no target commands or resets.
+Recenter=1 and neutral=1 were already present in its first retained snapshot;
+prior bounded windows had recenter=0. This establishes that the firmware has
+received a valid BOOT gesture at some point. It does not establish which
+gesture caused it, the 12-second hold waveform, or long-hold rejection:
+periodic snapshots did not capture BOOT down. Neutral remained the old
+incorrect frame's saturated roll (85 degrees), so this is not recenter or
+usability acceptance. Do not infer a failed button or wrong GPIO.
+
+The ROM-entry diagnostic now keeps BOOT physically held through host mode
+verification, eliminating early release as an uncontrolled timing variable.
+No write is permitted unless 303a:1001 ROM and the live preserved MAC match.
+At this checkpoint the board still runs 303a:4005 source 62c17de; the user has
+been asked to reconnect while keeping BOOT held and reply holding. All serial
+captures are closed. Frame observer 2ee4f77 remains archived and unflashed.
+Default branches remain 2be8519 (TiltMouse) and a49d95e (receiver). Exact
+evidence heads 379c611 and d9a27b8 pass CI 38476221230 and 38476226922.

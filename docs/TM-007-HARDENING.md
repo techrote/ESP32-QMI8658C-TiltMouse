@@ -36,6 +36,6 @@ No automatic cable-triggered switching is enabled by v0.1 main firmware. The API
 
 ## TM-008 instrumentation
 
-Every 10 seconds the application emits bounded diagnostics: generated/movement/dropped report counts; last button transition and generated X/Y; IMU/touch ages, errors, stale episodes, recoveries and touch recalibration; driver retry counts; maximum loop gap, collapsed timer slots and stack high-water mark; plus USB lifecycle counters or ESP-NOW send/recovery/session/sequence counters.
+Every 10 seconds the application emits bounded diagnostics: generated/movement/dropped report counts; the last logical button transition; a provisional 100 ms post-transition window with peak signed X/Y and sample count for click-motion correlation; IMU/touch ages, errors, stale episodes, recoveries and touch recalibration; driver retry counts; maximum loop gap, collapsed timer slots and stack high-water mark; plus USB lifecycle counters or ESP-NOW send/recovery/session/sequence counters. The 100 ms window is measurement only and does not alter movement.
 
 These are software observations, not USB/RF/ergonomic acceptance. TM-008 and faikeow FNR-008 must correlate them with actual receiver/host evidence.

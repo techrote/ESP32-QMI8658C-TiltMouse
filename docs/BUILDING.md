@@ -141,6 +141,8 @@ counts, IMU/touch errors/staleness/recovery/recalibration, maximum observed
 loop gap, collapsed timer slots and FreeRTOS stack high-water mark. USB mode
 also records mount/suspend and lifecycle-reset/completion failures. Wireless
 mode records send attempts, immediate/callback failures, recovery attempts,
-sender session and next platform sequence. Button transitions log generated
-X/Y at the transition timestamp for TM-008 click-motion correlation.
+sender session and next platform sequence. Button transitions open a provisional 100 ms observation window; the retained
+peak signed X/Y and number of generated reports in that window are logged for
+TM-008 click-motion correlation. This is instrumentation only: it does not
+freeze, damp or otherwise modify cursor motion.
 No secret/key material is exposed.

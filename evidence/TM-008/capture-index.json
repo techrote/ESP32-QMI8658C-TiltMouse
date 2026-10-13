@@ -240,6 +240,30 @@
     {
       "capture": "gyro-bias-linked-radio-initialization.json",
       "sha256": "449aa1a431ec04506fa4a0ef49abaf1229b8bf25a54cda2d9ff08de3a5cbbfad"
+    },
+    {
+      "capture": "gyro-bias-stationary/result.json",
+      "sha256": "7eac19acfe255605adb557d8fba459c80c762ae56bfd68a2cb008034c46cae7d"
+    },
+    {
+      "capture": "gyro-bias-stationary/serial.bin",
+      "sha256": "f6ece4d9919b830befc0756fc21358119ee9b625cd45658ef11ce80833823990"
+    },
+    {
+      "capture": "gyro-bias-controlled-axes/result.json",
+      "sha256": "0fae7bd0169528a2a66fda29b824fddb8a67f241e998fe9fb7d51ff9bd47863c"
+    },
+    {
+      "capture": "gyro-bias-controlled-axes/serial.bin",
+      "sha256": "406c0120e879bbc0469a3ad1099f428f882d53303633a3ba6c891873d769a719"
+    },
+    {
+      "capture": "gyro-bias-axes-operator-window/result.json",
+      "sha256": "073addfbeb4ad6d4175ce19b44a3e80b0c930bac67d8aa3c9785518a8bd1d329"
+    },
+    {
+      "capture": "gyro-bias-axes-operator-window/serial.bin",
+      "sha256": "4a9bc74b8974bffa97f39ca9431b2b42d98d39a7e45cbcd2430a025ce8859b99"
     }
   ]
 }

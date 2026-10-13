@@ -125,12 +125,13 @@
   "host_tests_passed": 14,
   "ci_run": 38480200839,
   "ci_status": "PASS",
-  "application_boot_observed": false,
-  "next_action": "Operator cold boot without buttons, keep flat face up and untouched, then capture stationary calibration/drift.",
+  "application_boot_observed": true,
+  "next_action": "Build and physically confirm X-sign correction; repeat recenter and complete touch/lifecycle/RF acceptance.",
   "deployed_at_utc": "2026-10-13T22:55:45.100789+00:00",
   "flash_verification": {
     "live_mac_matched": true,
     "esptool_all_three_region_digests_verified": true,
     "independent_app_readback_verified": true
-  }
+  },
+  "neutral_startup_subset_observed": true
 }

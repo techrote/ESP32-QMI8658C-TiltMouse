@@ -347,7 +347,7 @@ static void test_default_response_baseline(void)
     };
     tiltmouse_mouse_velocity_t velocity;
 
-    /* Retain the quiet neutral range and operator-confirmed board directions. */
+    /* Quiet neutral range is unchanged by the physical X-sign correction. */
     pose.roll_deg = 3.0f;
     pose.pitch_deg = -3.0f;
     assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
@@ -365,16 +365,19 @@ static void test_default_response_baseline(void)
         pose.pitch_deg = tilts[i];
         assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
                TILTMOUSE_MOUSE_MOTION_OK);
-        assert(velocity.x_counts_per_s >= lower[i]);
-        assert(velocity.x_counts_per_s <= upper[i]);
-        assert(velocity.x_counts_per_s >= previous);
-        assert_close(velocity.y_counts_per_s, velocity.x_counts_per_s, 0.0001f);
-        previous = velocity.x_counts_per_s;
+        /* LED face up / USB toward operator: physical trial found X reversed.
+         * Correct X only; keep the measured response magnitudes and Y sign. */
+        const float x_magnitude = -velocity.x_counts_per_s;
+        assert(x_magnitude >= lower[i]);
+        assert(x_magnitude <= upper[i]);
+        assert(x_magnitude >= previous);
+        assert_close(velocity.y_counts_per_s, x_magnitude, 0.0001f);
+        previous = x_magnitude;
         pose.roll_deg = -tilts[i];
         pose.pitch_deg = -tilts[i];
         assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
                TILTMOUSE_MOUSE_MOTION_OK);
-        assert_close(velocity.x_counts_per_s, -previous, 0.0001f);
+        assert_close(velocity.x_counts_per_s, previous, 0.0001f);
         assert_close(velocity.y_counts_per_s, -previous, 0.0001f);
     }
 }

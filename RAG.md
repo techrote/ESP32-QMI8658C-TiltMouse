@@ -1,4 +1,4 @@
-# RAG — ESP32-QMI8658C-TiltMouse
+# RAG â€” ESP32-QMI8658C-TiltMouse
 
 This file is the compact authoritative context for implementation agents. If an issue prompt conflicts with this file, reconcile live repository state and prefer the newest explicit repository decision.
 
@@ -51,7 +51,7 @@ From the Waveshare schematic and board documentation:
 | Touch separator/reference | GPIO4 |
 | Touch right group | GPIO5, GPIO6, GPIO7 |
 
-ESP32-S3 touch hardware maps TOUCH1–TOUCH7 to GPIO1–GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
+ESP32-S3 touch hardware maps TOUCH1â€“TOUCH7 to GPIO1â€“GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
 
 The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9 documents the 7-bit I2C address as 0x6A when SA0 is pulled high or left unconnected and 0x6B when SA0 is pulled low. Firmware verifies identity and probes 0x6A then 0x6B rather than relying on a board-address assumption.
 
@@ -74,6 +74,10 @@ Use:
 3. a bounded complementary filter for pitch/roll;
 4. a neutral orientation captured at startup and on explicit re-centre;
 5. tilt angle mapped to **relative cursor velocity**, not absolute screen position.
+
+TM-008's frame/bias-corrected physical trial found cursor X reversed in the
+LED-face-up / USB-toward-operator grip. Default cursor X now inverts roll;
+Y keeps pitch without inversion. Repeat physical sign acceptance after flash.
 
 TM-004 established the host-testable estimator/motion layer. Physical axis mapping and tuning remain TM-008 evidence.
 
@@ -199,8 +203,8 @@ v0.1 is complete when a physical ESP32-S3-Matrix can:
 - operate wirelessly through a compatible ESP-NOW receiver that enumerates as standard USB HID;
 - remain stationary in a comfortable neutral pose;
 - move cursor smoothly and predictably by tilt;
-- left-click/hold/drag using GPIO1–3;
-- right-click/hold using GPIO5–7;
+- left-click/hold/drag using GPIO1â€“3;
+- right-click/hold using GPIO5â€“7;
 - ignore GPIO4 as a click;
 - re-centre without reflashing;
 - survive ordinary USB and wireless link-loss/recovery paths safely;
@@ -269,6 +273,6 @@ Relevant faikeow authority:
 - `RAG.md`
 - `docs/02-PROTOCOLS.md`
 - `docs/08-HID-PROFILES.md`
-- FNR-006 / issue #7 — generic receiver core + `relative_mouse` profile
-- FNR-008 / issue #9 — physical platform/reference-sender acceptance
-- FNR-009 / issue #10 — v0.1 receiver release
+- FNR-006 / issue #7 â€” generic receiver core + `relative_mouse` profile
+- FNR-008 / issue #9 â€” physical platform/reference-sender acceptance
+- FNR-009 / issue #10 â€” v0.1 receiver release

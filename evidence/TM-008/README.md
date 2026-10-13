@@ -3,53 +3,47 @@
 Session: `joint-TM008-FNR008-2026-10-13`, started 13 October 2026, Europe/London.
 Status: **IN PROGRESS; NOT ACCEPTED**. Issue #8 remains open.
 
-## Latest checkpoint: corrected frame captured; gyro-bias candidate qualified in software
+## Latest checkpoint: calibrated neutral and usable control; X-sign correction pending retest
 
-The guarded held-BOOT procedure established ROM mode and matched the preserved
-live TiltMouse identity. Frame observer source `2ee4f77d0a6e5f4b1fa18a1110e0596720acb38f`
-was flashed at 22:28:48 UTC with three region digests and independent application
-readback verified, then cold-booted. The 30-second stationary capture began at
-22:30:06 UTC. It had 2963 selected-device Raw Input events, zero motion, no
-USB removal, serial error or observer error. Flat pose is now about -2.8 degrees
-roll / -7.7 degrees pitch, rather than saturated near 85 degrees. This supports
-the board-frame correction; it does not establish axis signs or usability.
+Installed source/build `3a33f41b0e2f5016b425bf28a955dfd777912bf8`, diagnostic app
+`f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`, passed live
+ROM identity, three written-region checks and independent application readback.
+The operator cold-booted and left the board flat, LED face up and untouched.
+The 30-second capture at 23:10:50 UTC (14 October local time) established
+neutral=1, quiet=32/32, touch ready, zero host movement/button events, no USB
+removal, serial/observer error or sensor/touch fault, and zero movement drops.
+Gyro qualification used 166 samples, rejected 54 earlier candidate windows,
+and completed 5.145 seconds after boot. Offset (-2018,10029,-826) mdps stayed
+frozen. A two-second startup is not established. Maximum local loop gap was
+11337 us. Three pose snapshots differed from neutral by at most 0.288 degrees;
+this is not a continuous physical angle bound.
 
-[Three bounded acquisition windows](frame-stationary-windows.csv) show native
-gyro means around (-1.9, 10.3, -0.83) dps. Maximum per-axis spans are 3.609 dps
-and 0.062 g. Quiet progress remains 0/32 and neutral invalid against the
-unchanged 8-dps gate. No sensor/touch errors, stale episodes, driver retries,
-movement drops or resets occurred in the retained snapshots. Maximum local
-loop gap was 9975 us. [Derived result](frame-stationary-result.json) and hashed
-private originals distinguish this result from a complete calibration pass.
+The first 60-second tilt window mostly captured a flat board and is not an
+axis/recenter result. A separate 300-second-maximum recording, stopped after
+operator completion at 121.156 seconds, captured 11718 selected HID events,
+6222 with movement and 22 with button flags. USB and serial remained stable,
+gyro offset remained frozen, no sensor faults occurred, and recenter stayed 0.
+Logical movement drops rose to 108; maximum local loop gap was 12114 us.
+These diagnostics are retained rather than treated as zero-loss evidence.
 
-Regression-first `579f9fd51694e76733377aaeb20111586ba3a45c` supplies the measured
-stationary offset to actual main and fails neutral capture (286 publications,
-zero motion, no freshness errors); the other 12 tests pass in CI 38478926087.
-Fix `3a33f41b0e2f5016b425bf28a955dfd777912bf8` adds the bounded stationary
-gyro-bias calibration documented in `docs/ORIENTATION-MOTION.md`. It passes
-all 14 host tests and all four required gates in
-[CI 38480200839](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38480200839).
-Local normal USB, diagnostic USB and real-pair ESP-NOW builds also pass, with
-linked USB descriptor comparison and wired-key-absence checks.
+Operator report with LED face up and USB toward the operator: "Feels good,
+x axis swapped". The narrow correction in this branch inverts default cursor
+X only, preserving Y, the original 1.6/900 response and 3-degree deadzone.
+The default-response regression retains the magnitude table and checks both
+corrected X signs with unchanged Y. Build/CI and physical X confirmation are
+required before this correction is accepted.
 
-[Exact gyro-bias artifacts](gyro-bias-candidate.json) were flashed at
-22:55:45 UTC after fresh 303a:1001 ROM detection, matching live identity, all
-three region digests and independent application readback. Diagnostic app
-SHA-256 is `f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`.
-The operator has been asked to release BOOT, cold unplug/replug without buttons,
-and keep the board flat face up and untouched. Application boot and the new
-stationary calibration/drift capture are pending. [Linked binary inspection](linked-radio-initialization.json)
-finds no Wi-Fi/BLE initialization symbols in either wired image; the ESP-NOW
-image contains Wi-Fi initialization and no BLE initialization. This is build
-evidence, not an RF emissions measurement.
-The learned offset is frozen during use; the original cursor curve, deadzone,
-8-dps quiet threshold, wire/auth contract and click-motion semantics remain.
-Next: confirm cold boot and capture stationary calibration/drift, then
-axes/recenter/usability. Board A remains unchanged on config 2;
-receiver/RF acceptance is untested. Both issues remain open.
+[Derived capture results](gyro-bias-physical-results.json) identify exact source,
+artifact, timing and limits. [Mixed click windows](gyro-bias-mixed-click-windows.csv)
+retain transition timestamps/peaks but are not controlled stationary-click or
+touch acceptance. BOOT recenter, stopping-flat, heat and LED behavior were not
+confirmed by the latest operator reply. No click freeze/damping is added.
+Implementation 3a33f41 passes all 14 tests and four gates in CI 38480200839;
+evidence head 228ac4b passes CI 38481644096. Receiver head 4078604 passes
+CI 38481643674. Board A remains unchanged on config 2 and RF is untested.
 
-The following sections retain earlier chronological checkpoints and their
-then-current status; the latest checkpoint above takes precedence.
+Following sections retain earlier chronological checkpoints; this checkpoint
+takes precedence. Both issues remain open.
 
 ## Reconciled authority and baseline
 

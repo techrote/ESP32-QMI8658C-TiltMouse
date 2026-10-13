@@ -62,11 +62,9 @@ Introduced a transport-neutral logical report and single-owner bounded publicati
 
 The retained historical evidence reports 10 fixture scenarios plus separate extra checks, 6,400 seeded stress steps, five detected deliberate defects and 260,100 focused C field comparisons. The original full host suite, target firmware build and physical USB/RF acceptance were not established by that prepass. Archive integrity alone did not satisfy issue #15 acceptance or install the proposed policy; the new production code and CI-tested regression suite do that separately. Physical-device evidence remains TM-008. The preservation record reconciles the earlier conversation's scenario-count discrepancy without changing the original files.
 
-### TM-005B / #16 — ESP-NOW sender for the faikeow relative-mouse profile
+### TM-005B / #16 — ESP-NOW sender — software implementation
 
-Implement ESP-NOW TX on the ESP32-S3 and map the TM-005A logical mouse report into the accepted `techrote/faikeow-now-reciever` generic platform envelope + `relative_mouse` profile. Do not define a competing private receiver protocol.
-
-The application packet must remain <=250 bytes for ESP-NOW v1 interoperability with ESP8266-class receivers. Movement uses latest-first semantics; full button state is repeated so loss cannot permanently stick a button.
+The ESP32-S3 transmitter now maps TM-005A reports into the frozen faikeow FNR-006 platform-v1 and relative_mouse-v1 envelope/payload, then wraps the complete 22-byte platform packet using FNR-007 authenticated radio wrapper v1 (44 bytes on air). It uses a fresh nonzero sender session, modulo-u32 sequence and only latest-first movement without resend queues. Paired per-device encryption/HMAC credentials must be provided by the selecting application; no universal secret or unwrapped production fallback exists. See docs/ESPNOW-SENDER.md. Direct USB remains the default, and physical acceptance remains TM-008.
 
 ### TM-006 / #6 — Integrated mouse
 

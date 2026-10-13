@@ -20,7 +20,7 @@ Merged work includes:
 - capacitive-touch acquisition/button fusion;
 - TM-005A transport-neutral report/publisher and native USB adapter.
 
-TM-005A / #15 introduced that logical mouse-report seam. TM-005B / #16 will add ESP-NOW support using ESP-IDF's Wi-Fi/ESP-NOW APIs.
+TM-005A / #15 introduced that logical mouse-report seam. TM-005B / #16 adds a selectable authenticated ESP-NOW sender API without changing default USB startup. It must be bound by TM-006 to a matching operator-provisioned receiver configuration; no secrets or universal key are embedded in a factory image. See docs/ESPNOW-SENDER.md.
 
 ## Transport build policy
 

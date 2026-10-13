@@ -174,3 +174,21 @@ target_include_directories(
 target_compile_features(espnow_health PRIVATE c_std_11)
 target_compile_options(espnow_health PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_test(NAME espnow_health COMMAND espnow_health)
+
+add_executable(
+    usb_lifecycle
+    test_usb_lifecycle.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/usb_hid_mouse_report.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_transport.c
+)
+target_include_directories(
+    usb_lifecycle PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/fakes
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/include
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+)
+target_compile_features(usb_lifecycle PRIVATE c_std_11)
+target_compile_options(usb_lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
+add_test(NAME usb_lifecycle COMMAND usb_lifecycle)

@@ -120,7 +120,16 @@ from 900 to 450 counts/s and changes exponent from 1.6 to 0.9. The 3 degree
 deadzone remains unchanged because corrected idle was quiet. See
 [the mapping contract](../../docs/ORIENTATION-MOTION.md) for predicted speeds.
 A repeated physical direction/usability trial is required before accepting
-these defaults. No click-motion freeze or damping is added.
+these defaults. Source `b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf` has been
+built in both wired variants, with matching linked HID descriptors. All 12
+host tests and all four required gates pass in
+[CI 38468595024](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38468595024).
+Its diagnostic app SHA-256
+`e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2`
+was flashed with live ROM identity, all three region digests and independent
+application readback verified. Application boot and tuning repeat are pending
+the operator RESET step. [Candidate 1 hashes](tuning-candidate-1.json) retain
+its exact binaries separately from the earlier diagnostic source. No click-motion freeze or damping is added.
 
 Board A remains on its prior accepted config-2 production pair and received
 no flash/reset in this session. RF, receiver internal transport and joint

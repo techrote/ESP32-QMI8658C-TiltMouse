@@ -80,6 +80,26 @@
     {
       "capture": "corrected-diag-axes-recenter/serial.bin",
       "sha256": "e0d6afe1cb6ed377876291296688e060381a7cb44d8fdf5eebf938e70b36023f"
+    },
+    {
+      "capture": "tuning1b-diag-build.log",
+      "sha256": "a5bcfa80ac0634e920b8dcce4da45079532f4f8be608dfe7c604cf95db2919bb"
+    },
+    {
+      "capture": "tuning1b-normal-build.log",
+      "sha256": "fed27f2a02a218c17674c59798ac216deda37f661cdfd9aff2790de1f0977e20"
+    },
+    {
+      "capture": "sender-candidate-builds-b8bac0e.json",
+      "sha256": "ee508ab635e49cd2649bacc4cda3583ab1757067d9d2e48eac4d9c740bf351b0"
+    },
+    {
+      "capture": "tiltmouse-tuning1b-diag-write/result.json",
+      "sha256": "37b6df3962d75e2a047392bf5a6fd85b88c1a2814ea415e25f7ce4b74f6e800f"
+    },
+    {
+      "capture": "tiltmouse-tuning1b-diag-write/application-readback.bin",
+      "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2"
     }
   ]
 }

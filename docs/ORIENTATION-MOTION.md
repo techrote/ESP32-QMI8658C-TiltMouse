@@ -61,14 +61,24 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | Setting | X | Y |
 | --- | ---: | ---: |
 | source | roll | pitch |
-| invert | no | no |
+| invert | no | yes |
 | deadzone | 3° | 3° |
 | max useful tilt | 35° | 35° |
-| response exponent | 1.6 | 1.6 |
-| gain | 900 counts/s | 900 counts/s |
+| response exponent | 0.9 | 0.9 |
+| gain | 450 counts/s | 450 counts/s |
 | velocity clamp | 1000 counts/s | 1000 counts/s |
 
 Axis source and inversion are explicit so physical acceptance can change board-to-pointer mapping without changing estimator mathematics.
+
+TM-008 candidate 1 follows the operator's 13 October 2026 corrected-firmware
+trial: Y felt inverted, movement was hard to start, and larger motion was hard
+to control. It inverts Y and uses a mildly concave response with half the prior
+900 counts/s gain. At 5/10/20/35 degrees, speeds are approximately
+37/115/255/450 counts/s, compared with 11/79/327/900 before. The 3 degree
+deadzone is retained because the corrected 25 second idle capture was quiet.
+This candidate still requires a repeated physical direction/usability trial;
+it is not an accepted v0.1 tuning result. Click-transition measurement continues
+without freezing or damping motion.
 
 ## Report integration and bounds
 

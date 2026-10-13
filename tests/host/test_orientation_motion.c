@@ -279,6 +279,47 @@ static void test_report_delta_clamp_discards_excess_backlog(void)
     assert_close(state.residual_x, 0.0f, 0.0001f);
 }
 
+static void test_physical_tuning_candidate_response(void)
+{
+    const tiltmouse_mouse_motion_config_t config =
+        tiltmouse_mouse_motion_default_config();
+    tiltmouse_orientation_pose_t pose = {
+        .neutral_valid = true,
+    };
+    tiltmouse_mouse_velocity_t velocity;
+
+    /* Retain the physically quiet neutral range and correct board Y direction. */
+    pose.roll_deg = 3.0f;
+    pose.pitch_deg = -3.0f;
+    assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+           TILTMOUSE_MOUSE_MOTION_OK);
+    assert_close(velocity.x_counts_per_s, 0.0f, 0.0001f);
+    assert_close(velocity.y_counts_per_s, 0.0f, 0.0001f);
+
+    /* Small tilts start more readily; large tilts remain bounded and slower. */
+    const float tilts[] = {5.0f, 10.0f, 20.0f, 35.0f, 85.0f};
+    const float lower[] = {36.0f, 114.0f, 254.0f, 449.0f, 449.0f};
+    const float upper[] = {38.0f, 116.0f, 256.0f, 451.0f, 451.0f};
+    float previous = 0.0f;
+    for (size_t i = 0; i < sizeof(tilts) / sizeof(tilts[0]); ++i) {
+        pose.roll_deg = tilts[i];
+        pose.pitch_deg = tilts[i];
+        assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+               TILTMOUSE_MOUSE_MOTION_OK);
+        assert(velocity.x_counts_per_s >= lower[i]);
+        assert(velocity.x_counts_per_s <= upper[i]);
+        assert(velocity.x_counts_per_s >= previous);
+        assert_close(velocity.y_counts_per_s, -velocity.x_counts_per_s, 0.0001f);
+        previous = velocity.x_counts_per_s;
+        pose.roll_deg = -tilts[i];
+        pose.pitch_deg = -tilts[i];
+        assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+               TILTMOUSE_MOUSE_MOTION_OK);
+        assert_close(velocity.x_counts_per_s, -previous, 0.0001f);
+        assert_close(velocity.y_counts_per_s, previous, 0.0001f);
+    }
+}
+
 static void test_replay_fixture(void)
 {
     FILE *file = fopen(IMU_FIXTURE_PATH, "r");
@@ -340,6 +381,7 @@ int main(void)
     test_mapping_deadzone_curve_axis_and_clamp();
     test_fractional_accumulation_and_recentre_reset();
     test_report_delta_clamp_discards_excess_backlog();
+    test_physical_tuning_candidate_response();
     test_replay_fixture();
     return 0;
 }

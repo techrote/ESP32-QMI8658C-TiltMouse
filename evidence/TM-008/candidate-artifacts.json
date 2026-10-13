@@ -75,7 +75,7 @@
           "bytes": 963
         }
       ],
-      "deployed": false,
+      "deployed": true,
       "actual_private_key_linked": false
     },
     {
@@ -143,12 +143,12 @@
     "host_tests_passed": 12
   },
   "current_deployed_app": {
-    "source_commit": "77aa8e1be31e473fdf9e1261ef041d59a13c4807",
+    "source_commit": "5f07be236680d6232081923615c0433d643c4fdf",
     "mode": "USB HID + CDC telemetry",
-    "sha256": "e837e8c535351ede8957c04fa75006da6fe87de001f83b4fe4d7ab0b85d43ffe",
+    "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af",
     "exact_app_readback_verified": true,
-    "diagnostic_usb_boot_observed": false,
-    "clock_fix_in_this_deployed_app": false
+    "diagnostic_usb_boot_observed": true,
+    "clock_fix_in_this_deployed_app": true
   },
-  "next_physical_action": "Release BOOT and tap RESET once; verify diagnostic USB startup before any further write."
+  "next_physical_action": "Build and qualify tuning candidate 1, then repeat controlled direction/usability trial."
 }

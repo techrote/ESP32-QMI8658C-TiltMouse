@@ -48,6 +48,38 @@
     {
       "capture": "clock-fix-host-job.log",
       "sha256": "69ddf4032994c1dd3dbc90431f920a9c42fb8d4abb774dbc6f8ecc0983f7ae11"
+    },
+    {
+      "capture": "tiltmouse-prefixed-diag-serial.bin",
+      "sha256": "927d0b606e0be24f7b0a174f7a1d149b431594392e912339ee2dc8449f5a06f3"
+    },
+    {
+      "capture": "tiltmouse-usb-pre-fix-diag-idle/result.json",
+      "sha256": "b8714457c976e10abf5e63442bb58a6cd6f1bede1f9a80e640fc95bb842e0cef"
+    },
+    {
+      "capture": "tiltmouse-corrected-diag-write/result.json",
+      "sha256": "841b25fcff951476d8f9bebf61483b39222ef1412fd9878deef5e1fef58b9488"
+    },
+    {
+      "capture": "tiltmouse-corrected-diag-write/application-readback.bin",
+      "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af"
+    },
+    {
+      "capture": "corrected-diag-idle/result.json",
+      "sha256": "97b7eec485373fdf69e7cd459ef499b5bce80b699928a8f6d5821b8dd508c12a"
+    },
+    {
+      "capture": "corrected-diag-idle/serial.bin",
+      "sha256": "9d2e5d76ae5aba15f016d2b18414a9c73ef753dc7cee00fb7c44f7b48c2dcde8"
+    },
+    {
+      "capture": "corrected-diag-axes-recenter/result.json",
+      "sha256": "d4103d3dc24a5b6cb4ac459ee3d423235bfd7a4ffad17bd5976b78f78a6b45a1"
+    },
+    {
+      "capture": "corrected-diag-axes-recenter/serial.bin",
+      "sha256": "e0d6afe1cb6ed377876291296688e060381a7cb44d8fdf5eebf938e70b36023f"
     }
   ]
 }

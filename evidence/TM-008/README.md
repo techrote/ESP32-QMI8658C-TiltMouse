@@ -78,48 +78,57 @@ diagnostics use the new time; freshness checks still reject future timestamps.
 Corrected CI and repeated physical evidence remain required. The defect is
 TiltMouse-owned; no receiver or wire/authentication change is justified.
 
-## Software-qualified candidates and current hardware stop
+## Corrected firmware physical results and tuning candidate
 
 Source `5f07be236680d6232081923615c0433d643c4fdf` passes all four gates in
 [CI 38462974058](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38462974058),
-including all 12 host tests, wired and diagnostic builds with linked descriptor
-checks, wireless public-fixture build and style. The corrected actual-main
-timing regression passes without changing freshness limits or poll slots.
-Supplemental local builds of normal USB, diagnostic USB and the real private
-paired ESP-NOW configuration also complete. Exact binaries/ELFs/configurations
-are archived privately; [candidate hashes](candidate-artifacts.json) identify
-them. These updated candidates are **not yet flashed or physically qualified**.
+including all 12 host tests and linked wired/diagnostic descriptor checks.
+Normal USB, diagnostic USB and the private paired ESP-NOW candidates are
+archived with [exact hashes](candidate-artifacts.json).
 
-Current TiltMouse flash instead contains the earlier diagnostic image from
-`77aa8e1be31e473fdf9e1261ef041d59a13c4807`, application SHA-256
-`e837e8c535351ede8957c04fa75006da6fe87de001f83b4fe4d7ab0b85d43ffe`.
-All three flash regions passed esptool digest verification; a subsequent
-independent application readback matches the exact BIN. It still has the old
-dispatch-clock behavior. Diagnostic USB application boot is **not observed**:
-the host still exposes the downloader's 303a:1001 / serial interface.
+Manual RESET established the earlier diagnostic USB boot (303a:4005 plus CDC).
+Its pre-fix physical telemetry reproduced false freshness failures: IMU stale
+3557 rising to 4163 and touch stale 384 rising to 447 over ten seconds, with
+zero movement and successful USB transfers. This supports the deterministic
+actual-main regression; it does not indicate an electrically failed sensor.
 
-Operator reported reconnecting while holding BOOT. A read-only GPIO input probe
-using the pinned ESP-IDF S3 register definition subsequently found GPIO0 high.
-One bounded, supported RTS reset attempt did not produce observed diagnostic
-USB interfaces. No automatic reset retries or other hardware writes follow.
-This does not establish a corrupt flash, failed sensor, or diagnostic firmware
-defect. The pending physical action is to release BOOT and tap RESET once,
-without holding BOOT, then verify fresh USB topology and capture telemetry.
-That action has not been confirmed. Host serial handles are closed; no RF
-generator is running. Board A remains on its prior accepted config-2 production
-pair; it received no flash/reset in this session.
+The corrected diagnostic image was flashed after a fresh ROM MAC match. All
+three written regions passed digest checks, and independent application
+readback matched SHA-256
+`28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af`.
+After operator RESET it enumerated as 303a:4005 with CDC. In the 25 second
+`corrected-diag-idle` capture there was no host movement/removal/error.
+Telemetry established neutral and touch readiness, zero IMU/touch errors,
+zero stale/recovery episodes, zero dropped logical reports, and approximately
+104-108 logical reports/s. Recorded maximum loop gap was 5708 us. This is a
+bounded diagnostic-firmware idle result, not acceptance of normal USB firmware.
 
-The first normal baseline BIN was superseded in the working build directory;
-its exact manifest/hash/build logs remain retained. Updated candidates and the
-currently flashed diagnostic BIN are separately archived. No final acceptance
-relies on reconstructing a missing earlier BIN from a newly built hash.
+The 60 second `corrected-diag-axes-recenter` capture contained 6389 target-only
+Raw Input events, 1736 with movement, and no observer errors or removal.
+Movement reached both host axes. Nine button transitions occurred during
+handling; this was not a controlled touch or stationary-click trial. Completed
+click-window peaks reached (10,12) counts while moving; no artefact or damping
+requirement is inferred. Recenter counters remained zero in captured periodic
+snapshots, so BOOT recenter is not established by this trial. Raw Input can
+coalesce reports; event counts are not a packet-loss measurement.
 
-After confirmed diagnostic boot, capture the pre-fix counters, return TiltMouse
-to ROM through its physical BOOT/reset path, flash the archived corrected
-diagnostic candidate with fresh MAC verification, and repeat startup/tilt.
-Then qualify the corrected normal mouse-only image before the touch/lifecycle
-and authenticated joint RF matrix. Both issues and both draft PRs stay open.
+The operator reported Y inverted and the response difficult to start, then
+hard to control in motion. TM-008 tuning candidate 1 inverts Y, reduces gain
+from 900 to 450 counts/s and changes exponent from 1.6 to 0.9. The 3 degree
+deadzone remains unchanged because corrected idle was quiet. See
+[the mapping contract](../../docs/ORIENTATION-MOTION.md) for predicted speeds.
+A repeated physical direction/usability trial is required before accepting
+these defaults. No click-motion freeze or damping is added.
+
+Board A remains on its prior accepted config-2 production pair and received
+no flash/reset in this session. RF, receiver internal transport and joint
+recovery acceptance remain untested. The first normal baseline BIN was
+superseded in a working build directory; its exact manifest/hash/logs remain.
+Subsequent firmware candidates and application readbacks are separately
+archived. No acceptance relies on reconstructing a missing earlier BIN.
+
 Capture digests are in [the private-capture index](capture-index.json).
+Both issues and both draft PRs remain open.
 
 ## Outstanding acceptance
 

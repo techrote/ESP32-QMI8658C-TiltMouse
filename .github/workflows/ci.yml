@@ -49,3 +49,32 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check repository text/style
         run: python3 tools/check_style.py
+
+  wireless-firmware-build:
+    name: ESP32-S3 wireless-mode build (public test fixture)
+    runs-on: ubuntu-24.04
+    container:
+      image: espressif/idf@sha256:81893c71bb5e570088901f21def8684c25cd2a9020281bd01b843a7655edb18c
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare PUBLIC-ONLY test pairing and wireless selection
+        shell: bash
+        run: |
+          # This is the FNR-007 published interoperability key, not a real
+          # per-device deployment secret. Only the ignored local file gets it.
+          cat > main/tiltmouse_sender_config.local.h <<'EOF'
+          #ifndef TILTMOUSE_LOCAL_TEST_CONFIGURATION_H
+          #define TILTMOUSE_LOCAL_TEST_CONFIGURATION_H
+          #define TM_ESPNOW_LOCAL_CONFIG { .sender_mac = {2, 3, 4, 5, 6, 7}, .receiver_mac = {10, 11, 12, 13, 14, 15}, .peer_key = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, .channel = 6, .config_id = UINT64_C(0x123456789abcdef0), .generation = 1u }
+          #endif
+          EOF
+          sed '/^CONFIG_TILTMOUSE_OUTPUT_USB=/d' sdkconfig.defaults > sdkconfig.espnow.defaults
+          printf 'CONFIG_TILTMOUSE_OUTPUT_ESPNOW=y\n' >> sdkconfig.espnow.defaults
+      - name: Build selected ESP-NOW application
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py -D SDKCONFIG_DEFAULTS=sdkconfig.espnow.defaults set-target esp32s3
+          idf.py -D SDKCONFIG_DEFAULTS=sdkconfig.espnow.defaults build
+          grep -Fx 'CONFIG_TILTMOUSE_OUTPUT_ESPNOW=y' sdkconfig
+          test -f build/esp32_qmi8658c_tiltmouse.bin

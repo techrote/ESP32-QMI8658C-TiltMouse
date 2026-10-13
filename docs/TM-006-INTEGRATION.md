@@ -55,3 +55,12 @@ TM-007/TM-008 gates, not claims of this PR.
 
 Receiver FNR-006 frozen at 136ef3b612f83fd9cad74a5dd50c2e5f629b44de.
 FNR-007 provisioning/wrapper at a49d95e61dc910c7db139db0280f80a31d10bfc8.
+
+## Dual-mode CI
+
+The normal firmware CI job cross-builds the default USB-only application.
+An independent wireless-mode job compiles the real ESP-NOW selected application
+against the same pinned ESP-IDF with the FNR-007 PUBLIC interoperability key
+and synthetic test MACs in a transient gitignored local header. Those values
+are intentionally not production credentials. Both paths must compile; neither
+requires physical hardware or claims real pairing.

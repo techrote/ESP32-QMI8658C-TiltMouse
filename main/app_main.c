@@ -292,6 +292,7 @@ void app_main(void)
     uint64_t last_loop_us = 0;
     uint64_t max_loop_gap_us = 0;
     uint64_t last_logged_button_transition_us = 0;
+    uint64_t last_logged_click_window_us = 0;
     uint32_t collapsed_ticks = 0;
     tm_imu_runtime_t imu_runtime = {.last_status = QMI8658_OK};
     tm_touch_runtime_t touch_runtime = {.last_error = ESP_OK};
@@ -346,6 +347,18 @@ void app_main(void)
                          (int)event_diag.last_dx, (int)event_diag.last_dy,
                          event_diag.click_motion_window_until_us);
             }
+            if (event_diag.last_button_transition_us != 0 &&
+                event_diag.last_button_transition_us != last_logged_click_window_us &&
+                output_now_us >= event_diag.click_motion_window_until_us) {
+                last_logged_click_window_us = event_diag.last_button_transition_us;
+                ESP_LOGI(TAG,
+                         "button-window t=%" PRIu64 " until=%" PRIu64
+                         " peak=(%d,%d) samples=%" PRIu32,
+                         event_diag.last_button_transition_us,
+                         event_diag.click_motion_window_until_us,
+                         (int)event_diag.click_peak_dx, (int)event_diag.click_peak_dy,
+                         event_diag.click_motion_samples);
+            }
         }
         if (diag_poll_us == 0 || now_us - diag_poll_us >= TM_DIAG_POLL_US) {
             diag_poll_us = now_us;
@@ -353,6 +366,7 @@ void app_main(void)
             tm_app_diagnostics(&s_app, output_now_us, &diag);
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32
+                     " neutral=%d touch_ready=%d age_us=(%" PRIu64 ",%" PRIu64 ")"
                      " dropped=%" PRIu32 " recenter=%" PRIu32
                      " imu(err=%" PRIu32 " stale=%" PRIu32 " rec=%" PRIu32
                      " drv_retry=%" PRIu32 "/%" PRIu32 ")"
@@ -363,6 +377,8 @@ void app_main(void)
                      " loop_max=%" PRIu64 " collapsed=%" PRIu32
                      " stack_words=%u",
                      diag.reports_published, diag.movement_reports,
+                     (int)diag.neutral_valid, (int)diag.touch_valid,
+                     diag.imu_age_us, diag.touch_age_us,
                      diag.dropped_motion, diag.recenters,
                      diag.imu_errors, diag.imu_stale, diag.imu_recoveries,
                      imu_runtime.reinit_successes, imu_runtime.reinit_attempts,

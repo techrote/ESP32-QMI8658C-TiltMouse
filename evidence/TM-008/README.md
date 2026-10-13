@@ -57,8 +57,6 @@ Raw captures, original flash, full device identities, deployment keys and
 generated source remain outside Git. No RF result or final usability tuning is
 claimed by this record. No click-motion freeze/damping has been added.
 
-## Outstanding acceptance
-
 ## Retained target-loop timing failure
 
 The zero-motion observation prompted inspection of the real application loop.

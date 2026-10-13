@@ -24,6 +24,15 @@ the pinned nonblocking, fixed-FIFO VFS. There are no diagnostic application
 commands, synthetic movement, sensor overrides, or changed motion semantics.
 Unconsumed serial output can be truncated; serial logs are not lossless evidence.
 
+Each completed, uninterrupted 100 ms post-transition window is logged once with
+its transition timestamp, end, peak X/Y and sample count. A second transition
+before that end replaces the measurement window; the earlier window is not a
+completed-window observation. Use representative clicks with at least 100 ms
+between transitions for complete peak correlation, and retain ordinary rapid
+click trials separately as host behavior. Periodic snapshots also expose
+neutral/touch readiness and actual IMU/touch ages. Instrumentation changes no
+input, movement, button or transport semantics.
+
 CI builds both wired variants and checks their actual linked descriptor bytes:
 
 ```sh

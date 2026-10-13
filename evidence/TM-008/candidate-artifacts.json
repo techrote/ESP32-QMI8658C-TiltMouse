@@ -147,9 +147,10 @@
     "mode": "USB HID + CDC telemetry",
     "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2",
     "exact_app_readback_verified": true,
-    "diagnostic_usb_boot_observed": false,
+    "diagnostic_usb_boot_observed": true,
     "clock_fix_in_this_deployed_app": true,
-    "tuning_candidate": 1
+    "tuning_candidate": 1,
+    "physical_result": "REJECTED speed curve; baseline restoration pending"
   },
-  "next_physical_action": "BOOT released: tap RESET once and verify startup, then repeat speed-curve trial."
+  "next_physical_action": "Put only TiltMouse into downloader, verify live identity and restore archived 5f07be2 diagnostic image; then controlled BOOT recenter in actual grip."
 }

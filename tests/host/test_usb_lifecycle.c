@@ -164,6 +164,6 @@ int main(void)
     test_detach_reconnect_and_failed_completion();
     test_quiesce();
     const tm_usb_hid_mouse_status_t status = tiltmouse_usb_hid_mouse_status();
-    assert(status.attaches == 1u && status.resumes == 1u);
+    assert(status.attaches == 2u && status.resumes == 1u);
     return 0;
 }

@@ -279,7 +279,7 @@ static void test_report_delta_clamp_discards_excess_backlog(void)
     assert_close(state.residual_x, 0.0f, 0.0001f);
 }
 
-static void test_physical_tuning_candidate_response(void)
+static void test_default_response_baseline(void)
 {
     const tiltmouse_mouse_motion_config_t config =
         tiltmouse_mouse_motion_default_config();
@@ -296,10 +296,10 @@ static void test_physical_tuning_candidate_response(void)
     assert_close(velocity.x_counts_per_s, 0.0f, 0.0001f);
     assert_close(velocity.y_counts_per_s, 0.0f, 0.0001f);
 
-    /* Small tilts start more readily; large tilts remain bounded and slower. */
+    /* Preserve the original response after the physical candidate was rejected. */
     const float tilts[] = {5.0f, 10.0f, 20.0f, 35.0f, 85.0f};
-    const float lower[] = {36.0f, 114.0f, 254.0f, 449.0f, 449.0f};
-    const float upper[] = {38.0f, 116.0f, 256.0f, 451.0f, 451.0f};
+    const float lower[] = {10.0f, 78.0f, 326.0f, 899.0f, 899.0f};
+    const float upper[] = {12.0f, 80.0f, 328.0f, 901.0f, 901.0f};
     float previous = 0.0f;
     for (size_t i = 0; i < sizeof(tilts) / sizeof(tilts[0]); ++i) {
         pose.roll_deg = tilts[i];
@@ -381,7 +381,7 @@ int main(void)
     test_mapping_deadzone_curve_axis_and_clamp();
     test_fractional_accumulation_and_recentre_reset();
     test_report_delta_clamp_discards_excess_backlog();
-    test_physical_tuning_candidate_response();
+    test_default_response_baseline();
     test_replay_fixture();
     return 0;
 }

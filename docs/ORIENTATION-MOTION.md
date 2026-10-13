@@ -64,23 +64,22 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | invert | no | no |
 | deadzone | 3° | 3° |
 | max useful tilt | 35° | 35° |
-| response exponent | 0.9 | 0.9 |
-| gain | 450 counts/s | 450 counts/s |
+| response exponent | 1.6 | 1.6 |
+| gain | 900 counts/s | 900 counts/s |
 | velocity clamp | 1000 counts/s | 1000 counts/s |
 
 Axis source and inversion are explicit so physical acceptance can change board-to-pointer mapping without changing estimator mathematics.
 
-TM-008 candidate 1 follows the operator's 13 October 2026 corrected-firmware
-trial: movement was hard to start and larger motion was hard to control. The
-operator corrected the initial Y-inversion report after holding the board in
-the intended orientation with the cable in hand; the original axis signs are
-retained. The candidate uses a mildly concave response with half the prior
-900 counts/s gain. At 5/10/20/35 degrees, speeds are approximately
-37/115/255/450 counts/s, compared with 11/79/327/900 before. The 3 degree
-deadzone is retained because the corrected 25 second idle capture was quiet.
-This candidate still requires a repeated physical direction/usability trial;
-it is not an accepted v0.1 tuning result. Click-transition measurement continues
-without freezing or damping motion.
+TM-008 candidate 1 tried exponent 0.9 and gain 450 counts/s after the operator
+reported difficult initiation and high-speed control. The operator rejected
+the physical candidate as substantially less controllable. The original
+1.6/900 response is restored; it remains provisional rather than accepted v0.1
+tuning. Original axis signs are retained after the operator corrected an
+initial Y-inversion report when holding the board with the cable in hand.
+Neutral capture in the actual grip and usable orientation range require
+controlled measurement before another curve change. The corrected 25 second
+baseline idle was quiet. Click-transition measurement continues without
+freezing or damping motion. Full candidate results remain in TM-008 evidence.
 
 ## Report integration and bounds
 

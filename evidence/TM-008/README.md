@@ -115,21 +115,27 @@ coalesce reports; event counts are not a packet-loss measurement.
 The operator initially reported Y inverted, then corrected that assessment:
 directions are correct when held the intended way with the cable in hand.
 The response was difficult to start, then hard to control in motion.
-TM-008 tuning candidate 1 preserves the original axis signs, reduces gain
-from 900 to 450 counts/s and changes exponent from 1.6 to 0.9. The 3 degree
-deadzone remains unchanged because corrected idle was quiet. See
-[the mapping contract](../../docs/ORIENTATION-MOTION.md) for predicted speeds.
-A repeated physical direction/usability trial is required before accepting
-these defaults. Source `b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf` has been
-built in both wired variants, with matching linked HID descriptors. All 12
-host tests and all four required gates pass in
+TM-008 tuning candidate 1 preserved original axis signs, reduced gain from
+900 to 450 counts/s and changed exponent from 1.6 to 0.9. Source
+`b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf` passed all four required gates in
 [CI 38468595024](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38468595024).
-Its diagnostic app SHA-256
-`e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2`
-was flashed with live ROM identity, all three region digests and independent
-application readback verified. Application boot and tuning repeat are pending
-the operator RESET step. [Candidate 1 hashes](tuning-candidate-1.json) retain
-its exact binaries separately from the earlier diagnostic source. No click-motion freeze or damping is added.
+Both wired builds and linked HID descriptor checks passed. Diagnostic app
+SHA-256 `e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2`
+passed live target identity, all three flash digests and independent readback.
+After reported RESET the downloader remained visible, with GPIO0 read high.
+A subsequent operator cold unplug/replug produced healthy diagnostic USB and
+CDC. This does not establish the reason the earlier RESET did not start it.
+
+The 15 second `tuning1b-diag-idle` capture had 1556 Raw Input events, 1505 with
+movement and six button events. Inputs were ready; stale/error/drop counters
+were zero, USB mounted with no resets/failures, maximum loop gap 5648 us.
+Despite its planned idle name, it does not establish quiet idle: handling was
+not confirmed. The operator reported the new curve far less controllable than
+before, comparing it to flying a quadcopter in acro mode while drunk.
+**Candidate 1 is rejected.** Restore exponent 1.6 / gain 900 and verify deliberate
+BOOT recenter in the actual grip before further response tuning. Original
+axis signs remain unchanged. No click-motion freeze or damping is added.
+[Candidate 1 hashes/results](tuning-candidate-1.json) retain this failed trial.
 
 Board A remains on its prior accepted config-2 production pair and received
 no flash/reset in this session. RF, receiver internal transport and joint

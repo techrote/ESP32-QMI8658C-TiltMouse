@@ -100,6 +100,18 @@
     {
       "capture": "tiltmouse-tuning1b-diag-write/application-readback.bin",
       "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2"
+    },
+    {
+      "capture": "tuning1b-post-reset-boot-input-read.log",
+      "sha256": "07fc235eac1160ebc4ac3cd383bde54a90c7a7a5ab67670eb07f630132051653"
+    },
+    {
+      "capture": "tuning1b-diag-idle/result.json",
+      "sha256": "ebc65e53c6ce72fb14a1e24684b90e0844fbd1b9b2a20c0f3a6d6acd891ab02d"
+    },
+    {
+      "capture": "tuning1b-diag-idle/serial.bin",
+      "sha256": "16e1eb3d524096dd5979d4096ea5900658d85c2721617c9d0c48ea1f6614659a"
     }
   ]
 }

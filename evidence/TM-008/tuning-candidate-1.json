@@ -94,5 +94,10 @@
   "full_ci_run": 38468595024,
   "full_ci_status": "PASS",
   "application_readback_verified": true,
-  "application_boot_observed": false
+  "application_boot_observed": true,
+  "physical_result": "REJECTED",
+  "operator_feedback": "Far less controllable than before; compared feel to flying a quadcopter in acro mode while drunk.",
+  "capture": "tuning1b-diag-idle",
+  "idle_result": "NOT ESTABLISHED: movement and buttons observed; operator handling not confirmed",
+  "next_action": "Restore archived 5f07be2 baseline response, then verify BOOT neutral capture in actual grip."
 }

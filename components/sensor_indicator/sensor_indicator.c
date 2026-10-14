@@ -42,7 +42,9 @@ esp_err_t tm_sensor_indicator_init(void)
     };
     esp_err_t err = rmt_new_tx_channel(&channel_config, &s_channel);
     if (err == ESP_OK) {
-        const rmt_copy_encoder_config_t encoder_config = {0};
+        /* IDF v6.1 declares an empty configuration struct. */
+        rmt_copy_encoder_config_t encoder_config;
+        memset(&encoder_config, 0, sizeof(encoder_config));
         err = rmt_new_copy_encoder(&encoder_config, &s_encoder);
     }
     if (err == ESP_OK) {

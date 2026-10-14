@@ -1,4 +1,6 @@
 # Qualification only: normal sdkconfig.defaults remains mouse-only.
 CONFIG_TILTMOUSE_USB_DIAGNOSTICS=y
+# TM-008 owner-requested qualification exception; default-off in Kconfig.
+CONFIG_TILTMOUSE_SENSOR_INDICATOR=y
 CONFIG_TINYUSB_CDC_COUNT=1
 CONFIG_TINYUSB_CDC_TX_BUFSIZE=2048

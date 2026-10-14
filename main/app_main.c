@@ -21,6 +21,10 @@
 #include "tiltmouse/espnow_mouse.h"
 #include "sdkconfig.h"
 
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+#include "tiltmouse/sensor_indicator.h"
+#endif
+
 #if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
 #include "tiltmouse_sender_config.local.h"
 #endif
@@ -68,6 +72,10 @@ typedef struct {
     uint32_t reinit_successes;
     uint64_t next_retry_us;
     esp_err_t last_error;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    uint32_t last_raw[TILTMOUSE_TOUCH_CHANNEL_COUNT];
+    uint64_t last_sample_us;
+#endif
 } tm_touch_runtime_t;
 
 static tm_mouse_publish_result_t usb_publish(
@@ -283,7 +291,68 @@ static void read_touch(
         return;
     }
     runtime->consecutive_failures = 0;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    for (size_t i = 0; i < TILTMOUSE_TOUCH_CHANNEL_COUNT; ++i) {
+        runtime->last_raw[i] = sample.raw[i];
+    }
+    runtime->last_sample_us = sample.timestamp_us;
+#endif
 }
+
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+static uint32_t diagnostic_value(float value, double scale)
+{
+    /* Saturate before conversion, including raw values rounded by float. */
+    const double scaled = (double)value * scale;
+    if (!(scaled > 0.0)) {
+        return 0;
+    }
+    return scaled >= (double)UINT32_MAX ? UINT32_MAX : (uint32_t)scaled;
+}
+
+static void observe_touch(const tm_touch_runtime_t *runtime, uint64_t now_us)
+{
+    uint32_t baseline[7], noise[7], evidence[7];
+    for (size_t i = 0; i < TILTMOUSE_TOUCH_CHANNEL_COUNT; ++i) {
+        baseline[i] = diagnostic_value(s_app.buttons.baseline[i], 1.0);
+        noise[i] = diagnostic_value(s_app.buttons.noise[i], 1.0);
+        evidence[i] = diagnostic_value(s_app.buttons.normalized[i], 1000.0);
+    }
+    ESP_LOGI(TAG,
+             "touch-observe t=%" PRIu64 " sample=%" PRIu64
+             " ready=%d err=%d swap=%d groups=(%d,%d) buttons=%u"
+             " raw=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " baseline=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " noise=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " evidence_milli=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")",
+             now_us, runtime->last_sample_us, (int)s_app.touch_valid,
+             (int)runtime->last_error, (int)s_app.config.swap_touch_buttons,
+             (int)s_app.buttons.left_pressed, (int)s_app.buttons.right_pressed,
+             (unsigned)s_app.last_buttons,
+             runtime->last_raw[0], runtime->last_raw[1], runtime->last_raw[2],
+             runtime->last_raw[3], runtime->last_raw[4], runtime->last_raw[5],
+             runtime->last_raw[6],
+             baseline[0], baseline[1], baseline[2], baseline[3],
+             baseline[4], baseline[5], baseline[6],
+             noise[0], noise[1], noise[2], noise[3], noise[4], noise[5], noise[6],
+             evidence[0], evidence[1], evidence[2], evidence[3],
+             evidence[4], evidence[5], evidence[6]);
+}
+#endif
+
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+static float indicator_angle(const tiltmouse_motion_axis_config_t *axis)
+{
+    const float angle = axis->source == TILTMOUSE_MOTION_AXIS_ROLL
+        ? s_app.orientation.roll_deg - s_app.orientation.neutral_roll_deg
+        : s_app.orientation.pitch_deg - s_app.orientation.neutral_pitch_deg;
+    return axis->invert ? -angle : angle;
+}
+#endif
 
 void app_main(void)
 {
@@ -346,6 +415,13 @@ void app_main(void)
         return;
     }
 
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+    const esp_err_t indicator_error = tm_sensor_indicator_init();
+    if (indicator_error != ESP_OK) {
+        ESP_LOGW(TAG, "Dim indicator unavailable: %s", esp_err_to_name(indicator_error));
+    }
+#endif
+
     const esp_timer_create_args_t timer_args = {
         .callback = wake_app,
         .arg = xTaskGetCurrentTaskHandle(),
@@ -362,6 +438,9 @@ void app_main(void)
     uint64_t touch_poll_us = 0;
     uint64_t report_poll_us = 0;
     uint64_t diag_poll_us = 0;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    uint64_t touch_observe_us = 0;
+#endif
     uint64_t last_loop_us = 0;
     uint64_t max_loop_gap_us = 0;
     uint64_t last_logged_button_transition_us = 0;
@@ -433,6 +512,23 @@ void app_main(void)
                          event_diag.click_motion_samples);
             }
         }
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+        /* Fixed one-Hz snapshots of the already-consumed input, no extra reads.
+         * Fast transition timing remains in button-transition/window telemetry. */
+        if (touch_observe_us == 0 ||
+            now_us - touch_observe_us >= UINT64_C(1000000)) {
+            touch_observe_us = now_us;
+            observe_touch(&touch_runtime, output_now_us);
+        }
+#endif
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+        const bool indicator_ready = s_app.imu_valid &&
+            s_app.orientation.neutral_valid && output_now_us >= s_app.last_imu_us &&
+            output_now_us - s_app.last_imu_us <= s_app.config.imu_fresh_us;
+        tm_sensor_indicator_update(indicator_angle(&s_app.config.motion.x),
+                                   indicator_angle(&s_app.config.motion.y),
+                                   indicator_ready, output_now_us);
+#endif
         if (diag_poll_us == 0 || now_us - diag_poll_us >= TM_DIAG_POLL_US) {
             diag_poll_us = now_us;
             tm_app_diagnostics_t diag;
@@ -500,6 +596,13 @@ void app_main(void)
                 imu_runtime.window_samples = 0u;
                 imu_runtime.window_capped = false;
             }
+#endif
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+            const tm_sensor_indicator_status_t indicator = tm_sensor_indicator_status();
+            ESP_LOGI(TAG, "indicator running=%d submitted=%" PRIu32
+                     " busy=%" PRIu32 " err=%d",
+                     (int)indicator.running, indicator.submitted,
+                     indicator.busy_skips, (int)indicator.last_error);
 #endif
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32

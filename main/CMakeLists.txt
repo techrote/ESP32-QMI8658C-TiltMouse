@@ -3,6 +3,6 @@ idf_component_register(
     INCLUDE_DIRS "."
     PRIV_REQUIRES
         board app_pipeline qmi8658 gyro_bias orientation mouse_motion
-        touch_input touch_buttons usb_hid_mouse espnow_mouse
+        touch_input touch_buttons usb_hid_mouse espnow_mouse sensor_indicator
         esp_timer esp_driver_gpio
 )

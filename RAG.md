@@ -1,4 +1,4 @@
-# RAG â€” ESP32-QMI8658C-TiltMouse
+# RAG — ESP32-QMI8658C-TiltMouse
 
 This file is the compact authoritative context for implementation agents. If an issue prompt conflicts with this file, reconcile live repository state and prefer the newest explicit repository decision.
 
@@ -25,9 +25,9 @@ Bluetooth LE HID/HOGP is deferred beyond v0.1 rather than removed as a future de
 - Do not initialize Bluetooth/BLE in v0.1.
 - No host-side driver should be required for normal mouse use in either path: wireless hosts see the companion receiver as ordinary USB HID.
 - Motion sensor: onboard QMI8658C 6-axis IMU.
-- Left click: software fusion of touch channels GPIO1, GPIO2, GPIO3.
+- Left click: software fusion of touch channels GPIO5, GPIO6, GPIO7 (TM-008 operator-selected placement).
 - GPIO4: never a mouse click; reserve as separator/reference/diagnostic channel.
-- Right click: software fusion of touch channels GPIO5, GPIO6, GPIO7.
+- Right click: software fusion of touch channels GPIO1, GPIO2, GPIO3 (TM-008 operator-selected placement).
 - Do not electrically tie the touch pins together. Group them only in software.
 - Do not use the LED matrix in the initial release. Keep LED data quiescent.
 - Preserve a reliable BOOT/RESET flashing recovery path.
@@ -47,11 +47,11 @@ From the Waveshare schematic and board documentation:
 | QMI8658C INT2 | GPIO13 |
 | RGB matrix data input | GPIO14 |
 | BOOT button | GPIO0 |
-| Touch left group | GPIO1, GPIO2, GPIO3 |
+| Touch left group (TM-008 placement) | GPIO5, GPIO6, GPIO7 |
 | Touch separator/reference | GPIO4 |
-| Touch right group | GPIO5, GPIO6, GPIO7 |
+| Touch right group (TM-008 placement) | GPIO1, GPIO2, GPIO3 |
 
-ESP32-S3 touch hardware maps TOUCH1â€“TOUCH7 to GPIO1â€“GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
+ESP32-S3 touch hardware maps TOUCH1–TOUCH7 to GPIO1–GPIO7. The S3 uses touch hardware version 2, for which raw measurement values increase with added capacitance/touch.
 
 The QMI8658C `WHO_AM_I` register is 0x00 and should read 0x05. QMI8658C rev. 0.9 documents the 7-bit I2C address as 0x6A when SA0 is pulled high or left unconnected and 0x6B when SA0 is pulled low. Firmware verifies identity and probes 0x6A then 0x6B rather than relying on a board-address assumption.
 
@@ -172,7 +172,12 @@ Normal direct-USB identity remains mouse-only. A diagnostic build may expose HID
 
 ESP-NOW mode may depend on ESP-IDF `esp_wifi` / `esp_now`; direct USB mode should not initialize Wi-Fi merely because wireless support exists in the binary.
 
-The onboard LEDs remain unused unless a later issue explicitly changes scope.
+Normal USB and ESP-NOW builds keep the LEDs unused. On 14 October 2026 the
+operator explicitly requested a very dim sensor representation for the next
+TM-008 test build. `CONFIG_TILTMOUSE_SENSOR_INDICATOR` is default-off and USB
+diagnostic-only; that qualification defaults file opts into a one-code,
+single-pixel tilt dot on GPIO14. See `docs/TM-008-NEXT-TEST.md` for the narrow
+exception and the remaining physical checks. It does not qualify release LEDs.
 
 ## Acceptance principles
 
@@ -203,8 +208,8 @@ v0.1 is complete when a physical ESP32-S3-Matrix can:
 - operate wirelessly through a compatible ESP-NOW receiver that enumerates as standard USB HID;
 - remain stationary in a comfortable neutral pose;
 - move cursor smoothly and predictably by tilt;
-- left-click/hold/drag using GPIO1â€“3;
-- right-click/hold using GPIO5â€“7;
+- left-click/hold/drag using GPIO5–7;
+- right-click/hold using GPIO1–3;
 - ignore GPIO4 as a click;
 - re-centre without reflashing;
 - survive ordinary USB and wireless link-loss/recovery paths safely;
@@ -273,6 +278,6 @@ Relevant faikeow authority:
 - `RAG.md`
 - `docs/02-PROTOCOLS.md`
 - `docs/08-HID-PROFILES.md`
-- FNR-006 / issue #7 â€” generic receiver core + `relative_mouse` profile
-- FNR-008 / issue #9 â€” physical platform/reference-sender acceptance
-- FNR-009 / issue #10 â€” v0.1 receiver release
+- FNR-006 / issue #7 — generic receiver core + `relative_mouse` profile
+- FNR-008 / issue #9 — physical platform/reference-sender acceptance
+- FNR-009 / issue #10 — v0.1 receiver release

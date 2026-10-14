@@ -241,3 +241,27 @@ target_compile_features(gyro_bias PRIVATE c_std_11)
 target_compile_options(gyro_bias PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(gyro_bias PRIVATE m)
 add_test(NAME gyro_bias COMMAND gyro_bias)
+
+add_executable(indicator_frame
+    test_indicator_frame.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/indicator_frame.c)
+target_include_directories(indicator_frame PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/include)
+target_compile_features(indicator_frame PRIVATE c_std_11)
+target_compile_options(indicator_frame PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(indicator_frame PRIVATE m)
+add_test(NAME indicator_frame COMMAND indicator_frame)
+
+add_executable(sensor_indicator
+    test_sensor_indicator.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/sensor_indicator.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/indicator_frame.c)
+target_include_directories(sensor_indicator PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/indicator_fakes
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include)
+target_compile_features(sensor_indicator PRIVATE c_std_11)
+target_compile_options(sensor_indicator PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(sensor_indicator PRIVATE m)
+add_test(NAME sensor_indicator_async COMMAND sensor_indicator)
+add_test(NAME sensor_indicator_stuck COMMAND sensor_indicator stuck)

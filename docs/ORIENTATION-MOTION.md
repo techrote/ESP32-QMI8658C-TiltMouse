@@ -34,7 +34,7 @@ The actual-main regression with this offset reproduces failed neutral capture.
 The target adapter now learns a bounded stationary mean before forwarding IMU
 samples to the pipeline. It uses at least 128 samples spanning at least one
 second, with no gap over 100 ms. Each window requires acceleration magnitude
-0.75â€“1.25 g, per-axis acceleration span at most 0.10 g, per-axis gyro span at
+0.75–1.25 g, per-axis acceleration span at most 0.10 g, per-axis gyro span at
 most 4 dps, and raw gyro magnitude at most 16 dps per axis. The last bound is
 an application guard covering the measured offset, not a QMI manufacturing
 tolerance. The window contains only fixed sums/min/max and at most 1024 samples;
@@ -69,13 +69,13 @@ Default estimator hypotheses are:
 | Setting | Default |
 | --- | ---: |
 | complementary-filter time constant | 0.50 s |
-| usable acceleration magnitude | 0.75â€“1.25 g |
+| usable acceleration magnitude | 0.75–1.25 g |
 | largest gyro-integrated sample gap | 50 ms |
-| roll/pitch bound | Â±85Â° |
+| roll/pitch bound | ±85° |
 
 A non-monotonic timestamp is rejected without changing estimator state. A gap larger than 50 ms is never gyro-integrated: the timestamp is rebased and, when gravity is usable, roll/pitch are re-established from the accelerometer. This prevents a stale interval from becoming a large synthetic rotation.
 
-Acceleration outside 0.75â€“1.25 g is treated as a dynamic disturbance and is not used for gravity correction on that update. Gyro prediction continues for normal-sized time steps.
+Acceleration outside 0.75–1.25 g is treated as a dynamic disturbance and is not used for gravity correction on that update. Gyro prediction continues for normal-sized time steps.
 
 ## Neutral pose
 
@@ -104,8 +104,8 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | --- | ---: | ---: |
 | source | roll | pitch |
 | invert | yes | no |
-| deadzone | 3Â° | 3Â° |
-| max useful tilt | 35Â° | 35Â° |
+| deadzone | 3° | 3° |
+| max useful tilt | 35° | 35° |
 | response exponent | 1.6 | 1.6 |
 | gain | 900 counts/s | 900 counts/s |
 | velocity clamp | 1000 counts/s | 1000 counts/s |
@@ -152,6 +152,6 @@ Host tests cover:
 - deadzone and nonlinear curve boundaries;
 - velocity and report-delta clamps;
 - fractional accumulation and residual clearing on re-centre;
-- a CSV replay that tilts from neutral to +20Â° pitch, holds through a dynamic acceleration disturbance, and returns to neutral.
+- a CSV replay that tilts from neutral to +20° pitch, holds through a dynamic acceleration disturbance, and returns to neutral.
 
 These tests establish deterministic algorithm behavior only. Final board axes, neutral drift, deadzone, gain, response curve, and cursor feel remain physical TM-008 acceptance work.

@@ -220,6 +220,40 @@ static void test_buttons_reference_failure_and_drag(void)
     assert(!app.orientation.neutral_valid);
 }
 
+static void test_operator_button_locations(void)
+{
+    tm_app_pipeline_t app;
+    fake_transport_t fake;
+    setup(&app, &fake, TM_MOUSE_TRANSPORT_USB);
+    assert(app.config.swap_touch_buttons);
+    calibrate_touch(&app);
+    calibrate_imu(&app);
+    touch(&app, 136000, 2000, 1000, 1000);
+    touch(&app, 144000, 2000, 1000, 1000);
+    assert(next(&app, 144000).buttons == TM_MOUSE_BUTTON_RIGHT);
+    touch(&app, 152000, 1000, 1000, 1000);
+    touch(&app, 160000, 1000, 1000, 1000);
+    assert(next(&app, 160000).buttons == 0);
+    touch(&app, 168000, 1000, 1000, 2000);
+    touch(&app, 176000, 1000, 1000, 2000);
+    assert(next(&app, 176000).buttons == TM_MOUSE_BUTTON_LEFT);
+    touch(&app, 184000, 2000, 1000, 2000);
+    touch(&app, 192000, 2000, 1000, 2000);
+    assert(next(&app, 192000).buttons == TM_MOUSE_BUTTON_ALL);
+    touch(&app, 200000, 1000, 9000, 1000);
+    touch(&app, 208000, 1000, 9000, 1000);
+    assert(next(&app, 208000).buttons == 0);
+
+    /* Same physical fusion supports the original mapping when explicitly set. */
+    tm_app_config_t cfg = tm_app_default_config();
+    cfg.swap_touch_buttons = false;
+    assert(tm_app_init(&app, &cfg, TM_MOUSE_TRANSPORT_USB, app.output));
+    calibrate_touch(&app);
+    touch(&app, 136000, 2000, 1000, 1000);
+    touch(&app, 144000, 2000, 1000, 1000);
+    assert(next(&app, 144000).buttons == TM_MOUSE_BUTTON_LEFT);
+}
+
 static void test_single_transport_and_latest_only(void)
 {
     tm_app_pipeline_t usb_app, wireless_app;
@@ -407,7 +441,7 @@ static void test_click_motion_window_tracks_post_transition_peak(void)
     app.inhibit_motion_once = false;
 
     tm_mouse_report_t r = next(&app, 100000);
-    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(r.buttons == TM_MOUSE_BUTTON_RIGHT);
     assert(app.last_button_transition_us == 100000);
     assert(app.click_motion_window_until_us == 200000);
     assert(app.click_motion_samples == 1u);
@@ -416,7 +450,7 @@ static void test_click_motion_window_tracks_post_transition_peak(void)
     app.orientation.roll_deg = 35.0f;
     app.last_imu_us = 108000;
     r = next(&app, 108000);
-    assert(r.buttons == TM_MOUSE_BUTTON_LEFT);
+    assert(r.buttons == TM_MOUSE_BUTTON_RIGHT);
     assert(app.click_motion_samples == 2u);
     assert((app.click_peak_dx < 0 ? -app.click_peak_dx : app.click_peak_dx) >=
            (first_peak < 0 ? -first_peak : first_peak));
@@ -444,6 +478,7 @@ int main(void)
     test_startup_neutral_and_stale_sources();
     test_tilt_movement_and_recentre();
     test_buttons_reference_failure_and_drag();
+    test_operator_button_locations();
     test_single_transport_and_latest_only();
     test_reject_reused_timestamps();
     test_touch_fault_requires_recalibration_and_single_release();

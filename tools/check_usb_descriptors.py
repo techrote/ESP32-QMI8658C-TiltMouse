@@ -82,7 +82,15 @@ def main() -> None:
         raise ValueError("Diagnostic mode changed the mouse report contract")
     if int.from_bytes(hid_descriptors[0][7:9], "little") != len(reports[0]):
         raise ValueError("HID descriptor report length mismatch")
-    print("PASS: linked normal/diagnostic mouse bytes, interfaces and endpoints")
+    # The qualification defaults opt into the dim indicator; normal USB must
+    # not acquire its GPIO/RMT driver. Check linked code, not source macros.
+    for path, expected in ((args.usb, False), (args.diagnostic, True)):
+        with path.open("rb") as stream:
+            table = ELFFile(stream).get_section_by_name(".symtab")
+            present = bool(table.get_symbol_by_name("tm_sensor_indicator_init"))
+            if present != expected:
+                raise ValueError("Indicator linked in the wrong USB build")
+    print("PASS: linked mouse bytes/interfaces/endpoints; diagnostic-only indicator")
 
 
 if __name__ == "__main__":

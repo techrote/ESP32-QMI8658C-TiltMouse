@@ -1,0 +1,72 @@
+# TM-008 physical acceptance campaign
+
+TM-008 / issue #8 and receiver FNR-008 / issue #9 share session
+`joint-TM008-FNR008-2026-10-13`. Each issue retains its own acceptance decision.
+Both remain open until their physical criteria and final CI are established.
+
+## Wired telemetry build
+
+Normal firmware exposes only the HID mouse. On the Matrix board its native USB
+pins cannot simultaneously expose the hardware USB Serial/JTAG console. The
+qualification build adds CDC to the same USB device so the existing TM-007
+application telemetry is observable through the board's cable:
+
+```sh
+idf.py -B build-usb-diag -D IDF_TARGET=esp32s3 -D SDKCONFIG=sdkconfig.usb-diag \
+  -D 'SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.usb-diagnostics.defaults' build
+```
+
+Run from the pinned ESP-IDF v6.1 environment with ESP32-S3 selected. Diagnostic
+USB has three interfaces (HID plus the two CDC interfaces). HID retains its
+original report descriptor, interface 0, IN endpoint 0x81 and 8 ms poll interval.
+CDC uses separate endpoints and redirects existing application logs through
+the pinned nonblocking, fixed-FIFO VFS. There are no diagnostic application
+commands, synthetic movement, sensor overrides, or changed motion semantics.
+Unconsumed serial output can be truncated; serial logs are not lossless evidence.
+
+Each completed, uninterrupted 100 ms post-transition window is logged once with
+its transition timestamp, end, peak X/Y and sample count. A second transition
+before that end replaces the measurement window; the earlier window is not a
+completed-window observation. Use representative clicks with at least 100 ms
+between transitions for complete peak correlation, and retain ordinary rapid
+click trials separately as host behavior. Periodic snapshots also expose
+neutral/touch readiness and actual IMU/touch ages. Instrumentation changes no
+input, movement, button or transport semantics.
+
+The diagnostic USB build additionally snapshots the same successful QMI
+acquisition consumed by the application. At the existing ten-second diagnostic
+cadence it logs acceleration in mg, angular rate in mdps, sensor/host timestamps,
+successful/no-data counts, current acquisition status, quiet-sample progress,
+filtered/neutral angles in millidegrees and BOOT state. Integer presentation
+truncates toward zero. It performs no additional I2C transactions and changes
+no calibration limits, curve, recovery timing or input decisions. Normal USB
+and ESP-NOW builds exclude this additional observation state and output.
+
+The observer also aggregates native acceleration/gyro mean and peak-to-peak
+spread between diagnostics, with no sample queue and a 4096-acquisition cap.
+Each window logs its count and whether the cap was reached, then resets.
+These measurements diagnose bias/stationarity; they do not change the existing
+quiet calibration predicate or estimate/compensate gyro bias. Raw readouts
+remain native-frame; pose readouts use the target's corrected estimator frame.
+
+CI builds both wired variants and checks their actual linked descriptor bytes:
+
+```sh
+python tools/check_usb_descriptors.py \
+  --usb build/esp32_qmi8658c_tiltmouse.elf \
+  --diagnostic build-usb-diag/esp32_qmi8658c_tiltmouse.elf
+```
+
+Normal mouse-only firmware must also be tested physically. Diagnostic USB
+enumeration or timing cannot stand in for acceptance of the normal identity.
+Wireless instrumentation uses the selected ESP-NOW build's console; no direct
+USB mouse is initialized in that mode.
+
+## Session evidence
+
+See [the TM-008 session record](../evidence/TM-008/README.md). Receiver-owned
+UART/core/USB observations and the shared RF matrix belong in
+[`faikeow-now-reciever/evidence/FNR-008/`](https://github.com/techrote/faikeow-now-reciever/tree/codex/fnr-008-physical-acceptance/evidence/FNR-008).
+Source commits, actual build modes and binary hashes must accompany every
+result. Repeated USB transfers and ESP-NOW callbacks do not alone establish
+host movement or receiver application acceptance.

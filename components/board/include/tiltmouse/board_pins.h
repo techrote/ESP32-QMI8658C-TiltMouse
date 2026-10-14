@@ -10,6 +10,7 @@
 enum {
     TILTMOUSE_GPIO_BOOT = 0,
 
+    /* Historical physical group names; app_pipeline owns HID placement. */
     TILTMOUSE_GPIO_TOUCH_LEFT_1 = 1,
     TILTMOUSE_GPIO_TOUCH_LEFT_2 = 2,
     TILTMOUSE_GPIO_TOUCH_LEFT_3 = 3,

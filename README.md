@@ -4,9 +4,9 @@ No-solder wired/wireless tilt-mouse firmware for the Waveshare **ESP32-S3-Matrix
 
 The product uses the onboard **QMI8658C** accelerometer/gyroscope for tilt-driven cursor motion and the ESP32-S3 capacitive-touch channels as two logical mouse buttons:
 
-- GPIO1–GPIO3: left click
+- GPIO1–GPIO3: right click (TM-008 operator-selected placement)
 - GPIO4: no click; reserved as separator/reference channel
-- GPIO5–GPIO7: right click
+- GPIO5–GPIO7: left click (TM-008 operator-selected placement)
 
 v0.1 now targets two transport modes:
 
@@ -15,7 +15,7 @@ v0.1 now targets two transport modes:
 
 The receiver platform is maintained separately in [`techrote/faikeow-now-reciever`](https://github.com/techrote/faikeow-now-reciever). Its first accepted hardware target is a clone "Pico W" containing RP2040 plus ESP8266/ESP8285-class Wi-Fi hardware. TiltMouse is the first reference sender for faikeow's generic `relative_mouse` profile.
 
-Bluetooth LE HID/HOGP remains a possible future transport, but it is explicitly deferred beyond v0.1. The onboard 8×8 RGB matrix also remains out of scope.
+Bluetooth LE HID/HOGP remains a possible future transport, but it is explicitly deferred beyond v0.1. The onboard 8×8 RGB matrix remains off in normal builds; the owner-requested TM-008 diagnostic build has a very dim sensor dot.
 
 ## Project authority
 

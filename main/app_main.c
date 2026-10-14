@@ -11,13 +11,19 @@
 #include "freertos/task.h"
 #include "tiltmouse/app_pipeline.h"
 #include "tiltmouse/board.h"
+#include "tiltmouse/board_imu_frame.h"
 #include "tiltmouse/board_pins.h"
+#include "tiltmouse/gyro_bias.h"
 #include "tiltmouse/qmi8658.h"
 #include "tiltmouse/qmi8658_esp_idf.h"
 #include "tiltmouse/touch_input.h"
 #include "tiltmouse/usb_hid_mouse.h"
 #include "tiltmouse/espnow_mouse.h"
 #include "sdkconfig.h"
+
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+#include "tiltmouse/sensor_indicator.h"
+#endif
 
 #if defined(CONFIG_TILTMOUSE_OUTPUT_ESPNOW)
 #include "tiltmouse_sender_config.local.h"
@@ -43,6 +49,21 @@ typedef struct {
     uint64_t next_retry_us;
     uint64_t no_data_since_us;
     qmi8658_status_t last_status;
+    tm_gyro_bias_t bias;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    qmi8658_sample_t last_sample;
+    float last_corrected_gyro[3];
+    uint32_t sample_count;
+    uint32_t no_data_count;
+    uint32_t window_samples;
+    bool window_capped;
+    float accel_sum[3];
+    float accel_min[3];
+    float accel_max[3];
+    float gyro_sum[3];
+    float gyro_min[3];
+    float gyro_max[3];
+#endif
 } tm_imu_runtime_t;
 
 typedef struct {
@@ -51,6 +72,10 @@ typedef struct {
     uint32_t reinit_successes;
     uint64_t next_retry_us;
     esp_err_t last_error;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    uint32_t last_raw[TILTMOUSE_TOUCH_CHANNEL_COUNT];
+    uint64_t last_sample_us;
+#endif
 } tm_touch_runtime_t;
 
 static tm_mouse_publish_result_t usb_publish(
@@ -134,6 +159,7 @@ static void try_imu_reinit(
         return;
     }
     ++runtime->reinit_attempts;
+    tm_gyro_bias_reset(&runtime->bias);
     const qmi8658_status_t recovery = qmi8658_init(imu, bus);
     runtime->last_status = recovery;
     runtime->next_retry_us = now_us + TM_DRIVER_RETRY_US;
@@ -152,6 +178,11 @@ static void read_imu(
     const qmi8658_status_t status = qmi8658_read_sample(imu, &hardware);
     runtime->last_status = status;
     if (status == QMI8658_NO_DATA) {
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+        if (runtime->no_data_count != UINT32_MAX) {
+            ++runtime->no_data_count;
+        }
+#endif
         if (runtime->no_data_since_us == 0u) {
             runtime->no_data_since_us = now_us;
             return;
@@ -168,6 +199,7 @@ static void read_imu(
     }
     runtime->no_data_since_us = 0u;
     if (status != QMI8658_OK) {
+        tm_gyro_bias_reset(&runtime->bias);
         tm_app_imu_error(&s_app);
         if (runtime->consecutive_failures != UINT32_MAX) {
             ++runtime->consecutive_failures;
@@ -176,11 +208,60 @@ static void read_imu(
         return;
     }
     runtime->consecutive_failures = 0;
-    tiltmouse_imu_sample_t sample = {.timestamp_us = hardware.host_time_us};
-    for (size_t i = 0; i < 3; ++i) {
-        sample.accel_g[i] = hardware.accel_g[i];
-        sample.gyro_dps[i] = hardware.gyro_dps[i];
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    /* Observe exactly the acquisition consumed below; no extra sensor reads. */
+    runtime->last_sample = hardware;
+    if (runtime->sample_count != UINT32_MAX) {
+        ++runtime->sample_count;
     }
+    if (runtime->window_samples < 4096u) {
+        for (size_t i = 0; i < 3u; ++i) {
+            const float accel = hardware.accel_g[i];
+            const float gyro = hardware.gyro_dps[i];
+            if (runtime->window_samples == 0u) {
+                runtime->accel_sum[i] = 0.0f;
+                runtime->gyro_sum[i] = 0.0f;
+                runtime->accel_min[i] = runtime->accel_max[i] = accel;
+                runtime->gyro_min[i] = runtime->gyro_max[i] = gyro;
+            }
+            runtime->accel_sum[i] += accel;
+            runtime->gyro_sum[i] += gyro;
+            if (accel < runtime->accel_min[i]) {
+                runtime->accel_min[i] = accel;
+            }
+            if (accel > runtime->accel_max[i]) {
+                runtime->accel_max[i] = accel;
+            }
+            if (gyro < runtime->gyro_min[i]) {
+                runtime->gyro_min[i] = gyro;
+            }
+            if (gyro > runtime->gyro_max[i]) {
+                runtime->gyro_max[i] = gyro;
+            }
+        }
+        ++runtime->window_samples;
+    } else {
+        runtime->window_capped = true;
+    }
+#endif
+    float corrected_gyro[3];
+    const tm_gyro_bias_result_t bias_result = tm_gyro_bias_update(
+        &runtime->bias, hardware.accel_g, hardware.gyro_dps,
+        hardware.host_time_us, corrected_gyro);
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    for (size_t i = 0; i < 3u; ++i) {
+        runtime->last_corrected_gyro[i] = corrected_gyro[i];
+    }
+#endif
+    if (bias_result != TM_GYRO_BIAS_READY) {
+        if (bias_result == TM_GYRO_BIAS_INVALID_SAMPLE) {
+            tm_app_imu_error(&s_app);
+        }
+        return;
+    }
+    tiltmouse_imu_sample_t sample = {.timestamp_us = hardware.host_time_us};
+    tiltmouse_board_imu_to_mouse_frame(hardware.accel_g, sample.accel_g);
+    tiltmouse_board_imu_to_mouse_frame(corrected_gyro, sample.gyro_dps);
     (void)tm_app_on_imu(&s_app, &sample);
 }
 
@@ -210,7 +291,68 @@ static void read_touch(
         return;
     }
     runtime->consecutive_failures = 0;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    for (size_t i = 0; i < TILTMOUSE_TOUCH_CHANNEL_COUNT; ++i) {
+        runtime->last_raw[i] = sample.raw[i];
+    }
+    runtime->last_sample_us = sample.timestamp_us;
+#endif
 }
+
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+static uint32_t diagnostic_value(float value, double scale)
+{
+    /* Saturate before conversion, including raw values rounded by float. */
+    const double scaled = (double)value * scale;
+    if (!(scaled > 0.0)) {
+        return 0;
+    }
+    return scaled >= (double)UINT32_MAX ? UINT32_MAX : (uint32_t)scaled;
+}
+
+static void observe_touch(const tm_touch_runtime_t *runtime, uint64_t now_us)
+{
+    uint32_t baseline[7], noise[7], evidence[7];
+    for (size_t i = 0; i < TILTMOUSE_TOUCH_CHANNEL_COUNT; ++i) {
+        baseline[i] = diagnostic_value(s_app.buttons.baseline[i], 1.0);
+        noise[i] = diagnostic_value(s_app.buttons.noise[i], 1.0);
+        evidence[i] = diagnostic_value(s_app.buttons.normalized[i], 1000.0);
+    }
+    ESP_LOGI(TAG,
+             "touch-observe t=%" PRIu64 " sample=%" PRIu64
+             " ready=%d err=%d swap=%d groups=(%d,%d) buttons=%u"
+             " raw=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " baseline=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " noise=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")"
+             " evidence_milli=(%" PRIu32 ",%" PRIu32 ",%" PRIu32 ",%" PRIu32
+             ",%" PRIu32 ",%" PRIu32 ",%" PRIu32 ")",
+             now_us, runtime->last_sample_us, (int)s_app.touch_valid,
+             (int)runtime->last_error, (int)s_app.config.swap_touch_buttons,
+             (int)s_app.buttons.left_pressed, (int)s_app.buttons.right_pressed,
+             (unsigned)s_app.last_buttons,
+             runtime->last_raw[0], runtime->last_raw[1], runtime->last_raw[2],
+             runtime->last_raw[3], runtime->last_raw[4], runtime->last_raw[5],
+             runtime->last_raw[6],
+             baseline[0], baseline[1], baseline[2], baseline[3],
+             baseline[4], baseline[5], baseline[6],
+             noise[0], noise[1], noise[2], noise[3], noise[4], noise[5], noise[6],
+             evidence[0], evidence[1], evidence[2], evidence[3],
+             evidence[4], evidence[5], evidence[6]);
+}
+#endif
+
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+static float indicator_angle(const tiltmouse_motion_axis_config_t *axis)
+{
+    const float angle = axis->source == TILTMOUSE_MOTION_AXIS_ROLL
+        ? s_app.orientation.roll_deg - s_app.orientation.neutral_roll_deg
+        : s_app.orientation.pitch_deg - s_app.orientation.neutral_pitch_deg;
+    return axis->invert ? -angle : angle;
+}
+#endif
 
 void app_main(void)
 {
@@ -273,6 +415,13 @@ void app_main(void)
         return;
     }
 
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+    const esp_err_t indicator_error = tm_sensor_indicator_init();
+    if (indicator_error != ESP_OK) {
+        ESP_LOGW(TAG, "Dim indicator unavailable: %s", esp_err_to_name(indicator_error));
+    }
+#endif
+
     const esp_timer_create_args_t timer_args = {
         .callback = wake_app,
         .arg = xTaskGetCurrentTaskHandle(),
@@ -289,9 +438,13 @@ void app_main(void)
     uint64_t touch_poll_us = 0;
     uint64_t report_poll_us = 0;
     uint64_t diag_poll_us = 0;
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+    uint64_t touch_observe_us = 0;
+#endif
     uint64_t last_loop_us = 0;
     uint64_t max_loop_gap_us = 0;
     uint64_t last_logged_button_transition_us = 0;
+    uint64_t last_logged_click_window_us = 0;
     uint32_t collapsed_ticks = 0;
     tm_imu_runtime_t imu_runtime = {.last_status = QMI8658_OK};
     tm_touch_runtime_t touch_runtime = {.last_error = ESP_OK};
@@ -323,12 +476,16 @@ void app_main(void)
             read_touch(&touch, &touch_runtime, now_us);
         }
         tm_app_service(&s_app);
+        /* Acquisitions timestamp their successful completion, after loop entry.
+         * Keep slot scheduling above on the original clock, but assess freshness
+         * and publish only against a clock sampled after those acquisitions. */
+        const uint64_t output_now_us = (uint64_t)esp_timer_get_time();
         if (report_poll_us == 0 || now_us - report_poll_us >= TM_REPORT_POLL_US) {
             report_poll_us = now_us;
             tm_mouse_publish_result_t result = {0};
-            (void)tm_app_dispatch(&s_app, now_us, &result);
+            (void)tm_app_dispatch(&s_app, output_now_us, &result);
             tm_app_diagnostics_t event_diag;
-            tm_app_diagnostics(&s_app, now_us, &event_diag);
+            tm_app_diagnostics(&s_app, output_now_us, &event_diag);
             if (event_diag.last_button_transition_us != 0 &&
                 event_diag.last_button_transition_us !=
                     last_logged_button_transition_us) {
@@ -342,13 +499,114 @@ void app_main(void)
                          (int)event_diag.last_dx, (int)event_diag.last_dy,
                          event_diag.click_motion_window_until_us);
             }
+            if (event_diag.last_button_transition_us != 0 &&
+                event_diag.last_button_transition_us != last_logged_click_window_us &&
+                output_now_us >= event_diag.click_motion_window_until_us) {
+                last_logged_click_window_us = event_diag.last_button_transition_us;
+                ESP_LOGI(TAG,
+                         "button-window t=%" PRIu64 " until=%" PRIu64
+                         " peak=(%d,%d) samples=%" PRIu32,
+                         event_diag.last_button_transition_us,
+                         event_diag.click_motion_window_until_us,
+                         (int)event_diag.click_peak_dx, (int)event_diag.click_peak_dy,
+                         event_diag.click_motion_samples);
+            }
         }
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+        /* Fixed one-Hz snapshots of the already-consumed input, no extra reads.
+         * Fast transition timing remains in button-transition/window telemetry. */
+        if (touch_observe_us == 0 ||
+            now_us - touch_observe_us >= UINT64_C(1000000)) {
+            touch_observe_us = now_us;
+            observe_touch(&touch_runtime, output_now_us);
+        }
+#endif
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+        const bool indicator_ready = s_app.imu_valid &&
+            s_app.orientation.neutral_valid && output_now_us >= s_app.last_imu_us &&
+            output_now_us - s_app.last_imu_us <= s_app.config.imu_fresh_us;
+        tm_sensor_indicator_update(indicator_angle(&s_app.config.motion.x),
+                                   indicator_angle(&s_app.config.motion.y),
+                                   indicator_ready, output_now_us);
+#endif
         if (diag_poll_us == 0 || now_us - diag_poll_us >= TM_DIAG_POLL_US) {
             diag_poll_us = now_us;
             tm_app_diagnostics_t diag;
-            tm_app_diagnostics(&s_app, now_us, &diag);
+            tm_app_diagnostics(&s_app, output_now_us, &diag);
+#if defined(CONFIG_TILTMOUSE_USB_DIAGNOSTICS)
+            const qmi8658_sample_t *observed = &imu_runtime.last_sample;
+            ESP_LOGI(TAG,
+                     "imu-observe t=%" PRIu64 " sensor=%" PRIu32
+                     " samples=%" PRIu32 " no_data=%" PRIu32 " status=%s"
+                     " accel_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " gyro_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " quiet=%" PRIu32 "/%" PRIu32
+                     " pose_mdeg=(%" PRId32 ",%" PRId32 ")"
+                     " neutral_mdeg=(%" PRId32 ",%" PRId32 ")"
+                     " boot_armed=%d boot_down=%d",
+                     observed->host_time_us, observed->sensor_timestamp,
+                     imu_runtime.sample_count, imu_runtime.no_data_count,
+                     qmi8658_status_string(imu_runtime.last_status),
+                     (int32_t)(observed->accel_g[0] * 1000.0f),
+                     (int32_t)(observed->accel_g[1] * 1000.0f),
+                     (int32_t)(observed->accel_g[2] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[0] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[1] * 1000.0f),
+                     (int32_t)(observed->gyro_dps[2] * 1000.0f),
+                     s_app.quiet_samples, s_app.config.startup_quiet_samples,
+                     (int32_t)(s_app.orientation.roll_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.pitch_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.neutral_roll_deg * 1000.0f),
+                     (int32_t)(s_app.orientation.neutral_pitch_deg * 1000.0f),
+                     (int)s_app.boot_armed, (int)s_app.boot_down);
+            ESP_LOGI(TAG,
+                     "imu-bias ready=%d n=%" PRIu32 " rejected=%" PRIu32
+                     " qualified_us=%" PRIu64
+                     " offset_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                     " corrected_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")",
+                     (int)imu_runtime.bias.ready, imu_runtime.bias.samples,
+                     imu_runtime.bias.rejected_windows, imu_runtime.bias.qualified_us,
+                     (int32_t)(imu_runtime.bias.bias_dps[0] * 1000.0f),
+                     (int32_t)(imu_runtime.bias.bias_dps[1] * 1000.0f),
+                     (int32_t)(imu_runtime.bias.bias_dps[2] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[0] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[1] * 1000.0f),
+                     (int32_t)(imu_runtime.last_corrected_gyro[2] * 1000.0f));
+            if (imu_runtime.window_samples != 0u) {
+                const float scale = 1000.0f / (float)imu_runtime.window_samples;
+                ESP_LOGI(TAG,
+                         "imu-window n=%" PRIu32 " capped=%d"
+                         " accel_mean_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " accel_span_mg=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " gyro_mean_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")"
+                         " gyro_span_mdps=(%" PRId32 ",%" PRId32 ",%" PRId32 ")",
+                         imu_runtime.window_samples, (int)imu_runtime.window_capped,
+                         (int32_t)(imu_runtime.accel_sum[0] * scale),
+                         (int32_t)(imu_runtime.accel_sum[1] * scale),
+                         (int32_t)(imu_runtime.accel_sum[2] * scale),
+                         (int32_t)((imu_runtime.accel_max[0] - imu_runtime.accel_min[0]) * 1000.0f),
+                         (int32_t)((imu_runtime.accel_max[1] - imu_runtime.accel_min[1]) * 1000.0f),
+                         (int32_t)((imu_runtime.accel_max[2] - imu_runtime.accel_min[2]) * 1000.0f),
+                         (int32_t)(imu_runtime.gyro_sum[0] * scale),
+                         (int32_t)(imu_runtime.gyro_sum[1] * scale),
+                         (int32_t)(imu_runtime.gyro_sum[2] * scale),
+                         (int32_t)((imu_runtime.gyro_max[0] - imu_runtime.gyro_min[0]) * 1000.0f),
+                         (int32_t)((imu_runtime.gyro_max[1] - imu_runtime.gyro_min[1]) * 1000.0f),
+                         (int32_t)((imu_runtime.gyro_max[2] - imu_runtime.gyro_min[2]) * 1000.0f));
+                imu_runtime.window_samples = 0u;
+                imu_runtime.window_capped = false;
+            }
+#endif
+#if defined(CONFIG_TILTMOUSE_SENSOR_INDICATOR)
+            const tm_sensor_indicator_status_t indicator = tm_sensor_indicator_status();
+            ESP_LOGI(TAG, "indicator running=%d submitted=%" PRIu32
+                     " busy=%" PRIu32 " err=%d",
+                     (int)indicator.running, indicator.submitted,
+                     indicator.busy_skips, (int)indicator.last_error);
+#endif
             ESP_LOGI(TAG,
                      "app reports=%" PRIu32 " move=%" PRIu32
+                     " neutral=%d touch_ready=%d age_us=(%" PRIu64 ",%" PRIu64 ")"
                      " dropped=%" PRIu32 " recenter=%" PRIu32
                      " imu(err=%" PRIu32 " stale=%" PRIu32 " rec=%" PRIu32
                      " drv_retry=%" PRIu32 "/%" PRIu32 ")"
@@ -359,6 +617,8 @@ void app_main(void)
                      " loop_max=%" PRIu64 " collapsed=%" PRIu32
                      " stack_words=%u",
                      diag.reports_published, diag.movement_reports,
+                     (int)diag.neutral_valid, (int)diag.touch_valid,
+                     diag.imu_age_us, diag.touch_age_us,
                      diag.dropped_motion, diag.recenters,
                      diag.imu_errors, diag.imu_stale, diag.imu_recoveries,
                      imu_runtime.reinit_successes, imu_runtime.reinit_attempts,

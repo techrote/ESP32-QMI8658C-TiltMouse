@@ -1,0 +1,23 @@
+{
+  "source_commit": "3a33f41b0e2f5016b425bf28a955dfd777912bf8",
+  "evidence_kind": "Linked binary inspection; not an RF emissions measurement.",
+  "builds": [
+    {
+      "mode": "usb",
+      "elf_sha256": "699df21f6aba2f481c3673354e0c23cadfa19f8424553943534440d9f78686f5",
+      "initialization_symbols_present": []
+    },
+    {
+      "mode": "usb-diagnostic",
+      "elf_sha256": "aca8faa8e557967a30e078c9fad5b1b5a2d31a344c66c3cac586aa2af96090d4",
+      "initialization_symbols_present": []
+    },
+    {
+      "mode": "espnow",
+      "elf_sha256": "21aeb0e85e0b8465c9fcff67597b2e85094c49679c8cbced863642d60844030c",
+      "initialization_symbols_present": [
+        "esp_wifi_init"
+      ]
+    }
+  ]
+}

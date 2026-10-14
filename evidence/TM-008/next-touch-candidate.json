@@ -1,0 +1,221 @@
+{
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "prepared_at_utc": "2026-10-14T00:28:41.985662+00:00",
+  "source_commit": "600df4366bc93fb3a00c64d9855e8c906d1d0113",
+  "source_clean": true,
+  "reference": {
+    "repository": "techrote/ESPsand",
+    "commit": "fd509bfdd3e1a84e9cf097635d3f25a98a345759"
+  },
+  "toolchain": {
+    "esp_idf": "v6.1",
+    "esp_idf_commit": "fff9895c82d744c7237be8847347bdd1b07c6643",
+    "xtensa_gcc": "esp-15.2.0_20251204",
+    "python": "3.12",
+    "esp_tinyusb": "2.3.0",
+    "tinyusb": "0.21.0~1"
+  },
+  "dependency_lock_sha256": "d212a3b740928d3eca695a8c9724dcf82cf3fe1f235c0b15562b4a2cec6f4499",
+  "ci": {
+    "run": 38489855242,
+    "status": "PASS",
+    "head": "600df4366bc93fb3a00c64d9855e8c906d1d0113",
+    "jobs": [
+      {
+        "name": "ESP32-S3 firmware build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Text and style sanity",
+        "conclusion": "success"
+      },
+      {
+        "name": "Host unit tests",
+        "conclusion": "success"
+      },
+      {
+        "name": "ESP32-S3 wireless-mode build (public test fixture)",
+        "conclusion": "success"
+      }
+    ],
+    "host_tests_passed": 17
+  },
+  "builds": [
+    {
+      "mode": "usb",
+      "source_commit": "600df4366bc93fb3a00c64d9855e8c906d1d0113",
+      "project_version": "600df43",
+      "target": "esp32s3",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "ee82bdd21e52c25d9ef97aef8b9636fec2bbe065d08f15f8d0e9081ac95864b8",
+          "bytes": 262816
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "e1da0975810f00ecd3f57df0be430bbd1746ad961c330d51107b8a6ac461d561",
+          "bytes": 4894864
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "b3c393b97da31028b60f37f632be922f991bfd0e2444e9c9ca27b0be1796e4b2",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "f76430a7d898fc358aa51cf64e69b8b17aa1a2b649b7f3adbab6f5cd4113f46f",
+          "bytes": 51617
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        },
+        {
+          "name": "project_description.json",
+          "sha256": "201802efafbfa3477af3cb8afc374c856adaaf942a04914f1e75014685fb1068",
+          "bytes": 308430
+        },
+        {
+          "name": "sdkconfig",
+          "sha256": "c6e01a558f42d19289042f267de2bc85c73831fb4061b2a3edf2f8645d811de0",
+          "bytes": 99485
+        }
+      ],
+      "deployed": false,
+      "currently_installed": false,
+      "application_boot_observed": false,
+      "sensor_indicator": false,
+      "actual_private_key_linked": false,
+      "wired_radio_and_ble_initialization_symbols_absent": true,
+      "indicator_linkage_check": "PASS"
+    },
+    {
+      "mode": "usb-diagnostic",
+      "source_commit": "600df4366bc93fb3a00c64d9855e8c906d1d0113",
+      "project_version": "600df43",
+      "target": "esp32s3",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "69918e8fc3cad9cc1dfc865ec5f646d71100963756705bbe61add259a060e984",
+          "bytes": 302272
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "d37aa208f473d5d4667bc4c9ecc8d39881ddcfc08a47537f0e0455d6ce9045a6",
+          "bytes": 5369208
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "54059f7a215d51d1a80dad0aa08be6678df6b95d6dc95362e099ce7da889e9da",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "394abd875b00a62af879c684b66b9c8d85498651733011c4c916a41ed7a79382",
+          "bytes": 51973
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        },
+        {
+          "name": "project_description.json",
+          "sha256": "705fba09afcef5dff59225a7e95ab3f8dc1cc1d7a5baa338cd3eab30a8f2f918",
+          "bytes": 307815
+        },
+        {
+          "name": "sdkconfig",
+          "sha256": "6c5ea41c6823f818fb972bf7f55929903e07e75b7418ef51c8a464b15da6d08a",
+          "bytes": 99713
+        }
+      ],
+      "deployed": false,
+      "currently_installed": false,
+      "application_boot_observed": false,
+      "sensor_indicator": true,
+      "actual_private_key_linked": false,
+      "wired_radio_and_ble_initialization_symbols_absent": true,
+      "indicator_linkage_check": "PASS"
+    },
+    {
+      "mode": "espnow",
+      "source_commit": "600df4366bc93fb3a00c64d9855e8c906d1d0113",
+      "project_version": "600df43",
+      "target": "esp32s3",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "b1009ed7870bc58d145ef97118cc9ba796d6b02ff18bcf819f86c7c72d2dc3d1",
+          "bytes": 726560
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "0759fa8fe19e43f24a2531a83f84683b549c39be695f58530ee80e358716c8bb",
+          "bytes": 8455120
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "4882c2d634d585b1113cd0d204cee5b4ef67b319baac8d365d923f65d552f1ad",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "6df68e8106295fb6f2535235156b145fb3ee53c3f2bc87c9176e02817f5641d0",
+          "bytes": 51620
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        },
+        {
+          "name": "project_description.json",
+          "sha256": "0181a9832d568d457706216e698f75c248c051e5556efda7157291d909dda482",
+          "bytes": 308833
+        },
+        {
+          "name": "sdkconfig",
+          "sha256": "8f315b63dc85690f3f8ef8f22df82fa57fa0b054dfccd3adad6da19dbf63ca53",
+          "bytes": 99426
+        }
+      ],
+      "deployed": false,
+      "currently_installed": false,
+      "application_boot_observed": false,
+      "sensor_indicator": false,
+      "actual_private_key_linked": true,
+      "wired_radio_and_ble_initialization_symbols_absent": false,
+      "indicator_linkage_check": "PASS"
+    }
+  ],
+  "physical_acceptance": false,
+  "target_flash_performed": false,
+  "host": "Windows; Europe/London operator session; no new physical test",
+  "deployment_configuration": "Existing private config-3 channel-1 pairing; unchanged and not deployed",
+  "last_installed_sender": {
+    "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+    "diagnostic_app_sha256": "a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd"
+  },
+  "receiver_source_authority": "a49d95e61dc910c7db139db0280f80a31d10bfc8",
+  "receiver_deployment": "Board A unchanged, historical production config 2",
+  "next_action": "Operator-present guarded TiltMouse flash, then physical touch/LED/USB qualification; no unattended test"
+}

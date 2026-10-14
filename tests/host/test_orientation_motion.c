@@ -6,6 +6,7 @@
 
 #include "tiltmouse/mouse_motion.h"
 #include "tiltmouse/orientation.h"
+#include "tiltmouse/board_imu_frame.h"
 
 static void assert_close(float actual, float expected, float tolerance)
 {
@@ -279,6 +280,108 @@ static void test_report_delta_clamp_discards_excess_backlog(void)
     assert_close(state.residual_x, 0.0f, 0.0001f);
 }
 
+static void test_matrix_frame_filter_consistency(void)
+{
+    tiltmouse_imu_sample_t sample = {.timestamp_us = 1000000};
+    const float native_flat[3] = {0.0f, 0.0f, -1.0f};
+    tiltmouse_board_imu_to_mouse_frame(native_flat, sample.accel_g);
+    const tiltmouse_orientation_config_t config = tiltmouse_orientation_default_config();
+    tiltmouse_orientation_state_t state;
+    tiltmouse_orientation_reset(&state, &config);
+    assert(tiltmouse_orientation_update(&state, &sample) ==
+           TILTMOUSE_ORIENTATION_INITIALIZED);
+    assert_close(state.roll_deg, 0.0f, 0.0001f);
+    assert_close(state.pitch_deg, 0.0f, 0.0001f);
+
+    /* Dynamic acceleration removes gravity correction for this step; gyro
+     * signs must follow the same proper frame rotation as acceleration. */
+    const float native_dynamic[3] = {0.0f, 0.0f, -2.0f};
+    const float native_gyro[3] = {25.0f, -50.0f, 0.0f};
+    tiltmouse_board_imu_to_mouse_frame(native_dynamic, sample.accel_g);
+    tiltmouse_board_imu_to_mouse_frame(native_gyro, sample.gyro_dps);
+    sample.timestamp_us += 10000;
+    assert(tiltmouse_orientation_update(&state, &sample) == TILTMOUSE_ORIENTATION_OK);
+    assert_close(state.roll_deg, 0.25f, 0.0001f);
+    assert_close(state.pitch_deg, 0.50f, 0.0001f);
+
+    /* Small native Y noise around -Z must not become alternating +/-85 roll. */
+    tiltmouse_orientation_reset(&state, &config);
+    sample.timestamp_us = 2000000;
+    tiltmouse_board_imu_to_mouse_frame(native_flat, sample.accel_g);
+    memset(sample.gyro_dps, 0, sizeof(sample.gyro_dps));
+    assert(tiltmouse_orientation_update(&state, &sample) ==
+           TILTMOUSE_ORIENTATION_INITIALIZED);
+    assert(tiltmouse_orientation_capture_neutral(&state));
+    const tiltmouse_mouse_motion_config_t motion = tiltmouse_mouse_motion_default_config();
+    for (unsigned i = 0; i < 200; ++i) {
+        const float native_noisy[3] = {0.0f, i % 2 ? -0.004f : 0.004f, -1.0f};
+        tiltmouse_board_imu_to_mouse_frame(native_noisy, sample.accel_g);
+        sample.timestamp_us += 4000;
+        assert(tiltmouse_orientation_update(&state, &sample) == TILTMOUSE_ORIENTATION_OK);
+        assert(fabsf(state.roll_deg) < 0.3f);
+        const tiltmouse_orientation_pose_t pose = tiltmouse_orientation_pose(&state);
+        tiltmouse_mouse_velocity_t velocity;
+        assert(tiltmouse_mouse_motion_velocity(&motion, &pose, &velocity) ==
+               TILTMOUSE_MOUSE_MOTION_OK);
+        assert_close(velocity.x_counts_per_s, 0.0f, 0.0001f);
+        assert_close(velocity.y_counts_per_s, 0.0f, 0.0001f);
+    }
+
+    /* A one-axis reflection would reverse this cross product. */
+    const float native_x[3] = {1.0f, 0.0f, 0.0f};
+    const float native_y[3] = {0.0f, 1.0f, 0.0f};
+    const float native_z[3] = {0.0f, 0.0f, 1.0f};
+    float x[3], y[3], z[3];
+    tiltmouse_board_imu_to_mouse_frame(native_x, x);
+    tiltmouse_board_imu_to_mouse_frame(native_y, y);
+    tiltmouse_board_imu_to_mouse_frame(native_z, z);
+    assert_close(x[0] * y[1] - x[1] * y[0], z[2], 0.0001f);
+}
+
+static void test_default_response_baseline(void)
+{
+    const tiltmouse_mouse_motion_config_t config =
+        tiltmouse_mouse_motion_default_config();
+    tiltmouse_orientation_pose_t pose = {
+        .neutral_valid = true,
+    };
+    tiltmouse_mouse_velocity_t velocity;
+
+    /* Quiet neutral range is unchanged by the physical X-sign correction. */
+    pose.roll_deg = 3.0f;
+    pose.pitch_deg = -3.0f;
+    assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+           TILTMOUSE_MOUSE_MOTION_OK);
+    assert_close(velocity.x_counts_per_s, 0.0f, 0.0001f);
+    assert_close(velocity.y_counts_per_s, 0.0f, 0.0001f);
+
+    /* Preserve the original response after the physical candidate was rejected. */
+    const float tilts[] = {5.0f, 10.0f, 20.0f, 35.0f, 85.0f};
+    const float lower[] = {10.0f, 78.0f, 326.0f, 899.0f, 899.0f};
+    const float upper[] = {12.0f, 80.0f, 328.0f, 901.0f, 901.0f};
+    float previous = 0.0f;
+    for (size_t i = 0; i < sizeof(tilts) / sizeof(tilts[0]); ++i) {
+        pose.roll_deg = tilts[i];
+        pose.pitch_deg = tilts[i];
+        assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+               TILTMOUSE_MOUSE_MOTION_OK);
+        /* LED face up / USB toward operator: physical trial found X reversed.
+         * Correct X only; keep the measured response magnitudes and Y sign. */
+        const float x_magnitude = -velocity.x_counts_per_s;
+        assert(x_magnitude >= lower[i]);
+        assert(x_magnitude <= upper[i]);
+        assert(x_magnitude >= previous);
+        assert_close(velocity.y_counts_per_s, x_magnitude, 0.0001f);
+        previous = x_magnitude;
+        pose.roll_deg = -tilts[i];
+        pose.pitch_deg = -tilts[i];
+        assert(tiltmouse_mouse_motion_velocity(&config, &pose, &velocity) ==
+               TILTMOUSE_MOUSE_MOTION_OK);
+        assert_close(velocity.x_counts_per_s, previous, 0.0001f);
+        assert_close(velocity.y_counts_per_s, -previous, 0.0001f);
+    }
+}
+
 static void test_replay_fixture(void)
 {
     FILE *file = fopen(IMU_FIXTURE_PATH, "r");
@@ -340,6 +443,8 @@ int main(void)
     test_mapping_deadzone_curve_axis_and_clamp();
     test_fractional_accumulation_and_recentre_reset();
     test_report_delta_clamp_discards_excess_backlog();
+    test_default_response_baseline();
+    test_matrix_frame_filter_consistency();
     test_replay_fixture();
     return 0;
 }

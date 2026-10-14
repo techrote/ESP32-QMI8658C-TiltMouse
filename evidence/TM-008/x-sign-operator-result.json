@@ -1,0 +1,53 @@
+{
+  "case": "x-sign-boot-and-axes",
+  "source_commit": "e8cfa99c3780df1296eb0fe76678224f67a33436",
+  "application_sha256": "a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd",
+  "started_at_utc": "2026-10-13T23:32:37.960233+00:00",
+  "elapsed_seconds": 300.0,
+  "maximum_seconds": 300.0,
+  "host_stop_observed": false,
+  "target_events": 29342,
+  "movement_events": 9676,
+  "button_events": 63,
+  "host_x_range": [
+    -15,
+    18
+  ],
+  "host_y_range": [
+    -13,
+    12
+  ],
+  "no_motion_tail_seconds": 21.375,
+  "recenter_counter_before": 0,
+  "recenter_counter_after": 1,
+  "recenter_first_seen_log_ms": 281020,
+  "neutral_before_mdeg": [
+    -1908,
+    -2376
+  ],
+  "neutral_after_mdeg": [
+    -27,
+    -5189
+  ],
+  "gyro_offset_frozen_mdps": [
+    -2499,
+    11059,
+    -838
+  ],
+  "imu_errors": 0,
+  "imu_stale": 0,
+  "touch_errors": 0,
+  "touch_stale": 0,
+  "usb_resets": 0,
+  "usb_failed_transfers": 0,
+  "logical_movement_dropped_start": 0,
+  "logical_movement_dropped_end": 235,
+  "max_local_loop_gap_us": 12020,
+  "approximate_diagnostic_logical_reports_per_second": 100.35163925948909,
+  "operator_boot_report": "done after requested two-second BOOT hold/release",
+  "operator_control_report": "Seems pretty good; right click too easy or location swap suggested; LEDs dark.",
+  "operator_preference": "Swap the left and right click locations",
+  "operator_next_build_request": "Very dim representation of sensor readings",
+  "assessment": "PARTIAL: recenter counter/neutral capture and usable motion established; touch ergonomics require swapped-layout trial.",
+  "limitations": "Individual edge timestamps and exact sign directions were not narrated. Heat not reported. Mixed button windows are not stationary-click acceptance. Diagnostic local cadence is not pointer latency or RF delivery/loss."
+}

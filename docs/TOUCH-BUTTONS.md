@@ -61,3 +61,24 @@ TM-008 must use physical ESP32-S3-Matrix measurements to establish final touch s
 - frozen baseline during touch and slow idle baseline adaptation;
 - summed, strong-or-two-moderate and 2-of-3 fusion semantics;
 - replay of the human-readable `tests/fixtures/touch_replay.csv` trace.
+
+## TM-008 operator-selected placement and reference investigation
+
+On 14 October 2026 the operator selected swapped click locations. Application
+defaults now map GPIO5-7 to canonical HID left, GPIO1-3 to canonical HID right.
+The fusion API retains its historical `left_pressed` (GPIO1-3) and
+`right_pressed` (GPIO5-7) physical group names. `swap_touch_buttons` applies
+placement once during logical-report creation, before either output adapter.
+Canonical HID/profile bits, GPIO4 exclusion, thresholds and debounce are unchanged.
+The explicitly selectable original mapping is also host-tested.
+
+[ESPsand reference review](TM-008-NEXT-TEST.md) records bare-board row coupling
+and unreliable independent zones on its tested board. That is a reason to
+measure this TiltMouse, not proof that its buttons pass or fail. Qualification
+telemetry now snapshots each pin's raw, baseline, noise and normalized positive
+evidence once per second alongside physical groups and last logical full-state
+buttons. Arrays are ordered GPIO1..7; `evidence_milli` is TiltMouse evidence
+multiplied by 1000, not ESPsand's signed/common-mode-corrected z-score.
+No common-mode subtraction or sensitivity change is imported without physical
+evidence. Snapshots can miss brief contacts; transition/window logs retain the
+existing event timing and 100-ms peak-motion observation.

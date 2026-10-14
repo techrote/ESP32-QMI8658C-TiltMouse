@@ -137,3 +137,12 @@ The pivot adds:
 14. **Complete button state.** Repeat full button state in every wireless report and release all buttons on receiver timeout.
 15. **No hidden IP networking.** Wi-Fi is initialized only as required for ESP-NOW.
 16. **BLE remains a future transport.** Do not carry BLE/HOGP or coexistence complexity in v0.1.
+
+## TM-008 qualification-only indicator exception
+
+On 14 October 2026 the operator requested a very dim sensor representation in
+the next test build. `docs/TM-008-NEXT-TEST.md` records the pinned ESPsand review,
+swapped button placement and bounded diagnostic-only indicator. Normal USB/RF
+and release defaults retain LED non-use. The operator then requested a stop
+until available for testing; the archived candidate is unflashed and neither
+physical acceptance issue is complete.

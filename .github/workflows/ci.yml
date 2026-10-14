@@ -29,6 +29,14 @@ jobs:
           . "$IDF_PATH/export.sh"
           idf.py set-target esp32s3
           idf.py build
+      - name: Build optional HID + CDC qualification telemetry
+        shell: bash
+        run: |
+          . "$IDF_PATH/export.sh"
+          idf.py -B build-usb-diag -D IDF_TARGET=esp32s3 -D SDKCONFIG=sdkconfig.usb-diag -D 'SDKCONFIG_DEFAULTS=sdkconfig.defaults;sdkconfig.usb-diagnostics.defaults' build
+          grep -Fx 'CONFIG_TILTMOUSE_USB_DIAGNOSTICS=y' sdkconfig.usb-diag
+          grep -Fx 'CONFIG_TILTMOUSE_SENSOR_INDICATOR=y' sdkconfig.usb-diag
+          python tools/check_usb_descriptors.py --usb build/esp32_qmi8658c_tiltmouse.elf --diagnostic build-usb-diag/esp32_qmi8658c_tiltmouse.elf --diagnostic-indicator
 
   host-tests:
     name: Host unit tests

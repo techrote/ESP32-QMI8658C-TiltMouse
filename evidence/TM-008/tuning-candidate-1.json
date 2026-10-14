@@ -1,0 +1,105 @@
+{
+  "source_commit": "b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf",
+  "source_clean": true,
+  "builds": [
+    {
+      "mode": "usb",
+      "source_commit": "b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "eb638468c0d52d38082a9e76419769996264a53c5aa5e2a56a56ba17a486b7a3",
+          "bytes": 261664
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "8d2ec9d4008995b617a9c3d9abd922380f8714c0d0488c49ded34db448c3af7e",
+          "bytes": 4881132
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "b3c393b97da31028b60f37f632be922f991bfd0e2444e9c9ca27b0be1796e4b2",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "f76430a7d898fc358aa51cf64e69b8b17aa1a2b649b7f3adbab6f5cd4113f46f",
+          "bytes": 51617
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": false,
+      "actual_private_key_linked": false
+    },
+    {
+      "mode": "usb-diagnostic",
+      "source_commit": "b8bac0e0d3aadb99c9a12fc570f9bfba7f07aebf",
+      "artifacts": [
+        {
+          "name": "esp32_qmi8658c_tiltmouse.bin",
+          "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2",
+          "bytes": 271312
+        },
+        {
+          "name": "esp32_qmi8658c_tiltmouse.elf",
+          "sha256": "d71c4b9e9495873652106121bd9a3176d86d125f1335a40f2165e24864383cdd",
+          "bytes": 4988140
+        },
+        {
+          "name": "bootloader/bootloader.bin",
+          "sha256": "54059f7a215d51d1a80dad0aa08be6678df6b95d6dc95362e099ce7da889e9da",
+          "bytes": 21120
+        },
+        {
+          "name": "partition_table/partition-table.bin",
+          "sha256": "7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820",
+          "bytes": 3072
+        },
+        {
+          "name": "config/sdkconfig.h",
+          "sha256": "9d0128b7380e3b7250b4378a60777935c687a6d764883cfae2ce4485ac56dc6e",
+          "bytes": 51928
+        },
+        {
+          "name": "flasher_args.json",
+          "sha256": "10c6e58424b04b4c64506e37870e26236a0d39b1bb44615397b7cd76d0a05cdf",
+          "bytes": 963
+        }
+      ],
+      "deployed": true,
+      "actual_private_key_linked": false
+    }
+  ],
+  "physical_acceptance": false,
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "tuning_candidate": 1,
+  "changes": {
+    "x_inverted": false,
+    "y_inverted": false,
+    "response_exponent": 0.9,
+    "gain_counts_per_second": 450,
+    "deadzone_degrees": 3
+  },
+  "linked_normal_diagnostic_descriptor_check": "PASS",
+  "host_tests_passed": 12,
+  "full_ci_run": 38468595024,
+  "full_ci_status": "PASS",
+  "application_readback_verified": true,
+  "application_boot_observed": true,
+  "physical_result": "REJECTED",
+  "operator_feedback": "Far less controllable than before; compared feel to flying a quadcopter in acro mode while drunk.",
+  "capture": "tuning1b-diag-idle",
+  "idle_result": "NOT ESTABLISHED: movement and buttons observed; operator handling not confirmed",
+  "next_action": "Diagnose restored baseline neutral and unexplained serial failure before further tuning.",
+  "currently_installed": false,
+  "restored_baseline_source": "5f07be236680d6232081923615c0433d643c4fdf"
+}

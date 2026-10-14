@@ -24,6 +24,8 @@ typedef struct {
     uint64_t click_motion_window_us;
     uint32_t startup_quiet_samples;
     float startup_gyro_limit_dps;
+    /* Physical GPIO1-3 / GPIO5-7 groups, before canonical HID bits. */
+    bool swap_touch_buttons;
     tiltmouse_orientation_config_t orientation;
     tiltmouse_mouse_motion_config_t motion;
     tiltmouse_touch_buttons_config_t touch;

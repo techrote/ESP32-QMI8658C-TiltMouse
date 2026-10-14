@@ -89,8 +89,8 @@ The following require real hardware evidence and must not be inferred from CI.
 - X/Y axes correspond to intended board tilt;
 - neutral drift is acceptable;
 - cursor has no objectionable stepping/hunting;
-- GPIO1–3 reliably produces left state;
-- GPIO5–7 reliably produces right state;
+- GPIO5–7 reliably produces left state (TM-008 placement);
+- GPIO1–3 reliably produces right state (TM-008 placement);
 - GPIO4 never clicks;
 - hold/drag works;
 - clicking does not cause unacceptable cursor jumps.

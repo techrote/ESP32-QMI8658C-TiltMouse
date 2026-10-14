@@ -1,0 +1,333 @@
+{
+  "session_id": "joint-TM008-FNR008-2026-10-13",
+  "captures": [
+    {
+      "capture": "tiltmouse-chip-id.log",
+      "sha256": "b134f2e4aec74b0615d3a4ce71875d89854a126f899a83718c42893bb1b738fa"
+    },
+    {
+      "capture": "tiltmouse-flash-id.log",
+      "sha256": "fa12a338023b090a6cf4428fdb986d0c442fbb70b5831d72024b8c29b5f89387"
+    },
+    {
+      "capture": "tiltmouse-usb-build-manifest.json",
+      "sha256": "ddb32da90b7cd9e0692ff334ebd0b185000cf5581e3b3acb4d457025b4093521"
+    },
+    {
+      "capture": "tiltmouse-usb-initial-idle/result.json",
+      "sha256": "b6844d82f43b2ef6c45172e75db95cf2d6258256f682daf41ed9acbb6e6b87fa"
+    },
+    {
+      "capture": "tiltmouse-usb-normal-active-axes/result.json",
+      "sha256": "75ea69591264029f6087fa1c6c387ce6dee7ea8149a766853bb60928badc4b5b"
+    },
+    {
+      "capture": "tiltmouse-usb-diag-build-manifest.json",
+      "sha256": "b431d62c0649a69fe869bf3b6b11594b26e9e873502d0c987fbcfc2559f4723d"
+    },
+    {
+      "capture": "tiltmouse-usb-diag-flash.log",
+      "sha256": "8c2e2516758842e2e7bd4e3fd855ba8b3525451641d97fd2c5f679dc13f8e5b1"
+    },
+    {
+      "capture": "tiltmouse-diag-77aa8e1-app-readback.bin",
+      "sha256": "e837e8c535351ede8957c04fa75006da6fe87de001f83b4fe4d7ab0b85d43ffe"
+    },
+    {
+      "capture": "tiltmouse-boot-pin-read.log",
+      "sha256": "07fc235eac1160ebc4ac3cd383bde54a90c7a7a5ab67670eb07f630132051653"
+    },
+    {
+      "capture": "tiltmouse-diag-software-boot.log",
+      "sha256": "7a9cfad032d5156aad599a19a47eb575c8f0fc651b0ff05f31b658bfced557ea"
+    },
+    {
+      "capture": "regression-host-job.log",
+      "sha256": "f2db0e4f2cebc4fca8bef6f825e3d7dc7764a19086e91df9c4b57cf1d80ac402"
+    },
+    {
+      "capture": "clock-fix-host-job.log",
+      "sha256": "69ddf4032994c1dd3dbc90431f920a9c42fb8d4abb774dbc6f8ecc0983f7ae11"
+    },
+    {
+      "capture": "tiltmouse-prefixed-diag-serial.bin",
+      "sha256": "927d0b606e0be24f7b0a174f7a1d149b431594392e912339ee2dc8449f5a06f3"
+    },
+    {
+      "capture": "tiltmouse-usb-pre-fix-diag-idle/result.json",
+      "sha256": "b8714457c976e10abf5e63442bb58a6cd6f1bede1f9a80e640fc95bb842e0cef"
+    },
+    {
+      "capture": "tiltmouse-corrected-diag-write/result.json",
+      "sha256": "841b25fcff951476d8f9bebf61483b39222ef1412fd9878deef5e1fef58b9488"
+    },
+    {
+      "capture": "tiltmouse-corrected-diag-write/application-readback.bin",
+      "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af"
+    },
+    {
+      "capture": "corrected-diag-idle/result.json",
+      "sha256": "97b7eec485373fdf69e7cd459ef499b5bce80b699928a8f6d5821b8dd508c12a"
+    },
+    {
+      "capture": "corrected-diag-idle/serial.bin",
+      "sha256": "9d2e5d76ae5aba15f016d2b18414a9c73ef753dc7cee00fb7c44f7b48c2dcde8"
+    },
+    {
+      "capture": "corrected-diag-axes-recenter/result.json",
+      "sha256": "d4103d3dc24a5b6cb4ac459ee3d423235bfd7a4ffad17bd5976b78f78a6b45a1"
+    },
+    {
+      "capture": "corrected-diag-axes-recenter/serial.bin",
+      "sha256": "e0d6afe1cb6ed377876291296688e060381a7cb44d8fdf5eebf938e70b36023f"
+    },
+    {
+      "capture": "tuning1b-diag-build.log",
+      "sha256": "a5bcfa80ac0634e920b8dcce4da45079532f4f8be608dfe7c604cf95db2919bb"
+    },
+    {
+      "capture": "tuning1b-normal-build.log",
+      "sha256": "fed27f2a02a218c17674c59798ac216deda37f661cdfd9aff2790de1f0977e20"
+    },
+    {
+      "capture": "sender-candidate-builds-b8bac0e.json",
+      "sha256": "ee508ab635e49cd2649bacc4cda3583ab1757067d9d2e48eac4d9c740bf351b0"
+    },
+    {
+      "capture": "tiltmouse-tuning1b-diag-write/result.json",
+      "sha256": "37b6df3962d75e2a047392bf5a6fd85b88c1a2814ea415e25f7ce4b74f6e800f"
+    },
+    {
+      "capture": "tiltmouse-tuning1b-diag-write/application-readback.bin",
+      "sha256": "e1b49551c43b1fc2b1cfeab5f72c325e2fc96ddd2711819d6ed9de2ed7776af2"
+    },
+    {
+      "capture": "tuning1b-post-reset-boot-input-read.log",
+      "sha256": "07fc235eac1160ebc4ac3cd383bde54a90c7a7a5ab67670eb07f630132051653"
+    },
+    {
+      "capture": "tuning1b-diag-idle/result.json",
+      "sha256": "ebc65e53c6ce72fb14a1e24684b90e0844fbd1b9b2a20c0f3a6d6acd891ab02d"
+    },
+    {
+      "capture": "tuning1b-diag-idle/serial.bin",
+      "sha256": "16e1eb3d524096dd5979d4096ea5900658d85c2721617c9d0c48ea1f6614659a"
+    },
+    {
+      "capture": "tiltmouse-restore-baseline-diag-write/result.json",
+      "sha256": "e777d5e3dc34cfd0dc35a19763226e6565309932731f7a720994c8fb27bdbf69"
+    },
+    {
+      "capture": "tiltmouse-restore-baseline-diag-write/application-readback.bin",
+      "sha256": "28395ec4c79d33eede13504cd3be3113f8f0dca3a3ad5f0b42c410133e2399af"
+    },
+    {
+      "capture": "restored-baseline-startup/serial.bin",
+      "sha256": "5195a9f1297e0f61f3c428e9e1a2e32d0a8ab557ed0b343ca11f108c4b08569c"
+    },
+    {
+      "capture": "restored-baseline-startup/observer-failure.json",
+      "sha256": "d16bc637d94c9e99cbc8550ebe4154beba776783bd289149bcf2cb6850b83acd"
+    },
+    {
+      "capture": "restored-baseline-usb-passive/result.json",
+      "sha256": "c0c0bd2846356e4aa2f2c709325abbee46355b5aef6bb535717eba7e6fb0ffe3"
+    },
+    {
+      "capture": "restored-baseline-usb-passive/serial.bin",
+      "sha256": "dffaf594f97946c58bbfceb8cce7877b7ecaf012e003de9b3129ded27346fb32"
+    },
+    {
+      "capture": "sender-candidate-builds-62c17de.json",
+      "sha256": "7e638a15d4e9e8005d36873475fcadb81b1166fe629a6127af7ab3ec940405c5"
+    },
+    {
+      "capture": "tiltmouse-imu-observer-diag-write/result.json",
+      "sha256": "a1f9991830ee14f132e3c8f5aa4fe32c599dc0abc6053f8295b247d7b8c4434e"
+    },
+    {
+      "capture": "tiltmouse-imu-observer-diag-write/application-readback.bin",
+      "sha256": "167fb83c9ce1182a1eff8e07f06f38c7cf2f0d070adaf2a1b2df4af4943b043a"
+    },
+    {
+      "capture": "imu-observer-stationary/result.json",
+      "sha256": "1542da27cddad60d081c731fa579465f294833a0b4ed317374e10a8101969736"
+    },
+    {
+      "capture": "imu-observer-stationary/serial.bin",
+      "sha256": "dc81cad861eaf744c5c907301b233d44f77074d97eaeb2c250ad79ed4797169c"
+    },
+    {
+      "capture": "faceup-regression-host-job.log",
+      "sha256": "ae00a6b4fe173490b3ae0f9f185dd5e1a2998c3bae63b83dd75382dd7011c692"
+    },
+    {
+      "capture": "sender-candidate-builds-2ee4f77.json",
+      "sha256": "ce287ea7d33bcdece92390d63e7fa9672482af0e985a944d74c0f07d1acb0b9b"
+    },
+    {
+      "capture": "imu-observer-boot-button-diagnosis/result.json",
+      "sha256": "1f321a68c98c4b8637ef19d98c5c3072ee7f6b9403893a1d70e639916fee80d1"
+    },
+    {
+      "capture": "imu-observer-boot-button-diagnosis/serial.bin",
+      "sha256": "8eeeb220a88778c707870eff8f8a5f0e97eaf90f873e1fb695a90421464e5ee7"
+    },
+    {
+      "capture": "imu-observer-boot-button-late/result.json",
+      "sha256": "2f3cf50199ec3a61d98e45a5051cdfee91ce13ead91fe41d4724eff726ce9dd7"
+    },
+    {
+      "capture": "imu-observer-boot-button-late/serial.bin",
+      "sha256": "80a3a2f3a0013d3f039eb5fd65e574f4cacff190f03833f7eb0ee8a09fa207e0"
+    },
+    {
+      "capture": "boot-hold-bounded-recording/result.json",
+      "sha256": "d19d7277cd2a35b8432e78500d6e17bc1bfd93881fcec04d20943e241f8c32a8"
+    },
+    {
+      "capture": "boot-hold-bounded-recording/serial.bin",
+      "sha256": "fc2cab04b04aca119b71bf66834a6c6acba81fe088de0c4821152a3d2b52a17b"
+    },
+    {
+      "capture": "tiltmouse-frame-observer-diag-write/result.json",
+      "sha256": "6a50a8360d970c09692a6265b348f8b858c06f8839df9fe8f9f044d91aa36675"
+    },
+    {
+      "capture": "tiltmouse-frame-observer-diag-write/application-readback.bin",
+      "sha256": "e9695c98bcd56af1ddff01a5c46ef86163c36c80e957fcf9709320da38ec4299"
+    },
+    {
+      "capture": "frame-observer-stationary/result.json",
+      "sha256": "1467fcdc3436df17745eeb40b242a22c395a1608118d46e9e3c08245821e920d"
+    },
+    {
+      "capture": "frame-observer-stationary/serial.bin",
+      "sha256": "a2d3b9c50bcec9c2946af20bef24f82e69cf10a4cbd2c9c7480a1bc5fa74c4ce"
+    },
+    {
+      "capture": "gyro-bias-regression-host-job.log",
+      "sha256": "6a4b74c8ad51d93f4790c6249adb13b51177cfba0093db5642e05acddb5ac9d5"
+    },
+    {
+      "capture": "gyro-bias-fix-host-job.log",
+      "sha256": "1485da2381835d32494bf1ab662fc18ed449eb318d4febeea8fd0172f6a28d83"
+    },
+    {
+      "capture": "sender-candidate-builds-3a33f41.json",
+      "sha256": "82e90c60361c663263ee391bcb21b31f1ae063cb3d31a44fe793814fc9c9abf6"
+    },
+    {
+      "capture": "gyro-bias-usb-build.log",
+      "sha256": "5d539196215e5881e0557081e744f9bf274d9405b3b6d9154ad035d493f2ecd7"
+    },
+    {
+      "capture": "gyro-bias-usb-diag-build.log",
+      "sha256": "39e7ad7aa4445ae05cfd4732d5998c7d447da217c7b99908bc48ee5ace2532f8"
+    },
+    {
+      "capture": "gyro-bias-espnow-build.log",
+      "sha256": "02ab7d9607679e1a218be432f6981c66b5001f8412bb9bf077442c03b99200d1"
+    },
+    {
+      "capture": "tiltmouse-gyro-bias-diag-write/result.json",
+      "sha256": "b5a06cba336f5e928556995cded14d3eca52bfd9c4a5fc69d963c40e655fab52"
+    },
+    {
+      "capture": "tiltmouse-gyro-bias-diag-write/application-readback.bin",
+      "sha256": "f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0"
+    },
+    {
+      "capture": "gyro-bias-linked-radio-initialization.json",
+      "sha256": "449aa1a431ec04506fa4a0ef49abaf1229b8bf25a54cda2d9ff08de3a5cbbfad"
+    },
+    {
+      "capture": "gyro-bias-stationary/result.json",
+      "sha256": "7eac19acfe255605adb557d8fba459c80c762ae56bfd68a2cb008034c46cae7d"
+    },
+    {
+      "capture": "gyro-bias-stationary/serial.bin",
+      "sha256": "f6ece4d9919b830befc0756fc21358119ee9b625cd45658ef11ce80833823990"
+    },
+    {
+      "capture": "gyro-bias-controlled-axes/result.json",
+      "sha256": "0fae7bd0169528a2a66fda29b824fddb8a67f241e998fe9fb7d51ff9bd47863c"
+    },
+    {
+      "capture": "gyro-bias-controlled-axes/serial.bin",
+      "sha256": "406c0120e879bbc0469a3ad1099f428f882d53303633a3ba6c891873d769a719"
+    },
+    {
+      "capture": "gyro-bias-axes-operator-window/result.json",
+      "sha256": "073addfbeb4ad6d4175ce19b44a3e80b0c930bac67d8aa3c9785518a8bd1d329"
+    },
+    {
+      "capture": "gyro-bias-axes-operator-window/serial.bin",
+      "sha256": "4a9bc74b8974bffa97f39ca9431b2b42d98d39a7e45cbcd2430a025ce8859b99"
+    },
+    {
+      "capture": "sender-candidate-builds-e8cfa99.json",
+      "sha256": "87415d73c05fda27292ffe7c9dba194922b26c175187de2ab117f3e4a182aeda"
+    },
+    {
+      "capture": "x-sign-host-job.log",
+      "sha256": "aec484417de21cd0635bc6b2b673cb0bb960ac11da8244160ddd4990a8f51466"
+    },
+    {
+      "capture": "x-sign-usb-build.log",
+      "sha256": "7a72074cd345037d551df46164b3b8801e21cb792244ee3eee98d44c3ce34a08"
+    },
+    {
+      "capture": "x-sign-usb-diag-build.log",
+      "sha256": "99db6f342e1e175cea926810d1e7f7edb52e08ee80c8f26ea5ec002997000688"
+    },
+    {
+      "capture": "x-sign-espnow-build.log",
+      "sha256": "7bdd78cc76e8b5c1394dd5c36b83d206ad45eec7c677fc1f58533e6244806d5e"
+    },
+    {
+      "capture": "tiltmouse-x-sign-diag-write/result.json",
+      "sha256": "a060e5a6f6e4a033f63d5a50ce9f71c9fe79ec9bb71ebde57710c2401dd72f99"
+    },
+    {
+      "capture": "tiltmouse-x-sign-diag-write/application-readback.bin",
+      "sha256": "a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd"
+    },
+    {
+      "capture": "x-sign-stationary/result.json",
+      "sha256": "6d82ec10cdf855ca4c74b1c81cf6b72c6552ecb0baf2db7d67df91e7ca291a07"
+    },
+    {
+      "capture": "x-sign-stationary/serial.bin",
+      "sha256": "d2ec0a4ec828abb5624b7413eedaba73100ab2470f18914d976791cc0602389d"
+    },
+    {
+      "capture": "x-sign-boot-and-axes/result.json",
+      "sha256": "6d1a33967c59fcef22e4c0ac6fb35a737ae695e55550fa14248354d11cf5d6f4"
+    },
+    {
+      "capture": "x-sign-boot-and-axes/serial.bin",
+      "sha256": "08d56aaeb548589515036fd95378e66664c0764c6455a84f1c57e31287ab5cd9"
+    },
+    {
+      "capture": "sender-next-touch-candidate.json",
+      "sha256": "8a81b99bea174ddcb174366e8b331a530fcd9cba3bfbb60282228e22fd7f5eb5"
+    },
+    {
+      "capture": "next-touch-host-job.log",
+      "sha256": "42e37e793d9a787c4b3eef6513668a441c8462b1ed4c1626adc82ae62568c564"
+    },
+    {
+      "capture": "build-next-touch-usb-diagnostic-final.log",
+      "sha256": "7e59e22349508d3836a716320bfd63f30cad0a46bce165234f95d85e7e5d4958"
+    },
+    {
+      "capture": "build-next-touch-usb-final.log",
+      "sha256": "d2cc1a6d097aeae771aea952fbd4efc49a5393f29b62a4429d500c561e84cf06"
+    },
+    {
+      "capture": "build-next-touch-espnow-final.log",
+      "sha256": "7fda3eae9c79018595ec737e88abf8a8766e339a13dfa2acbb176f25dc811e73"
+    }
+  ]
+}

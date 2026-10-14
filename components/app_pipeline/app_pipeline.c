@@ -27,6 +27,7 @@ tm_app_config_t tm_app_default_config(void)
         .click_motion_window_us = TM_CLICK_MOTION_WINDOW_US,
         .startup_quiet_samples = 32,
         .startup_gyro_limit_dps = 8.0f,
+        .swap_touch_buttons = true,
         .orientation = tiltmouse_orientation_default_config(),
         .motion = tiltmouse_mouse_motion_default_config(),
         .touch = tiltmouse_touch_buttons_default_config(),
@@ -330,9 +331,15 @@ bool tm_app_make_report(tm_app_pipeline_t *app, uint64_t now_us,
         return false;
     }
     app->safety_release_latched = false;
+    /* Fusion retains physical groups GPIO1-3 / GPIO5-7. Operator-selected
+     * placement is applied once at logical-report creation for both outputs. */
+    const uint32_t group_1_3 = app->config.swap_touch_buttons
+        ? TM_MOUSE_BUTTON_RIGHT : TM_MOUSE_BUTTON_LEFT;
+    const uint32_t group_5_7 = app->config.swap_touch_buttons
+        ? TM_MOUSE_BUTTON_LEFT : TM_MOUSE_BUTTON_RIGHT;
     const uint32_t buttons =
-        (app->buttons.left_pressed ? TM_MOUSE_BUTTON_LEFT : 0u) |
-        (app->buttons.right_pressed ? TM_MOUSE_BUTTON_RIGHT : 0u);
+        (app->buttons.left_pressed ? group_1_3 : 0u) |
+        (app->buttons.right_pressed ? group_5_7 : 0u);
     int8_t x = 0;
     int8_t y = 0;
     const bool fresh_imu = app->imu_valid &&

@@ -7,10 +7,52 @@ TM-004 is pure host-testable logic. It does not call ESP-IDF, TinyUSB, touch sen
 `tiltmouse_imu_sample_t` intentionally mirrors the parts of TM-003's `qmi8658_sample_t` used here:
 
 - `timestamp_us`: monotonic host timestamp in microseconds;
-- `accel_g[3]`: native sensor X/Y/Z acceleration in g;
-- `gyro_dps[3]`: native sensor X/Y/Z angular rate in degrees per second.
+- `accel_g[3]`: estimator-frame X/Y/Z acceleration in g;
+- `gyro_dps[3]`: estimator-frame X/Y/Z angular rate in degrees per second.
 
-TM-004 estimates roll about sensor +X and pitch about sensor +Y. Gyro Z is ignored. Yaw and magnetometer support are out of scope.
+The pure estimator expects a consistent right-handed frame with positive Z
+gravity in the intended flat pose. It estimates roll about frame +X and pitch
+about frame +Y. Gyro Z is ignored by orientation integration. Yaw and
+magnetometer support are out of scope.
+
+TM-008 physical capture with the Matrix flat, LED face up and untouched showed
+native QMI gravity near (0,0,-1) g. Passing it directly to the estimator drove
+roll to the 85 degree bound. The target adapter now applies a fixed 180 degree
+rotation about native X: (X,Y,Z) becomes (X,-Y,-Z), for both acceleration and
+gyro. This is a proper rotation, not a Z-only reflection. The QMI driver still
+returns native data; portable estimator fixtures already use estimator-frame
+data. Physical axis signs and usable tilt remain acceptance work.
+
+## Target gyro zero-rate calibration
+
+The confirmed stationary Matrix capture after frame correction showed native
+gyro means near (-1.9, 10.3, -0.83) dps. The Y offset exceeds the unchanged
+8-dps startup quiet gate. Three roughly 1500-sample stationary windows had
+per-axis gyro spans at most 3.609 dps and acceleration spans at most 0.062 g.
+The actual-main regression with this offset reproduces failed neutral capture.
+
+The target adapter now learns a bounded stationary mean before forwarding IMU
+samples to the pipeline. It uses at least 128 samples spanning at least one
+second, with no gap over 100 ms. Each window requires acceleration magnitude
+0.75–1.25 g, per-axis acceleration span at most 0.10 g, per-axis gyro span at
+most 4 dps, and raw gyro magnitude at most 16 dps per axis. The last bound is
+an application guard covering the measured offset, not a QMI manufacturing
+tolerance. The window contains only fixed sums/min/max and at most 1024 samples;
+movement or excess count restarts it without queuing samples.
+
+After qualification the native gyro mean is subtracted and then rotated into
+the estimator frame. The offset remains frozen through normal motion and BOOT
+recenter. Sensor errors/reinitialization, invalid/non-monotonic samples, or a
+gap over 100 ms discard qualification. Motion remains withheld while a fresh
+stationary window is pending, followed by the existing 32-sample/8-dps neutral
+gate. Touch acquisition and fresh full-state button reports continue.
+
+The board must be still during startup and after sensor recovery. A six-axis
+IMU cannot distinguish constant yaw rotation from a gyro zero-rate offset;
+these stationarity checks are a bounded heuristic. No offset is persisted or
+hard-coded for this board. Diagnostic USB logs retain native samples and add
+qualification, frozen offset and corrected gyro values for physical review.
+This implementation still requires physical calibration/drift/axes acceptance.
 
 ## Estimator
 
@@ -61,7 +103,7 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | Setting | X | Y |
 | --- | ---: | ---: |
 | source | roll | pitch |
-| invert | no | no |
+| invert | yes | no |
 | deadzone | 3° | 3° |
 | max useful tilt | 35° | 35° |
 | response exponent | 1.6 | 1.6 |
@@ -69,6 +111,24 @@ The provisional defaults are deliberately tuning hypotheses for TM-008, not clai
 | velocity clamp | 1000 counts/s | 1000 counts/s |
 
 Axis source and inversion are explicit so physical acceptance can change board-to-pointer mapping without changing estimator mathematics.
+
+TM-008 candidate 1 tried exponent 0.9 and gain 450 counts/s after the operator
+reported difficult initiation and high-speed control. The operator rejected
+the physical candidate as substantially less controllable. The original
+1.6/900 response is restored; it remains provisional rather than accepted v0.1
+tuning. Original axis signs are retained after the operator corrected an
+initial Y-inversion report when holding the board with the cable in hand.
+Neutral capture in the actual grip and usable orientation range require
+controlled measurement before another curve change. The corrected 25 second
+baseline idle was quiet. Click-transition measurement continues without
+freezing or damping motion. Full candidate results remain in TM-008 evidence.
+
+After frame and gyro-bias correction, the operator reported "Feels good,
+x axis swapped" with LED face up and the USB cable toward the operator.
+TM-008 therefore inverts only the default cursor X mapping; Y and all response
+magnitudes remain unchanged. The deterministic default-response test checks
+both X signs and the preserved Y sign across the original response table.
+Physical confirmation of the corrected X mapping is still required.
 
 ## Report integration and bounds
 

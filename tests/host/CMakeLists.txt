@@ -83,6 +83,7 @@ add_executable(
 target_include_directories(
     orientation_motion
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include
         ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
         ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
 )
@@ -192,3 +193,75 @@ target_include_directories(
 target_compile_features(usb_lifecycle PRIVATE c_std_11)
 target_compile_options(usb_lifecycle PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_test(NAME usb_lifecycle COMMAND usb_lifecycle)
+
+add_executable(app_main_timing
+    test_app_main_timing.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/gyro_bias.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/app_pipeline.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/orientation.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/mouse_motion.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/touch_buttons.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/mouse_report.c)
+target_include_directories(app_main_timing PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/include
+    ${CMAKE_CURRENT_LIST_DIR}/main_fakes
+    ${CMAKE_CURRENT_LIST_DIR}/fakes
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/app_pipeline/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/qmi8658/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_input/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/touch_buttons/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/orientation/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_motion/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/mouse_report/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/usb_hid_mouse/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/espnow_mouse/include)
+target_compile_features(app_main_timing PRIVATE c_std_11)
+target_compile_options(app_main_timing PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(app_main_timing PRIVATE m)
+add_test(NAME app_main_timing COMMAND app_main_timing)
+
+# Same actual target main and fakes, with the captured stationary gyro offset.
+get_target_property(TM_MAIN_TEST_SOURCES app_main_timing SOURCES)
+get_target_property(TM_MAIN_TEST_INCLUDES app_main_timing INCLUDE_DIRECTORIES)
+add_executable(app_main_bias ${TM_MAIN_TEST_SOURCES})
+target_include_directories(app_main_bias PRIVATE ${TM_MAIN_TEST_INCLUDES})
+target_compile_definitions(app_main_bias PRIVATE TM_TEST_GYRO_BIAS=1)
+target_compile_features(app_main_bias PRIVATE c_std_11)
+target_compile_options(app_main_bias PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(app_main_bias PRIVATE m)
+add_test(NAME app_main_bias COMMAND app_main_bias)
+
+add_executable(gyro_bias
+    test_gyro_bias.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/gyro_bias.c)
+target_include_directories(gyro_bias PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/gyro_bias/include)
+target_compile_features(gyro_bias PRIVATE c_std_11)
+target_compile_options(gyro_bias PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(gyro_bias PRIVATE m)
+add_test(NAME gyro_bias COMMAND gyro_bias)
+
+add_executable(indicator_frame
+    test_indicator_frame.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/indicator_frame.c)
+target_include_directories(indicator_frame PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/include)
+target_compile_features(indicator_frame PRIVATE c_std_11)
+target_compile_options(indicator_frame PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(indicator_frame PRIVATE m)
+add_test(NAME indicator_frame COMMAND indicator_frame)
+
+add_executable(sensor_indicator
+    test_sensor_indicator.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/sensor_indicator.c
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/indicator_frame.c)
+target_include_directories(sensor_indicator PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/indicator_fakes
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/sensor_indicator/include
+    ${CMAKE_CURRENT_LIST_DIR}/../../components/board/include)
+target_compile_features(sensor_indicator PRIVATE c_std_11)
+target_compile_options(sensor_indicator PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_link_libraries(sensor_indicator PRIVATE m)
+add_test(NAME sensor_indicator_async COMMAND sensor_indicator)
+add_test(NAME sensor_indicator_stuck COMMAND sensor_indicator stuck)

@@ -308,6 +308,26 @@
     {
       "capture": "x-sign-boot-and-axes/serial.bin",
       "sha256": "08d56aaeb548589515036fd95378e66664c0764c6455a84f1c57e31287ab5cd9"
+    },
+    {
+      "capture": "sender-next-touch-candidate.json",
+      "sha256": "8a81b99bea174ddcb174366e8b331a530fcd9cba3bfbb60282228e22fd7f5eb5"
+    },
+    {
+      "capture": "next-touch-host-job.log",
+      "sha256": "42e37e793d9a787c4b3eef6513668a441c8462b1ed4c1626adc82ae62568c564"
+    },
+    {
+      "capture": "build-next-touch-usb-diagnostic-final.log",
+      "sha256": "7e59e22349508d3836a716320bfd63f30cad0a46bce165234f95d85e7e5d4958"
+    },
+    {
+      "capture": "build-next-touch-usb-final.log",
+      "sha256": "d2cc1a6d097aeae771aea952fbd4efc49a5393f29b62a4429d500c561e84cf06"
+    },
+    {
+      "capture": "build-next-touch-espnow-final.log",
+      "sha256": "7fda3eae9c79018595ec737e88abf8a8766e339a13dfa2acbb176f25dc811e73"
     }
   ]
 }

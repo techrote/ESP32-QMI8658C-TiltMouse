@@ -3,7 +3,49 @@
 Session: `joint-TM008-FNR008-2026-10-13`, started 13 October 2026, Europe/London.
 Status: **IN PROGRESS; NOT ACCEPTED**. Issue #8 remains open.
 
-## Latest checkpoint: calibrated neutral and usable control; X-sign correction pending retest
+## Latest checkpoint: next touch/indicator build ready, unflashed; operator session stopped
+
+On 14 October 2026 the operator requested an ESPsand touch investigation review,
+another TiltMouse test build, then a stop while they sleep. Physical operations
+have stopped. No new candidate is flashed; Board A remains unchanged.
+
+[Reference review and next-session procedure](../../docs/TM-008-NEXT-TEST.md)
+pins ESPsand `fd509bfdd3e1a84e9cf097635d3f25a98a345759`. Its tested bare-board
+row showed broad fingertip coupling and unreliable separate product zones.
+That finding motivates measurement here; it establishes no TiltMouse pass/fail
+and does not justify importing common-mode cancellation or new thresholds.
+
+The [next candidate manifest](next-touch-candidate.json) identifies clean source
+`600df4366bc93fb3a00c64d9855e8c906d1d0113`, all three local builds, configuration
+hashes, toolchain, linked-code checks and private archived artifact hashes.
+Diagnostic app SHA-256:
+`69918e8fc3cad9cc1dfc865ec5f646d71100963756705bbe61add259a060e984`.
+All four gates and 17 host tests pass in
+[source CI 38489855242](https://github.com/techrote/ESP32-QMI8658C-TiltMouse/actions/runs/38489855242).
+Local normal USB, HID+CDC diagnostic USB and real-pair ESP-NOW builds pass.
+Linked mouse report/interface/endpoint bytes remain equal across USB variants.
+Both wired images exclude real/derived pairing keys and radio/BLE initialization
+symbols; only the diagnostic ELF contains the opt-in indicator adapter.
+Private keys, RF binaries and raw build/CI logs remain outside Git.
+
+The candidate maps GPIO5..7 to left, GPIO1..3 to right at logical report creation
+for both transports, retaining canonical wire bits and GPIO4 exclusion. Touch
+thresholds/debounce and the physically tried IMU/frame/gyro/X/motion defaults
+are unchanged. One-Hz raw/baseline/noise/evidence and full logical button-state
+snapshots support the next controlled touch trials. The owner-requested very
+dim diagnostic dot uses GPIO14, RGB row-major reference wiring, one channel at
+code 1 on one pixel, bounded changed-frame DMA output and no blocking waits.
+Kconfig defaults off; normal USB/RF keep LEDs off. Actual colour/orientation,
+visibility, loop overhead and touch behaviour remain physically untested.
+No click-motion freeze/damping is introduced.
+
+The last installed sender remains X-corrected source `e8cfa99`, diagnostic app
+`a63f5c606c3ecebab9ca8ad56c86b3c5d29efd3a52486a82c6e7009e8f8d3abd`.
+Earlier physical results below apply to their recorded builds, not to this
+unflashed candidate. Both TM-008 and FNR-008 remain open and unaccepted. Resume
+with the operator-present procedure, then the remaining USB and joint RF matrix.
+
+## Last physical checkpoint: calibrated neutral, X-corrected control and BOOT recenter
 
 Earlier calibrated source/build `3a33f41b0e2f5016b425bf28a955dfd777912bf8`, diagnostic app
 `f10c82308eea69cd9a5ae8137ac863dcfb344385bf91b0839a260c2e7bdde7b0`, passed live
